@@ -27,7 +27,7 @@ function main() {
     java \
         -cp ${classpath} \
         ${debug_option} \
-        io.novaordis.events.log4jp.Main \
+        io.novaordis.events.log4j.Main \
         ${verbose_option} \
         ${args}
 }
