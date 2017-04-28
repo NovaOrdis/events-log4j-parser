@@ -1,0 +1,95 @@
+#!/bin/bash
+
+function main() {
+
+    local verbose=false
+    local debug=false
+    local version=false
+    local args=""
+
+    # sets verbose, debug, args, ...
+    process-command-line $@
+
+    local verbose_option
+    local debug_option
+    ${verbose} && verbose_option="--verbose"
+    ${debug} && debug_option="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+
+    local classpath
+    classpath=$(get-classpath $(dirname $0)/../lib) || exit 1
+
+    #
+    # support for universal command "version"
+    #
+
+    ${version} && command=version
+
+    java \
+        -cp ${classpath} \
+        ${debug_option} \
+        io.novaordis.events.log4jp.Main \
+        ${verbose_option} \
+        ${args}
+}
+
+#
+# gets passed the original command line. The function extracts and sets as global variables clad-specific options
+#
+# Sets:
+#
+# verbose - true|false
+# debug   - true|false
+# version - true|false
+#
+# args    - the rest of the remaining args
+#
+#
+function process-command-line() {
+
+    args=""
+
+    while [ -n "$1" ]; do
+
+        if [ "$1" = "-v" -o "" = "--verbose" ]; then
+            verbose=true
+        elif [ "$1" = "-d" -o "" = "--debug" ]; then
+            debug=true
+        elif [ "$1" = "version" ]; then
+            version=true
+        else
+            [ -z "${args}" ] && args=$1 || args="${args} $1"
+        fi
+        shift
+    done
+}
+
+#
+# must receive the path to the lib directory
+#
+function get-classpath() {
+
+    local lib_dir=$1
+
+    [ -z "${lib_dir}" ] && { echo "'lib_dir' not provided" 1>&2; exit 1; }
+    [ -d ${lib_dir} ] || { echo "lib_dir ${lib_dir} not a directory" 1>&2; exit 1; }
+
+    local first=true
+
+    #
+    # add the lib directory itself at the top of the classpath
+    #
+
+    echo -n "${lib_dir}:";
+
+    for i in ${lib_dir}/*.jar; do
+        if ${first}; then
+            first=false
+        else
+            echo -n ":"
+        fi
+        echo -n ${i}
+    done
+}
+
+
+main $@
