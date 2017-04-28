@@ -27,7 +27,8 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="events-log4j-parser" target="1.8" />
-      <module name="events-log4j-parser-release" target="1.8" />
+      <module name="events-log4j-parser-root" target="1.8" />
+      <module name="release" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

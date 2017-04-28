@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4j.impl;
+
+import io.novaordis.events.api.event.Event;
+import io.novaordis.events.api.parser.*;
+import io.novaordis.events.api.parser.ParsingException;
+
+import java.util.List;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Context {
+public class Log4jParser extends ParserBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -28,69 +34,29 @@ public class Context {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Error last;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    // ParserBase implementation ---------------------------------------------------------------------------------------
+
+    @Override
+    protected List<Event> parse(long lineNumber, String line) throws ParsingException {
+
+        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
+    }
+
+    @Override
+    protected List<Event> close(long lineNumber) throws ParsingException {
+
+        throw new RuntimeException("close() NOT YET IMPLEMENTED");
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
-
-    /**
-     *
-     * @exception IllegalArgumentException if the event being set occurs before the current event
-     */
-    public void process(Error e) {
-
-        try {
-
-            analyze(e, last);
-        }
-        catch(Exception ex) {
-
-            System.err.println(ex.getMessage());
-        }
-        finally {
-
-            this.last = e;
-        }
-    }
-
-    public void dump() {
-
-        System.out.println("");
-    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
     // Private ---------------------------------------------------------------------------------------------------------
-
-    /**
-     * @param previous may be null if we are analyzing the first event
-     */
-    private void analyze(Error current, Error previous) throws Exception {
-
-        if (previous == null) {
-
-            return;
-        }
-
-        String comment = previous.getComment();
-
-        if (!comment.contains("ConcurrentAccessTimeoutException")) {
-
-            return;
-        }
-
-        if (!current.getThreadName().equals(previous.getThreadName())) {
-
-            return;
-        }
-
-        long offset = current.getTimestamp() - previous.getTimestamp();
-
-        LogProcessing.out(current.getComment());
-    }
 
     // Inner classes ---------------------------------------------------------------------------------------------------
 

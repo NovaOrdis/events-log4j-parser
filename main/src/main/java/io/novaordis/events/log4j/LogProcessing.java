@@ -17,7 +17,7 @@
 package io.novaordis.events.log4j;
 
 import java.io.BufferedReader;
-import java.lang.Error;import java.lang.Exception;import java.lang.Object;import java.lang.String;import java.lang.System;import java.text.DateFormat;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -34,35 +34,6 @@ public class LogProcessing {
     private static final SimpleDateFormat OUT = new SimpleDateFormat("HH:mm:ss,SSS");
 
     // Static ----------------------------------------------------------------------------------------------------------
-
-    public static void loop(BufferedReader br) throws Exception {
-
-        String line;
-
-        Timestamp timestamp;
-
-        Context context = new Context();
-
-        long lineNumber = 0;
-
-        while((line = br.readLine()) != null) {
-
-            lineNumber ++;
-
-            timestamp = findTimestamp(line);
-
-            if (timestamp != null) {
-
-                lineWithTimestamp(context, lineNumber, timestamp, line.substring(timestamp.indexOfNextCharInLine));
-            }
-            else {
-
-                lineWithoutTimestamp(context, lineNumber, line);
-            }
-        }
-
-        context.dump();
-    }
 
     public static void out(Object o) {
 

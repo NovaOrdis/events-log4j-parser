@@ -18,6 +18,7 @@
         -->
 
         <novaordis.utilities.version>4.7.2</novaordis.utilities.version>
+        <events.api.version>1.1.4</events.api.version>
         <slf4j.version>1.7.6</slf4j.version>
 
         <!--
@@ -38,39 +39,43 @@
         <module>release</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.novaordis.utilities</groupId>
-            <artifactId>novaordis-utilities</artifactId>
-            <version>${novaordis.utilities.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.novaordis.utilities</groupId>
+                <artifactId>novaordis-utilities</artifactId>
+                <version>${novaordis.utilities.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.novaordis.events.api</groupId>
+                <artifactId>events-api</artifactId>
+                <version>${events.api.version}</version>
+            </dependency>
 
-        <!--
-            Testing Dependencies
-        -->
+            <!--
+                Testing Dependencies
+            -->
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
 
-        <!--
-            End of Testing Dependencies
-        -->
-
-    </dependencies>
+            <!--
+                End of Testing Dependencies
+            -->
+        </dependencies>
 
     <build>
         <plugins>

@@ -14,93 +14,25 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
-
-import io.novaordis.events.api.event.Event;
-import io.novaordis.events.log4j.impl.Log4jEvent;
-import io.novaordis.events.log4j.impl.Log4jParser;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+package io.novaordis.events.log4.impl;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Main {
+public class Log4jParserTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
-
-    public static void main(String[] args) throws Exception {
-
-        if (args.length == 0) {
-
-            throw new Exception("specify the file to process");
-        }
-
-        File f = new File(args[0]);
-
-        if (!f.isFile()) {
-
-            throw new Exception(f + " does not exist or is not readable");
-        }
-
-        List<Event> events = new ArrayList<>();
-
-        Log4jParser parser = new Log4jParser();
-
-        BufferedReader br = null;
-
-        try {
-
-            br = new BufferedReader(new FileReader(f));
-
-            String line;
-
-            while((line = br.readLine()) != null) {
-
-                events.addAll(parser.parse(line));
-            }
-
-            events.addAll(parser.close());
-        }
-        finally {
-
-            if (br != null) {
-
-                br.close();
-            }
-        }
-
-        for(Event e: events) {
-
-            Log4jEvent le = (Log4jEvent)e;
-
-            System.out.println(le);
-        }
-
-//                timestamp = findTimestamp(line);
-//
-//                if (timestamp != null) {
-//
-//                    lineWithTimestamp(context, lineNumber, timestamp, line.substring(timestamp.indexOfNextCharInLine));
-//                }
-//                else {
-//
-//                    lineWithoutTimestamp(context, lineNumber, line);
-//                }
-    }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
+
+    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 

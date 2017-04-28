@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/main/events-log4j-parser.iml" filepath="$PROJECT_DIR$/main/events-log4j-parser.iml" />
-      <module fileurl="file://$PROJECT_DIR$/release/events-log4j-parser-release.iml" filepath="$PROJECT_DIR$/release/events-log4j-parser-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/events-log4j-parser-root.iml" filepath="$PROJECT_DIR$/events-log4j-parser-root.iml" />
+      <module fileurl="file://$PROJECT_DIR$/release/release.iml" filepath="$PROJECT_DIR$/release/release.iml" />
     </modules>
   </component>
 </project>

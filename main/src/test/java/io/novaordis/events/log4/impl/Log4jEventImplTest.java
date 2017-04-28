@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4.impl;
+
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Context {
+public class Log4jEventImplTest extends Log4jEventTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -28,35 +31,16 @@ public class Context {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Error last;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     *
-     * @exception IllegalArgumentException if the event being set occurs before the current event
-     */
-    public void process(Error e) {
+    // Tests -----------------------------------------------------------------------------------------------------------
 
-        try {
+    @Override
+    protected Log4jEventImpl getLog4jEventToTest() throws Exception {
 
-            analyze(e, last);
-        }
-        catch(Exception ex) {
-
-            System.err.println(ex.getMessage());
-        }
-        finally {
-
-            this.last = e;
-        }
-    }
-
-    public void dump() {
-
-        System.out.println("");
+        return new Log4jEventImpl();
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -64,33 +48,6 @@ public class Context {
     // Protected -------------------------------------------------------------------------------------------------------
 
     // Private ---------------------------------------------------------------------------------------------------------
-
-    /**
-     * @param previous may be null if we are analyzing the first event
-     */
-    private void analyze(Error current, Error previous) throws Exception {
-
-        if (previous == null) {
-
-            return;
-        }
-
-        String comment = previous.getComment();
-
-        if (!comment.contains("ConcurrentAccessTimeoutException")) {
-
-            return;
-        }
-
-        if (!current.getThreadName().equals(previous.getThreadName())) {
-
-            return;
-        }
-
-        long offset = current.getTimestamp() - previous.getTimestamp();
-
-        LogProcessing.out(current.getComment());
-    }
 
     // Inner classes ---------------------------------------------------------------------------------------------------
 
