@@ -19,6 +19,10 @@ package io.novaordis.events.log4j.impl;
 import io.novaordis.events.api.event.GenericTimedEvent;
 import io.novaordis.events.api.event.StringProperty;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
@@ -31,6 +35,8 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     public static final String LOG_CATEGORY_PROPERTY_NAME = "log-category";
     public static final String THREAD_PROPERTY_NAME = "thread";
     public static final String MESSAGE_PROPERTY_NAME = "message";
+
+    private static final DateFormat TO_STRING_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS");
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -157,6 +163,21 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         //
         // temporarily ignoring extra lines
         //
+    }
+
+    @Override
+    public String toString() {
+
+
+        String s = "";
+
+        s += getLineNumber() + ": ";
+
+        s += TO_STRING_DATE_FORMAT.format(getTime());
+
+        return s;
+
+
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
