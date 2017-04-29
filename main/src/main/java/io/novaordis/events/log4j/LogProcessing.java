@@ -16,7 +16,7 @@
 
 package io.novaordis.events.log4j;
 
-import io.novaordis.events.log4j.impl.Timestamp;
+import io.novaordis.events.log4j.impl.TimestampMatcher;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,7 +56,7 @@ public class LogProcessing {
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d,\\d\\d\\d) .*");
     private static final DateFormat IN = new SimpleDateFormat("HH:mm:ss,SSS");
 
-    private static Timestamp findTimestamp(String line) throws Exception {
+    private static TimestampMatcher findTimestamp(String line) throws Exception {
 
         Matcher m = DATE_PATTERN.matcher(line);
 
@@ -68,10 +68,10 @@ public class LogProcessing {
         String timestampAsString = m.group(1);
         Date timestamp = IN.parse(timestampAsString);
         int nextCharInLine = m.end(1) + 1;
-        return new Timestamp(timestamp.getTime(), nextCharInLine);
+        return new TimestampMatcher(timestamp.getTime(), null, nextCharInLine);
     }
 
-    private static void lineWithTimestamp(Context context, long lineNumber, Timestamp t, String restOfTheLine)
+    private static void lineWithTimestamp(Context context, long lineNumber, TimestampMatcher t, String restOfTheLine)
             throws Exception {
 
         if (restOfTheLine.startsWith("ERROR")) {
@@ -83,7 +83,7 @@ public class LogProcessing {
     private static void lineWithoutTimestamp(Context context, long lineNumber, String restOfTheLine) {
     }
 
-    private static void errorLine(Context context, long lineNumber, Timestamp t, String restOfTheLine)
+    private static void errorLine(Context context, long lineNumber, TimestampMatcher t, String restOfTheLine)
             throws Exception {
 
         Error error = new Error(t.getTime(), lineNumber);

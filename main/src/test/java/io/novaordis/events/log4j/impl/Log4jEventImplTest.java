@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4.impl;
+package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public abstract class Log4jEventTest {
+public class Log4jEventImplTest extends Log4jEventTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -34,13 +37,38 @@ public abstract class Log4jEventTest {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
+    @Test
+    public void invalidLogLevelStorage() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        String s = "something that cannot be a log level";
+
+        e.setStringProperty(Log4jEventImpl.LOG_LEVEL_PROPERTY_NAME, s);
+
+        try {
+
+            e.getLogLevel();
+            fail("should have failed");
+        }
+        catch(IllegalStateException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.equals("invalid '" + Log4jEventImpl.LOG_LEVEL_PROPERTY_NAME + "' value: \"" + s + "\""));
+        }
+    }
+
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected Log4jEventImpl getLog4jEventToTest() throws Exception {
+
+        return new Log4jEventImpl();
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    protected abstract Log4jEvent getLog4jEventToTest() throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

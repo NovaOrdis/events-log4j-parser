@@ -50,6 +50,7 @@ public class Log4jParser extends ParserBase {
 
     public Log4jParser() {
 
+        pattern = null;
         fullyParsedEvents = new ArrayList<>();
     }
 
@@ -88,7 +89,7 @@ public class Log4jParser extends ParserBase {
 
     void applyHeuristics(long lineNumber, String line) throws ParsingException {
 
-        Timestamp t = Timestamp.find(line);
+        TimestampMatcher t = TimestampMatcher.find(lineNumber, line);
 
         if (t == null) {
 
@@ -141,6 +142,22 @@ public class Log4jParser extends ParserBase {
         fullyParsedEvents = new ArrayList<>();
 
         return result;
+    }
+
+    /**
+     * May return null.
+     */
+    Log4jEvent getCurrentEvent() {
+
+        return currentEvent;
+    }
+
+    /**
+     * @return the underlying storage
+     */
+    List<Event> getFullyParsedEvents() {
+
+        return fullyParsedEvents;
     }
 
     // Protected -------------------------------------------------------------------------------------------------------

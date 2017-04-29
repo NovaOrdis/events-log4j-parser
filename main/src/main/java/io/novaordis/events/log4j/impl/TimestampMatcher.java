@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Timestamp {
+public class TimestampMatcher {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ public class Timestamp {
     //
     public static final Pattern[] KNOWN_TIMESTAMP_PATTERNS = {
 
-            Pattern.compile("(^\\d\\d:\\d\\d:\\d\\d,\\d\\d\\d)( +).*"),
+            Pattern.compile("(^[0-2]\\d:[0-5]\\d:[0-5]\\d,\\d\\d\\d)( +).*"),
     };
 
     //
@@ -59,7 +59,7 @@ public class Timestamp {
 
             throw new IllegalArgumentException(
                     "the KNOWN_TIMESTAMP_PATTERNS number is different from DATE_FORMATS, which means " +
-                            Timestamp.class.getName() + " is incorrectly coded");
+                            TimestampMatcher.class.getName() + " is incorrectly coded");
         }
     }
 
@@ -69,13 +69,13 @@ public class Timestamp {
      * Matches the line against know timestamp patterns and return a Timestamp instance if the line *begins* with
      * a known pattern.
      */
-    public static Timestamp find(long lineNumber, String line) throws ParsingException {
+    public static TimestampMatcher find(long lineNumber, String line) throws ParsingException {
 
         //
         // discard invalid leading characters
         //
 
-        int offset = 0;
+        int offset;
 
         for(offset = 0; offset < line.length(); offset++) {
 
@@ -97,17 +97,20 @@ public class Timestamp {
             break;
         }
 
+        if (offset != 0) {
+
+            line = line.substring(offset);
+        }
+
         //
         // attempt to match known timestamp patterns
         //
 
-        line = line.substring(offset);
-
-        int dfIndex = -1;
+        int dateFormatIndex = -1;
 
         for(Pattern p: KNOWN_TIMESTAMP_PATTERNS) {
 
-            dfIndex ++;
+            dateFormatIndex++;
 
             Matcher m = p.matcher(line);
 
@@ -123,14 +126,14 @@ public class Timestamp {
 
                 try {
 
-                    d = DATE_FORMATS[dfIndex].parse(s);
+                    d = DATE_FORMATS[dateFormatIndex].parse(s);
                 }
                 catch(ParseException pe) {
 
-                    throw new ParsingException("TODO", pe, lineNumber);
+                    throw new ParsingException("invalid timestamp \"" + s + "\"", pe, lineNumber);
                 }
 
-                return new Timestamp(d.getTime(), offset + m.end(2));
+                return new TimestampMatcher(d.getTime(), DATE_FORMATS[dateFormatIndex], offset + m.end(2));
 
             }
         }
@@ -146,13 +149,18 @@ public class Timestamp {
 
     private long time;
     private int indexOfNextCharInLine;
+    private DateFormat dateFormat;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public Timestamp(long timestamp, int indexOfNextCharInLine) {
+    /**
+     * @param df the DateFormat of the time stamp as matched in the log
+     */
+    public TimestampMatcher(long timestamp, DateFormat df, int indexOfNextCharInLine) {
 
         this.time = timestamp;
         this.indexOfNextCharInLine = indexOfNextCharInLine;
+        this.dateFormat = df;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -165,6 +173,25 @@ public class Timestamp {
     public int getIndexOfNextCharInLine() {
 
         return  indexOfNextCharInLine;
+    }
+
+    @Override
+    public String toString() {
+
+        String s = "";
+
+        if (dateFormat == null) {
+
+            s += time;
+        }
+        else {
+
+            s += dateFormat.format(time);
+        }
+
+        s += ", " + indexOfNextCharInLine;
+
+        return s;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

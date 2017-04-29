@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4.impl;
+package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.log4j.impl.Log4jParser;
 import org.junit.Test;
+
+import java.text.SimpleDateFormat;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Log4jParserTest {
+public class TimestampMatcherTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -37,16 +42,48 @@ public class Log4jParserTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
-    // applyHeuristics() -----------------------------------------------------------------------------------------------
+    // find() ----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void applyHeuristics() throws Exception {
+    public void find() throws Exception {
 
-        Log4jParser p = new Log4jParser();
+        String s = "14:56:16,781      INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.7.Final-redhat-1";
 
+        TimestampMatcher t = TimestampMatcher.find(1, s);
 
+        assertNotNull(t);
 
+        long time = t.getTime();
+        int i = t.getIndexOfNextCharInLine();
 
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("14:56:16,781").getTime(), time);
+        assertEquals(s.indexOf('I'), i);
+    }
+
+    @Test
+    public void find_InvalidTimestampPatternInvalidHour() throws Exception {
+
+        String s = "14:66:16,781      INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.7.Final-redhat-1";
+
+        TimestampMatcher t = TimestampMatcher.find(1, s);
+
+        assertNull(t);
+    }
+
+    @Test
+    public void find_LineWithInvalidLeadingChars() throws Exception {
+
+        String s = "\u001B[0m14:56:16,781      INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.7.Final-redhat-1";
+
+        TimestampMatcher t = TimestampMatcher.find(1, s);
+
+        assertNotNull(t);
+
+        long time = t.getTime();
+        int i = t.getIndexOfNextCharInLine();
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("14:56:16,781").getTime(), time);
+        assertEquals(s.indexOf('I'), i);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

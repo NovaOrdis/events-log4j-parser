@@ -17,6 +17,7 @@
 package io.novaordis.events.log4j.impl;
 
 import io.novaordis.events.api.event.GenericTimedEvent;
+import io.novaordis.events.api.event.StringProperty;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -26,16 +27,133 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
+    public static final String LOG_LEVEL_PROPERTY_NAME = "log-level";
+    public static final String LOG_CATEGORY_PROPERTY_NAME = "log-category";
+    public static final String THREAD_PROPERTY_NAME = "thread";
+    public static final String MESSAGE_PROPERTY_NAME = "message";
+
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    Log4jEventImpl() {
+
+        this(0L, 0L, null, null, null, null);
+    }
+
+    public Log4jEventImpl(
+            long lineNumber, long timestamp, Log4jLevel level, String category, String threadName, String message) {
+
+        super(timestamp);
+        setLineNumber(lineNumber);
+        setLogLevel(level);
+        setLogCategory(category);
+        setThreadName(threadName);
+        setMessage(message);
+    }
+
     // Log4jEvent implementation ---------------------------------------------------------------------------------------
+
+    /**
+     * May return null.
+     *
+     * @exception IllegalStateException if the internal storage for property cannot be converted to Log4jLevel
+     */
+    @Override
+    public Log4jLevel getLogLevel() {
+
+        StringProperty sp = getStringProperty(LOG_LEVEL_PROPERTY_NAME);
+
+        if (sp == null) {
+
+            return null;
+        }
+
+        String s = sp.getString();
+
+        if (s == null) {
+
+            return null;
+        }
+
+        Log4jLevel level =  Log4jLevel.fromLiteral(s);
+
+        if (level == null) {
+
+            throw new IllegalStateException("invalid '" + LOG_LEVEL_PROPERTY_NAME + "' value: \"" + s + "\"");
+        }
+
+        return level;
+    }
+
+    @Override
+    public void setLogLevel(Log4jLevel level) {
+
+        setStringProperty(LOG_LEVEL_PROPERTY_NAME, level == null ? null : level.toLiteral());
+    }
+
+    @Override
+    public String getLogCategory() {
+
+        StringProperty sp = getStringProperty(LOG_CATEGORY_PROPERTY_NAME);
+
+        if (sp == null) {
+
+            return null;
+        }
+
+        return sp.getString();
+    }
+
+    @Override
+    public void setLogCategory(String s) {
+
+        setStringProperty(LOG_CATEGORY_PROPERTY_NAME, s);
+    }
+
+    @Override
+    public String getThreadName() {
+
+        StringProperty sp = getStringProperty(THREAD_PROPERTY_NAME);
+
+        if (sp == null) {
+
+            return null;
+        }
+
+        return sp.getString();
+    }
+
+    @Override
+    public void setThreadName(String s) {
+
+        setStringProperty(THREAD_PROPERTY_NAME, s);
+    }
+
+    @Override
+    public String getMessage() {
+
+        StringProperty sp = getStringProperty(MESSAGE_PROPERTY_NAME);
+
+        if (sp == null) {
+
+            return null;
+        }
+
+        return sp.getString();
+    }
+
+    @Override
+    public void setMessage(String s) {
+
+        setStringProperty(MESSAGE_PROPERTY_NAME, s);
+    }
 
     @Override
     public void append(String line) {
+
         throw new RuntimeException("append() NOT YET IMPLEMENTED");
     }
 
