@@ -16,7 +16,8 @@
 
 package io.novaordis.events.log4j;
 
-import java.io.BufferedReader;
+import io.novaordis.events.log4j.impl.Timestamp;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,7 +86,7 @@ public class LogProcessing {
     private static void errorLine(Context context, long lineNumber, Timestamp t, String restOfTheLine)
             throws Exception {
 
-        Error error = new Error(t.timestamp, lineNumber);
+        Error error = new Error(t.getTime(), lineNumber);
 
         //
         // logger

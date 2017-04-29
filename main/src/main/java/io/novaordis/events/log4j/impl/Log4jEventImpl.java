@@ -32,6 +32,13 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    // Log4jEvent implementation ---------------------------------------------------------------------------------------
+
+    @Override
+    public void append(String line) {
+        throw new RuntimeException("append() NOT YET IMPLEMENTED");
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------

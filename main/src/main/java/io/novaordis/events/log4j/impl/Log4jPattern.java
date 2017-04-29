@@ -16,26 +16,16 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.api.event.TimedEvent;
-import io.novaordis.events.api.parser.ParsingException;
-
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public interface Log4jEvent extends TimedEvent {
+public interface Log4jPattern {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
 
-    static Log4jEvent build(long lineNumber, Timestamp t, String restOfTheLine) throws ParsingException {
-
-        throw new RuntimeException("NYE");
-    }
-
     // Public ----------------------------------------------------------------------------------------------------------
-
-    public void append(String line);
 
 }

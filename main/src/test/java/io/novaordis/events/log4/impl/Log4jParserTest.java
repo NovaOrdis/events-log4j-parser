@@ -16,6 +16,9 @@
 
 package io.novaordis.events.log4.impl;
 
+import io.novaordis.events.log4j.impl.Log4jParser;
+import org.junit.Test;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
@@ -33,6 +36,18 @@ public class Log4jParserTest {
     // Public ----------------------------------------------------------------------------------------------------------
 
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    // applyHeuristics() -----------------------------------------------------------------------------------------------
+
+    @Test
+    public void applyHeuristics() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+
+
+
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

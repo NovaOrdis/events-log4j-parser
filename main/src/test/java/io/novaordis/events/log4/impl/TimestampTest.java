@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4.impl;
+
+import io.novaordis.events.log4j.impl.Timestamp;
+import org.junit.Test;
+
+import java.text.SimpleDateFormat;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 4/28/17
  */
-public class Timestamp {
+public class TimestampTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -28,18 +36,29 @@ public class Timestamp {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    public long timestamp;
-    public int indexOfNextCharInLine;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public Timestamp(long timestamp, int indexOfNextCharInLine) {
-
-        this.timestamp = timestamp;
-        this.indexOfNextCharInLine = indexOfNextCharInLine;
-    }
-
     // Public ----------------------------------------------------------------------------------------------------------
+
+    // Tests -----------------------------------------------------------------------------------------------------------
+
+    // find() ----------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void find_LineWithInvalidLeadingChars() throws Exception {
+
+        String s = "\u001B[0m14:56:16,781      INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.7.Final-redhat-1";
+
+        Timestamp t = Timestamp.find(1, s);
+
+        assertNotNull(t);
+
+        long time = t.getTime();
+        int i = t.getIndexOfNextCharInLine();
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("14:56:16,781").getTime(), time);
+        assertEquals(s.indexOf('I'), i);
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
