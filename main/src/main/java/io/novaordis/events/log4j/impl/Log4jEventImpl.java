@@ -154,7 +154,9 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     @Override
     public void append(String line) {
 
-        throw new RuntimeException("append() NOT YET IMPLEMENTED");
+        //
+        // temporarily ignoring extra lines
+        //
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
