@@ -8,7 +8,7 @@
 
     <groupId>io.novaordis.events.log4j</groupId>
     <artifactId>events-log4j-parser-root</artifactId>
-    <version>1.0.0-SNAPSHOT-4</version>
+    <version>1.0.0-SNAPSHOT-5</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -60,16 +60,6 @@
                 <groupId>io.novaordis.events.api</groupId>
                 <artifactId>events-api</artifactId>
                 <version>${events.api.version}</version>
-            </dependency>
-
-            <!--
-                This is needed for the API, but we don't need to embed it yet.
-            -->
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-                <scope>provided</scope>
             </dependency>
 
 
