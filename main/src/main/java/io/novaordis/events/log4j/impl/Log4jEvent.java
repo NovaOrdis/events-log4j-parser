@@ -84,7 +84,7 @@ public interface Log4jEvent extends TimedEvent {
         // category
         //
 
-        ParsingResult category = CategoryParser.find(restOfTheLine, i, lineNumber);
+        ParsingResult category = Parsers.find(restOfTheLine, i, '[', ']', lineNumber);
 
         if (category == null) {
 

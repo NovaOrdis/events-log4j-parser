@@ -22,18 +22,21 @@ import io.novaordis.events.api.parser.ParsingException;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 6/2/17
  */
-public class CategoryParser {
+public class Parsers {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     /**
+     * Finds a token enclosed by the specified markers, accounting for nested marker pairs.
+     *
      * @return may return null if a category finding heuristics does not identify any.
      *
      * @throws ParsingException on improperly formatted category.
      */
-    public static ParsingResult find(String s, int from, Long lineNumber) throws ParsingException {
+    public static ParsingResult find(String s, int from, char leftMarker, char rightMarker, Long lineNumber)
+            throws ParsingException {
 
         int i = from;
 
@@ -41,7 +44,7 @@ public class CategoryParser {
 
         for(; i < s.length(); i ++) {
 
-            if (s.charAt(i) == '[') {
+            if (s.charAt(i) == leftMarker) {
 
                 start = i;
                 break;
@@ -56,7 +59,7 @@ public class CategoryParser {
         i ++;
 
         //
-        // skip nested brackets
+        // skip nested marker pairs
         //
 
         int level = 0;
@@ -65,7 +68,7 @@ public class CategoryParser {
 
             char c = s.charAt(i);
 
-            if (c == ']') {
+            if (c == rightMarker) {
 
                 if (level == 0) {
 
@@ -78,21 +81,22 @@ public class CategoryParser {
 
                 level --;
             }
-            else if (c == '[') {
+            else if (c == leftMarker) {
 
                 level ++;
             }
         }
 
         throw new ParsingException(
-                "unbalanced square brackets when attempting to heuristically find category", lineNumber, start);
+                "unbalanced " + leftMarker + " " + rightMarker  + " when attempting to heuristically find category",
+                lineNumber, start);
     }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    private CategoryParser() {
+    private Parsers() {
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

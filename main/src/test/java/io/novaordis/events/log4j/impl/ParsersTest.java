@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 6/2/17
  */
-public class CategoryParserTest {
+public class ParsersTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -48,14 +48,14 @@ public class CategoryParserTest {
     @Test
     public void find_NoCategory() throws Exception {
 
-        ParsingResult r = CategoryParser.find("blah", 0, 1L);
+        ParsingResult r = Parsers.find("blah", 0, '[', ']', 1L);
         assertNull(r);
     }
 
     @Test
     public void find() throws Exception {
 
-        ParsingResult r = CategoryParser.find(" something [this is what we expect] something else", 0, 1L);
+        ParsingResult r = Parsers.find(" something [this is what we expect] something else", 0, '[', ']', 1L);
 
         assertNotNull(r);
 
@@ -66,7 +66,7 @@ public class CategoryParserTest {
     @Test
     public void find_NestedBrackets() throws Exception {
 
-        ParsingResult r = CategoryParser.find(" blah [this [is [what] we] [expect]] something else", 0, 1L);
+        ParsingResult r = Parsers.find(" blah [this [is [what] we] [expect]] something else", 0, '[', ']', 1L);
 
         assertNotNull(r);
 
@@ -77,7 +77,7 @@ public class CategoryParserTest {
     @Test
     public void find_UnbalancedNestedBracketsNotPartOfCategory() throws Exception {
 
-        ParsingResult r = CategoryParser.find("blah [ blah2 ] ] something else", 0, 1L);
+        ParsingResult r = Parsers.find("blah [ blah2 ] ] something else", 0, '[', ']', 1L);
 
         assertNotNull(r);
 
@@ -90,14 +90,15 @@ public class CategoryParserTest {
 
         try {
 
-            CategoryParser.find(" blah [ ", 0, 7L);
+            Parsers.find(" blah [ ", 0, '[', ']', 7L);
             fail("should have thrown exception");
         }
         catch(ParsingException e) {
 
             String msg = e.getMessage();
             assertTrue(msg.contains("unbalanced"));
-            assertTrue(msg.contains("brackets"));
+            assertTrue(msg.contains("["));
+            assertTrue(msg.contains("]"));
             assertEquals(7L, e.getLineNumber().longValue());
 
             // where the bracket sequence starts
@@ -110,14 +111,15 @@ public class CategoryParserTest {
 
         try {
 
-            CategoryParser.find(" blah [ something [ something else ] ", 0, 7L);
+            Parsers.find(" blah [ something [ something else ] ", 0, '[', ']', 7L);
             fail("should have thrown exception");
         }
         catch(ParsingException e) {
 
             String msg = e.getMessage();
             assertTrue(msg.contains("unbalanced"));
-            assertTrue(msg.contains("brackets"));
+            assertTrue(msg.contains("["));
+            assertTrue(msg.contains("]"));
             assertEquals(7L, e.getLineNumber().longValue());;
 
             // where the bracket sequence starts
