@@ -110,48 +110,14 @@ public interface Log4jEvent extends TimedEvent {
         // thread name, look for nested parantheses
         //
 
-        if (restOfTheLine.length() == i || restOfTheLine.charAt(i) != '(') {
+        ParsingResult threadName = Parsers.find(restOfTheLine, i, '(', ')', lineNumber);
 
-            throw new ParsingException("no thread name separator ( found after the log category", lineNumber);
+        if (threadName == null) {
+
+            throw new ParsingException("no thread name found after the log category, expecting (...)", lineNumber);
         }
 
-        int j = i + 1;
-
-        int nestingLevel = 0;
-
-        for(; j < restOfTheLine.length(); j ++) {
-
-            char c = restOfTheLine.charAt(j);
-
-            if (c == ')') {
-
-                if (nestingLevel == 0) {
-
-                    //
-                    // closed
-                    //
-
-                    break;
-                }
-                else {
-
-                    nestingLevel --;
-                }
-            }
-            else if (c == '(') {
-
-                nestingLevel ++;
-            }
-        }
-
-        if (j == restOfTheLine.length()) {
-
-            throw new ParsingException("unbalanced parantheses in thread name", lineNumber);
-        }
-
-        String threadName = restOfTheLine.substring(i + 1, j);
-
-        i = j + 1;
+        i = threadName.getNext();
 
         //
         // skip the spaces
@@ -172,7 +138,7 @@ public interface Log4jEvent extends TimedEvent {
             message = restOfTheLine.substring(i);
         }
 
-        return new Log4jEventImpl(lineNumber, t.getTime(), level, category.getValue(), threadName, message);
+        return new Log4jEventImpl(lineNumber, t.getTime(), level, category.getValue(), threadName.getValue(), message);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

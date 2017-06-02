@@ -87,9 +87,7 @@ public class Parsers {
             }
         }
 
-        throw new ParsingException(
-                "unbalanced " + leftMarker + " " + rightMarker  + " when attempting to heuristically find category",
-                lineNumber, start);
+        throw new ParsingException("unbalanced " + leftMarker + "..." + rightMarker, lineNumber, start);
     }
 
     // Attributes ------------------------------------------------------------------------------------------------------

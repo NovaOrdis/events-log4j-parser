@@ -20,7 +20,7 @@ package io.novaordis.events.log4j.impl;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 6/2/17
  */
-public class ParsingResult {
+class ParsingResult {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -61,6 +61,12 @@ public class ParsingResult {
     public String getValue() {
 
         return value;
+    }
+
+    @Override
+    public String toString() {
+
+        return "" + value + ", " + next;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

@@ -202,8 +202,9 @@ public abstract class Log4jEventTest {
 
             String msg = e.getMessage();
             assertEquals(8L, e.getLineNumber().longValue());
-            assertTrue(msg.contains("unbalanced parantheses"));
-            assertTrue(msg.contains("thread name"));
+            assertTrue(msg.contains("unbalanced"));
+            assertTrue(msg.contains("("));
+            assertTrue(msg.contains(")"));
         }
     }
 
