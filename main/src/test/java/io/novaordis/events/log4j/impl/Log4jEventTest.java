@@ -138,7 +138,7 @@ public abstract class Log4jEventTest {
 
         int position = 10;
 
-        TimestampMatcher t = new TimestampMatcher(7L, null, 10);
+        TimestampMatcher t = new TimestampMatcher(7L, null, position);
 
         try {
 
@@ -148,9 +148,10 @@ public abstract class Log4jEventTest {
         catch(ParsingException e) {
 
             String msg = e.getMessage();
+            assertTrue(msg.matches("no.*category.*$"));
+
             assertEquals(8L, e.getLineNumber().longValue());
             assertEquals(position + "ERROR ".length(), e.getPositionInLine().intValue());
-            assertTrue(msg.matches("no.*category"));
         }
     }
 

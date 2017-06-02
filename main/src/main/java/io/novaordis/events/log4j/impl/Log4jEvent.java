@@ -88,7 +88,8 @@ public interface Log4jEvent extends TimedEvent {
 
         if (category == null) {
 
-            throw new ParsingException("no log category found, expecting [...]", lineNumber, i);
+            throw new ParsingException(
+                    "no log category found, expecting [...]", lineNumber, t.getIndexOfNextCharInLine() + i);
         }
 
         i = category.getNext();

@@ -53,6 +53,8 @@ public class CategoryParser {
             return null;
         }
 
+        i ++;
+
         //
         // skip nested brackets
         //
