@@ -18,8 +18,10 @@ package io.novaordis.events.log4j.impl;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.event.TimedEvent;
+import io.novaordis.utilities.Files;
 import org.junit.Test;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -97,11 +99,30 @@ public class Log4jParserTest {
         assertEquals(expected, ((TimedEvent)fullyParsedEvents.get(1)).getTime().longValue());
     }
 
+    // production ------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void productionLine001() throws Exception {
+
+        String line = getProductionLine("production-line-001.txt");
+
+        Log4jParser p = new Log4jParser();
+
+        p.parse(line);
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
     // Private ---------------------------------------------------------------------------------------------------------
+
+    private String getProductionLine(String fileName) throws Exception {
+
+        File file = new File(System.getProperty("basedir"), "src/test/resources/data/" + fileName);
+        assertTrue(file.isFile());
+        return Files.read(file);
+    }
 
     // Inner classes ---------------------------------------------------------------------------------------------------
 

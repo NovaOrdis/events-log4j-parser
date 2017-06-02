@@ -14,25 +14,83 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4j.impl;
+
+import io.novaordis.events.api.parser.ParsingException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 4/28/17
+ * @since 6/2/17
  */
-public class ParsingException extends Exception {
+public class CategoryParser {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
 
+    /**
+     * @return may return null if a category finding heuristics does not identify any.
+     *
+     * @throws ParsingException on improperly formatted category.
+     */
+    public static ParsingResult find(String s, int from, Long lineNumber) throws ParsingException {
+
+        int i = from;
+
+        int start = -1;
+
+        for(; i < s.length(); i ++) {
+
+            if (s.charAt(i) == '[') {
+
+                start = i;
+                break;
+            }
+        }
+
+        if (start == -1) {
+
+            return null;
+        }
+
+        //
+        // skip nested brackets
+        //
+
+        int level = 0;
+
+        for(; i < s.length(); i ++) {
+
+            char c = s.charAt(i);
+
+            if (c == ']') {
+
+                if (level == 0) {
+
+                    //
+                    // found our category
+                    //
+
+                    return new ParsingResult(s.substring(start + 1, i), i + 1);
+                }
+
+                level --;
+            }
+            else if (c == '[') {
+
+                level ++;
+            }
+        }
+
+        throw new ParsingException(
+                "unbalanced square brackets when attempting to heuristically find category", lineNumber, start);
+    }
+
     // Attributes ------------------------------------------------------------------------------------------------------
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public ParsingException(String msg) {
-
-        super(msg);
+    private CategoryParser() {
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

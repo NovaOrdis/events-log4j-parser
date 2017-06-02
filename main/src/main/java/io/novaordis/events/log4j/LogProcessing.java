@@ -16,6 +16,7 @@
 
 package io.novaordis.events.log4j;
 
+import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.TimestampMatcher;
 
 import java.text.DateFormat;
@@ -94,7 +95,7 @@ public class LogProcessing {
 
         if (!restOfTheLine.startsWith("[")) {
 
-            throw new ParsingException("line " + lineNumber + " does not contain [logger...");
+            throw new ParsingException("[logger... not found", lineNumber);
         }
 
         int i = restOfTheLine.indexOf(']');
@@ -111,7 +112,7 @@ public class LogProcessing {
 
         if (i == -1) {
 
-            throw new ParsingException("line " + lineNumber + " does not contain (thread-name...");
+            throw new ParsingException("(thread-name... not found", lineNumber);
         }
 
         //
@@ -144,7 +145,7 @@ public class LogProcessing {
 
         if (j == restOfTheLine.length()) {
 
-            throw new ParsingException("line " + lineNumber + ": unbalanced thread name parantheses");
+            throw new ParsingException("unbalanced thread name parantheses", lineNumber);
         }
 
         error.setThreadName(restOfTheLine.substring(i + 1, j));

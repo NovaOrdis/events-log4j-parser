@@ -132,6 +132,45 @@ public abstract class Log4jEventTest {
     }
 
     @Test
+    public void build_MissingCategory() throws Exception {
+
+        String s = "ERROR something";
+
+        int position = 10;
+
+        TimestampMatcher t = new TimestampMatcher(7L, null, 10);
+
+        try {
+
+            Log4jEvent.build(8L, t, s);
+            fail("should have thrown exception");
+        }
+        catch(ParsingException e) {
+
+            String msg = e.getMessage();
+            assertEquals(8L, e.getLineNumber().longValue());
+            assertEquals(position + "ERROR ".length(), e.getPositionInLine().intValue());
+            assertTrue(msg.matches("no.*category"));
+        }
+    }
+
+    @Test
+    public void categoryWithNestedBrackets() throws Exception {
+
+        String s = "ERROR [org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]] (blah) blah2";
+
+        TimestampMatcher t = new TimestampMatcher(7L, null, 10);
+        Log4jEvent e = Log4jEvent.build(8L, t, s);
+
+        assertEquals(8L, e.getLineNumber().longValue());
+        assertEquals(7L, e.getTime().longValue());
+        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
+        assertEquals("org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]", e.getLogCategory());
+        assertEquals("blah", e.getThreadName());
+        assertEquals("blah2", e.getMessage());
+    }
+
+    @Test
     public void build_RecursiveParanthesesInThreadName() throws Exception {
 
         String s = "ERROR [io.test] (something (some between parantheses (and one more level) and more)) something";

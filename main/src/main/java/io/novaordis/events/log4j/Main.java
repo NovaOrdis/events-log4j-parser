@@ -17,6 +17,7 @@
 package io.novaordis.events.log4j;
 
 import io.novaordis.events.api.event.Event;
+import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jParser;
 
@@ -38,51 +39,52 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length == 0) {
-
-            throw new Exception("specify the file to process");
-        }
-
-        File f = new File(args[0]);
-
-        if (!f.isFile()) {
-
-            throw new Exception(f + " does not exist or is not readable");
-        }
-
-        List<Event> events = new ArrayList<>();
-
-        Log4jParser parser = new Log4jParser();
-
-        BufferedReader br = null;
-
         try {
 
-            br = new BufferedReader(new FileReader(f));
+            if (args.length == 0) {
 
-            String line;
-
-            while((line = br.readLine()) != null) {
-
-                events.addAll(parser.parse(line));
+                throw new Exception("specify the file to process");
             }
 
-            events.addAll(parser.close());
-        }
-        finally {
+            File f = new File(args[0]);
 
-            if (br != null) {
+            if (!f.isFile()) {
 
-                br.close();
+                throw new Exception(f + " does not exist or is not readable");
             }
-        }
 
-        for(Event e: events) {
+            List<Event> events = new ArrayList<>();
 
-            Log4jEvent le = (Log4jEvent)e;
+            Log4jParser parser = new Log4jParser();
 
-            System.out.println(le);
-        }
+            BufferedReader br = null;
+
+            try {
+
+                br = new BufferedReader(new FileReader(f));
+
+                String line;
+
+                while ((line = br.readLine()) != null) {
+
+                    events.addAll(parser.parse(line));
+                }
+
+                events.addAll(parser.close());
+            } finally {
+
+                if (br != null) {
+
+                    br.close();
+                }
+            }
+
+            for (Event e : events) {
+
+                Log4jEvent le = (Log4jEvent) e;
+
+                System.out.println(le);
+            }
 
 //                timestamp = findTimestamp(line);
 //
@@ -94,6 +96,11 @@ public class Main {
 //
 //                    lineWithoutTimestamp(context, lineNumber, line);
 //                }
+        }
+        catch(ParsingException e) {
+
+            System.err.println("[error] line " + e.getLineNumber() + ": " + e.getMessage());
+        }
     }
 
     // Attributes ------------------------------------------------------------------------------------------------------

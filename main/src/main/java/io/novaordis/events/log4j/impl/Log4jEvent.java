@@ -84,29 +84,14 @@ public interface Log4jEvent extends TimedEvent {
         // category
         //
 
-        if (restOfTheLine.length() == i || restOfTheLine.charAt(i) != '[') {
+        ParsingResult category = CategoryParser.find(restOfTheLine, i, lineNumber);
 
-            throw new ParsingException("no log category separator [ found after the log level", lineNumber);
+        if (category == null) {
+
+            throw new ParsingException("no log category found, expecting [...]", lineNumber, i);
         }
 
-        int j = i + 1;
-
-        for(; j < restOfTheLine.length(); j ++) {
-
-            if (restOfTheLine.charAt(j) == ']') {
-
-                break;
-            }
-        }
-
-        if (j == restOfTheLine.length()) {
-
-            throw new ParsingException("unbalanced log category separator, ] not found", lineNumber);
-        }
-
-        String category = restOfTheLine.substring(i + 1, j);
-
-        i = j + 1;
+        i = category.getNext();
 
         //
         // skip the spaces
@@ -129,7 +114,7 @@ public interface Log4jEvent extends TimedEvent {
             throw new ParsingException("no thread name separator ( found after the log category", lineNumber);
         }
 
-        j = i + 1;
+        int j = i + 1;
 
         int nestingLevel = 0;
 
@@ -186,7 +171,7 @@ public interface Log4jEvent extends TimedEvent {
             message = restOfTheLine.substring(i);
         }
 
-        return new Log4jEventImpl(lineNumber, t.getTime(), level, category, threadName, message);
+        return new Log4jEventImpl(lineNumber, t.getTime(), level, category.getValue(), threadName, message);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
