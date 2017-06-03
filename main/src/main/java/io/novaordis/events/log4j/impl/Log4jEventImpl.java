@@ -171,13 +171,17 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
         String s = "";
 
-        s += getLineNumber() + ": ";
+        s += getLineNumber() + ", ";
 
-        s += TO_STRING_DATE_FORMAT.format(getTime());
+        s += TO_STRING_DATE_FORMAT.format(getTime()) + ", ";
+
+        s += getLogLevel() + ", ";
+
+        s += getLogCategory() + ", ";
+
+        s += getMessage();
 
         return s;
-
-
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

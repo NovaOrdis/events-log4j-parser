@@ -40,6 +40,7 @@ public class MixedQuery implements Query {
     // Attributes ------------------------------------------------------------------------------------------------------
 
     private List<String> keywords;
+    private boolean keywordMatchingCaseSensitive;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -63,6 +64,8 @@ public class MixedQuery implements Query {
 
             keywords.add(s);
         }
+
+        keywordMatchingCaseSensitive = false;
     }
 
     // Query implementation --------------------------------------------------------------------------------------------
@@ -88,7 +91,10 @@ public class MixedQuery implements Query {
 
                 for(String k: keywords) {
 
-                    if (((String) o).contains(k)) {
+                    String target = isKeywordMatchingCaseSensitive() ? (String)o : ((String)o).toLowerCase();
+                    String searchKey = isKeywordMatchingCaseSensitive() ? k : k.toLowerCase();
+
+                    if (target.contains(searchKey)) {
 
                         return true;
                     }
@@ -96,7 +102,9 @@ public class MixedQuery implements Query {
             }
             else {
 
-                throw new RuntimeException("we don't know how to match non-String properties");
+                //
+                // TODO currently we don't attempt to match non-string properties, return here
+                //
             }
         }
 
@@ -111,6 +119,11 @@ public class MixedQuery implements Query {
     public List<String> getKeywords() {
 
         return keywords;
+    }
+
+    public boolean isKeywordMatchingCaseSensitive() {
+
+        return keywordMatchingCaseSensitive;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

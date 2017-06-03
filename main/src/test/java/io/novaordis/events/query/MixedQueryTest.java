@@ -17,6 +17,7 @@
 package io.novaordis.events.query;
 
 import io.novaordis.events.api.event.GenericTimedEvent;
+import io.novaordis.events.api.event.StringProperty;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -97,6 +98,30 @@ public class MixedQueryTest extends QueryTest {
         MixedQuery q = new MixedQuery();
         assertTrue(q.selects(new GenericTimedEvent()));
     }
+
+    @Test
+    public void selects_keywordQueryIsCaseInsensitiveByDefault() throws Exception {
+
+        MixedQuery q = new MixedQuery(Collections.singletonList("blah"));
+
+        assertFalse(q.isKeywordMatchingCaseSensitive());
+
+        GenericTimedEvent e = new GenericTimedEvent(Collections.singletonList(new StringProperty("key", "blah")));
+        assertTrue(q.selects(e));
+
+        GenericTimedEvent e2 = new GenericTimedEvent(Collections.singletonList(new StringProperty("key", "Blah")));
+        assertTrue(q.selects(e2));
+
+        GenericTimedEvent e3 = new GenericTimedEvent(Collections.singletonList(new StringProperty("key", "BlaH")));
+        assertTrue(q.selects(e3));
+
+        GenericTimedEvent e4 = new GenericTimedEvent(Collections.singletonList(new StringProperty("key", "BLAH")));
+        assertTrue(q.selects(e4));
+
+        GenericTimedEvent e5 = new GenericTimedEvent(Collections.singletonList(new StringProperty("key", "something")));
+        assertFalse(q.selects(e5));
+    }
+
 
     // Package protected -----------------------------------------------------------------------------------------------
 
