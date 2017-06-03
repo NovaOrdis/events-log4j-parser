@@ -14,81 +14,17 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
-
-import io.novaordis.events.api.event.Event;
-import io.novaordis.events.api.parser.ParsingException;
-import io.novaordis.events.log4j.impl.Log4jParser;
-import io.novaordis.utilities.UserErrorException;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+package io.novaordis.events.query;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 4/28/17
+ * @since 6/2/17
  */
-public class Main {
+public class QueryException extends Exception {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
-
-    public static void main(String[] args) throws Exception {
-
-        try {
-
-            Configuration c = new Configuration(args);
-
-            List<Event> events = new ArrayList<>();
-
-            Log4jParser parser = new Log4jParser();
-
-            BufferedReader br = null;
-
-            try {
-
-                br = new BufferedReader(new FileReader(c.getFile()));
-
-                String line;
-
-                while ((line = br.readLine()) != null) {
-
-                    events.addAll(parser.parse(line));
-                }
-
-                events.addAll(parser.close());
-
-            }
-            finally {
-
-                if (br != null) {
-
-                    br.close();
-                }
-            }
-
-            for (Event e : events) {
-
-                if (c.getQuery() != null && !c.getQuery().selects(e)) {
-
-                    continue;
-                }
-
-                System.out.println(e);
-            }
-        }
-        catch(UserErrorException e) {
-
-            System.err.println("[error]: " + e.getMessage());
-        }
-        catch(ParsingException e) {
-
-            System.err.println("[error] line " + e.getLineNumber() + ": " + e.getMessage());
-        }
-    }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
