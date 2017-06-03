@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.query;
+package io.novaordis.events.log4j;
 
-import io.novaordis.events.api.event.GenericTimedEvent;
+import io.novaordis.events.query.MixedQuery;
+import io.novaordis.events.query.Query;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 6/2/17
  */
-public class MixedQueryTest extends QueryTest {
+public class ConfigurationTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -48,65 +45,39 @@ public class MixedQueryTest extends QueryTest {
     // Tests -----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void fromArguments() throws Exception {
-
-        List<String> args = new ArrayList<>(Arrays.asList("red", "blue"));
-        MixedQuery q = (MixedQuery)Query.fromArguments(args, 0);
-
-        assertNotNull(q);
-
-        List<String> keywords = q.getKeywords();
-
-        assertEquals(2, keywords.size());
-        assertEquals("red", keywords.get(0));
-        assertEquals("blue", keywords.get(1));
-
-        assertTrue(args.isEmpty());
-    }
-
-    // constructor -----------------------------------------------------------------------------------------------------
-
-    @Test
     public void constructor() throws Exception {
 
-        MixedQuery q = new MixedQuery(Collections.singletonList("something"));
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
 
-        List<String> keywords = q.getKeywords();
+        String[] args = {
+                
+                f.getPath(),
+                "red",
+                "blue"
+        };
 
-        assertEquals(1, keywords.size());
-        assertEquals("something", keywords.get(0));
+        Configuration c = new Configuration(args);
 
-        GenericTimedEvent e = new GenericTimedEvent();
+        File f2 = c.getFile();
 
-        e.setStringProperty("test-key", "blah blah something blah");
+        assertEquals(f, f2);
 
-        assertTrue(q.selects(e));
+        Query q = c.getQuery();
 
-        GenericTimedEvent e2 = new GenericTimedEvent();
+        MixedQuery mq = (MixedQuery)q;
 
-        e2.setStringProperty("test-key", "blah blah blah");
+        List<String> keywords = mq.getKeywords();
 
-        assertFalse(q.selects(e2));
-    }
+        assertEquals(2, keywords.size());
 
-    // selects() -------------------------------------------------------------------------------------------------------
-
-    @Test
-    public void selects_noArgumentsIsNullQuery() throws Exception {
-
-        MixedQuery q = new MixedQuery();
-        assertTrue(q.selects(new GenericTimedEvent()));
+        assertEquals("red", keywords.get(0));
+        assertEquals("blue", keywords.get(1));
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    @Override
-    protected Query getQueryToTest() throws Exception {
-
-        return new MixedQuery();
-    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

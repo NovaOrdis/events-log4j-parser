@@ -56,7 +56,7 @@ public interface Query {
 
         for(int i = from; i < args.size(); i ++) {
 
-            queryTokens.add(args.remove(i));
+            queryTokens.add(args.remove(i--));
         }
 
         return new MixedQuery(queryTokens);
