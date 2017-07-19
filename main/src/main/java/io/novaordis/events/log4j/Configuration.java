@@ -16,6 +16,8 @@
 
 package io.novaordis.events.log4j;
 
+import io.novaordis.events.processing.Procedure;
+import io.novaordis.events.processing.ProcedureFactory;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
@@ -51,9 +53,27 @@ class Configuration {
             throw new UserErrorException("log file name missing");
         }
 
-        String f = argsa[0];
+        String commandOrFile = argsa[0];
 
-        file = new File(f);
+        Procedure p = ProcedureFactory.find(commandOrFile);
+
+        String fileName;
+
+        if (p != null) {
+
+            if (argsa.length == 1) {
+
+                throw new UserErrorException("log file name missing");
+            }
+
+            fileName = argsa[1];
+        }
+        else {
+
+            fileName = commandOrFile;
+        }
+
+        file = new File(fileName);
 
         if (!file.isFile() || !file.canRead()) {
 
