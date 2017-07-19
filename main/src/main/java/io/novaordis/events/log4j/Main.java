@@ -19,11 +19,13 @@ package io.novaordis.events.log4j;
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.Log4jParser;
+import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,10 +58,20 @@ public class Main {
 
                 while ((line = br.readLine()) != null) {
 
-                    events.addAll(parser.parse(line));
+                    //
+                    // apply the query here to avoid accumulation in memory of irrelevant events
+                    //
+
+                    List<Event> es = applyQuery(parser.parse(line), c.getQuery());
+
+                    if (!es.isEmpty()) {
+
+                        events.addAll(es);
+                    }
                 }
 
-                events.addAll(parser.close());
+                List<Event> es = applyQuery(parser.close(), c.getQuery());
+                events.addAll(es);
 
             }
             finally {
@@ -101,6 +113,38 @@ public class Main {
     // Protected -------------------------------------------------------------------------------------------------------
 
     // Private ---------------------------------------------------------------------------------------------------------
+
+    /**
+     * @param q may be null
+     */
+    private static List<Event> applyQuery(List<Event> events, Query q) {
+
+        List<Event> result = null;
+
+        for (Event e : events) {
+
+            if (q != null && !q.selects(e)) {
+
+                continue;
+            }
+
+            if (result == null) {
+
+                result = new ArrayList<>();
+            }
+
+            result.add(e);
+        }
+
+        if (result == null) {
+
+            return Collections.emptyList();
+        }
+        else {
+
+            return result;
+        }
+    }
 
     // Inner classes ---------------------------------------------------------------------------------------------------
 

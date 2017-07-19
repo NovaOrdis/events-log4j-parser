@@ -39,6 +39,7 @@ public class TimestampMatcher {
     public static final Pattern[] KNOWN_TIMESTAMP_PATTERNS = {
 
             Pattern.compile("(^[0-2]\\d:[0-5]\\d:[0-5]\\d,\\d\\d\\d)( +).*"),
+            Pattern.compile("(^[0-1]\\d/[0-3]\\d/\\d\\d [0-2]\\d:[0-5]\\d:[0-5]\\d,\\d\\d\\d)( +).*"),
     };
 
     //
@@ -47,6 +48,7 @@ public class TimestampMatcher {
     public static final DateFormat[] DATE_FORMATS = {
 
             new SimpleDateFormat("HH:mm:ss,SSS"),
+            new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS"),
     };
 
     static {

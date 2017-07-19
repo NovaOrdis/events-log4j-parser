@@ -86,6 +86,22 @@ public class TimestampMatcherTest {
         assertEquals(s.indexOf('I'), i);
     }
 
+    @Test
+    public void find_KnownPattern() throws Exception {
+
+        String s = "07/18/17 12:57:28,348 WARN  [org.jboss.as.logging] (Controller Boot Thread) JBAS011511: Replacing handler 'FILE' during add operation. Either the handler type or the module name differs from the initial configuration.";
+
+        TimestampMatcher t = TimestampMatcher.find(1, s);
+
+        assertNotNull(t);
+
+        long time = t.getTime();
+        int i = t.getIndexOfNextCharInLine();
+
+        assertEquals(new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS").parse("07/18/17 12:57:28,348").getTime(), time);
+        assertEquals(s.indexOf('W'), i);
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
