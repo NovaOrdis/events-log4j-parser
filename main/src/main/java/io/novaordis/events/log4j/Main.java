@@ -107,12 +107,12 @@ public class Main {
                 }
             }
 
+            //noinspection Convert2streamapi
             for (Event e : events) {
 
-                if (c.getQuery() != null && !c.getQuery().selects(e)) {
-
-                    continue;
-                }
+                //
+                // events are already filtered, we don't need to filter them again
+                //
 
                 System.out.println(e);
             }
