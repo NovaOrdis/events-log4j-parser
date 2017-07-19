@@ -17,19 +17,16 @@
 package io.novaordis.events.query;
 
 import io.novaordis.events.api.event.Event;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.novaordis.events.api.event.Property;
 
 /**
- * A query comprising structured (event property definitions) and unstructured (keywords, regular expressions) text.
- *
- * Example: "blah blah <property-name>:'something'"
+ * A keyword query matches the keyword against the content of all properties of an event. If there is at least one
+ * match, the query matches.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 6/2/17
+ * @since 7/19/17
  */
-public class MixedQuery implements Query {
+public class KeywordQuery implements Query {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -37,20 +34,26 @@ public class MixedQuery implements Query {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private List<KeywordQuery> keywordQueries;
-    private boolean keywordMatchingCaseSensitive;
-    private List<FieldQuery> fieldQueries;
+    private String keyword;
+
+    private boolean matchingCaseSensitive;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    /**
-     * A mixed query with no query tokens, equivalent with NullQuery.
-     */
-    public MixedQuery() throws QueryException {
+    public KeywordQuery(String keyword) {
 
-        this.keywordQueries = new ArrayList<>();
-        this.fieldQueries = new ArrayList<>();
-        this.keywordMatchingCaseSensitive = false;
+        if (keyword == null) {
+
+            throw new IllegalArgumentException("null keyword");
+        }
+
+        this.keyword = keyword;
+
+        //
+        // by default matching is not case sensitive
+        //
+
+        this.matchingCaseSensitive = false;
     }
 
     // Query implementation --------------------------------------------------------------------------------------------
@@ -63,24 +66,25 @@ public class MixedQuery implements Query {
             throw new IllegalArgumentException("null event");
         }
 
-        if (keywordQueries.isEmpty()) {
+        for(Property p: e.getProperties()) {
 
-            return true;
-        }
+            Object o = p.getValue();
 
-        for(KeywordQuery kq: keywordQueries) {
+            if (o instanceof String) {
 
-            if (kq.selects(e)) {
+                String target = matchingCaseSensitive ? (String)o : ((String)o).toLowerCase();
+                String searchKey = matchingCaseSensitive ? keyword : keyword.toLowerCase();
 
-                return true;
+                if (target.contains(searchKey)) {
+
+                    return true;
+                }
             }
-        }
+            else {
 
-        for(FieldQuery fq : fieldQueries) {
-
-            if (fq.selects(e)) {
-
-                return true;
+                //
+                // TODO currently we don't attempt to match non-string properties, return here
+                //
             }
         }
 
@@ -89,44 +93,19 @@ public class MixedQuery implements Query {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    public void addLiteral(String literal) throws QueryException {
+    public String getKeyword() {
 
-        if (literal == null) {
-
-            throw new IllegalArgumentException("null literal");
-        }
-
-        if (literal.contains(":")) {
-
-            FieldQuery q = new FieldQuery(literal);
-            fieldQueries.add(q);
-        }
-        else {
-
-            KeywordQuery q = new KeywordQuery(literal);
-            keywordQueries.add(q);
-        }
+        return keyword;
     }
 
-    /**
-     * @return the internal storage so handle with care
-     */
-    public List<KeywordQuery> getKeywordQueries() {
+    public boolean isMatchingCaseSensitive() {
 
-        return keywordQueries;
+        return matchingCaseSensitive;
     }
 
-    public boolean isKeywordMatchingCaseSensitive() {
+    public void setMatchingCaseSensitive(boolean b) {
 
-        return keywordMatchingCaseSensitive;
-    }
-
-    /**
-     * @return the internal storage so handle with care
-     */
-    public List<FieldQuery> getFieldQueries() {
-
-        return fieldQueries;
+        this.matchingCaseSensitive = b;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

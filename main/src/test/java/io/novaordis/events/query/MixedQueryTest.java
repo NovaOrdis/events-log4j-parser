@@ -56,26 +56,71 @@ public class MixedQueryTest extends QueryTest {
 
         assertNotNull(q);
 
-        List<String> keywords = q.getKeywords();
+        List<KeywordQuery> keywords = q.getKeywordQueries();
 
         assertEquals(2, keywords.size());
-        assertEquals("red", keywords.get(0));
-        assertEquals("blue", keywords.get(1));
+        assertEquals("red", keywords.get(0).getKeyword());
+        assertEquals("blue", keywords.get(1).getKeyword());
 
         assertTrue(args.isEmpty());
     }
 
-    // constructor -----------------------------------------------------------------------------------------------------
+    @Test
+    public void fromArguments_FieldQuery() throws Exception {
+
+        List<String> args = new ArrayList<>(Collections.singletonList("something:SomethingElse"));
+        MixedQuery q = (MixedQuery)Query.fromArguments(args, 0);
+
+        assertNotNull(q);
+
+        List<KeywordQuery> keywords = q.getKeywordQueries();
+        assertTrue(keywords.isEmpty());
+
+        List<FieldQuery> fields = q.getFieldQueries();
+
+        assertEquals(1, fields.size());
+        assertEquals("something", fields.get(0).getFieldName());
+        assertEquals("SomethingElse", fields.get(0).getValue());
+
+        assertTrue(args.isEmpty());
+    }
 
     @Test
-    public void constructor() throws Exception {
+    public void fromArguments_FieldQueryAndKeywordQuery() throws Exception {
 
-        MixedQuery q = new MixedQuery(Collections.singletonList("something"));
+        List<String> args = new ArrayList<>(Arrays.asList("red", "something:SomethingElse", "blue"));
+        MixedQuery q = (MixedQuery)Query.fromArguments(args, 0);
 
-        List<String> keywords = q.getKeywords();
+        assertNotNull(q);
+
+        List<KeywordQuery> keywords = q.getKeywordQueries();
+
+        assertEquals(2, keywords.size());
+        assertEquals("red", keywords.get(0).getKeyword());
+        assertEquals("blue", keywords.get(1).getKeyword());
+
+        List<FieldQuery> fields = q.getFieldQueries();
+
+        assertEquals(1, fields.size());
+        assertEquals("something", fields.get(0).getFieldName());
+        assertEquals("SomethingElse", fields.get(0).getValue());
+
+        assertTrue(args.isEmpty());
+    }
+
+    // addLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void addLiteral_KeywordQuery() throws Exception {
+
+        MixedQuery q = new MixedQuery();
+
+        q.addLiteral("something");
+
+        List<KeywordQuery> keywords = q.getKeywordQueries();
 
         assertEquals(1, keywords.size());
-        assertEquals("something", keywords.get(0));
+        assertEquals("something", keywords.get(0).getKeyword());
 
         GenericTimedEvent e = new GenericTimedEvent();
 
@@ -88,6 +133,24 @@ public class MixedQueryTest extends QueryTest {
         e2.setStringProperty("test-key", "blah blah blah");
 
         assertFalse(q.selects(e2));
+
+        assertTrue(q.getFieldQueries().isEmpty());
+    }
+
+    @Test
+    public void addLiteral_FieldQuery() throws Exception {
+
+        MixedQuery q = new MixedQuery();
+
+        q.addLiteral("something:somethingelse");
+
+        List<FieldQuery> fields = q.getFieldQueries();
+
+        assertEquals(1, fields.size());
+        assertEquals("something", fields.get(0).getFieldName());
+        assertEquals("somethingelse", fields.get(0).getValue());
+
+        assertTrue(q.getKeywordQueries().isEmpty());
     }
 
     // selects() -------------------------------------------------------------------------------------------------------
@@ -102,7 +165,9 @@ public class MixedQueryTest extends QueryTest {
     @Test
     public void selects_keywordQueryIsCaseInsensitiveByDefault() throws Exception {
 
-        MixedQuery q = new MixedQuery(Collections.singletonList("blah"));
+        MixedQuery q = new MixedQuery();
+
+        q.addLiteral("blah");
 
         assertFalse(q.isKeywordMatchingCaseSensitive());
 
@@ -122,6 +187,52 @@ public class MixedQueryTest extends QueryTest {
         assertFalse(q.selects(e5));
     }
 
+    @Test
+    public void selects_OnlyFieldQueries() throws Exception {
+
+        MixedQuery q = new MixedQuery();
+
+        q.addLiteral("color:blue");
+
+        GenericTimedEvent e = new GenericTimedEvent(Collections.singletonList(new StringProperty("color", "blue")));
+        assertTrue(q.selects(e));
+
+        GenericTimedEvent e2 = new GenericTimedEvent(Collections.singletonList(new StringProperty("color", "red")));
+        assertTrue(q.selects(e2));
+    }
+
+    @Test
+    public void selects_KeywordsAndFieldQueries() throws Exception {
+
+        MixedQuery q = new MixedQuery();
+
+        q.addLiteral("blah");
+        q.addLiteral("color:blue");
+
+        GenericTimedEvent e = new GenericTimedEvent();
+        e.setStringProperty("something", "something else");
+        e.setStringProperty("color", "red");
+
+        assertFalse(q.selects(e));
+
+        GenericTimedEvent e2 = new GenericTimedEvent();
+        e2.setStringProperty("something", "something blah else");
+        e2.setStringProperty("color", "red");
+
+        assertTrue(q.selects(e2));
+
+        GenericTimedEvent e3 = new GenericTimedEvent();
+        e3.setStringProperty("something", "something else");
+        e3.setStringProperty("color", "blue");
+
+        assertTrue(q.selects(e3));
+
+        GenericTimedEvent e4 = new GenericTimedEvent();
+        e4.setStringProperty("something", "something blah else");
+        e4.setStringProperty("color", "blue");
+
+        assertTrue(q.selects(e4));
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

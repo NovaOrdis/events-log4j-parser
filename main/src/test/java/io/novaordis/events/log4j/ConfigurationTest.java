@@ -17,6 +17,7 @@
 package io.novaordis.events.log4j;
 
 import io.novaordis.events.processing.Procedure;
+import io.novaordis.events.query.KeywordQuery;
 import io.novaordis.events.query.MixedQuery;
 import io.novaordis.events.query.Query;
 import org.junit.Test;
@@ -68,12 +69,12 @@ public class ConfigurationTest {
 
         MixedQuery mq = (MixedQuery)q;
 
-        List<String> keywords = mq.getKeywords();
+        List<KeywordQuery> keywords = mq.getKeywordQueries();
 
         assertEquals(2, keywords.size());
 
-        assertEquals("red", keywords.get(0));
-        assertEquals("blue", keywords.get(1));
+        assertEquals("red", keywords.get(0).getKeyword());
+        assertEquals("blue", keywords.get(1).getKeyword());
     }
 
     @Test
@@ -103,12 +104,12 @@ public class ConfigurationTest {
 
         MixedQuery mq = (MixedQuery)q;
 
-        List<String> keywords = mq.getKeywords();
+        List<KeywordQuery> keywords = mq.getKeywordQueries();
 
         assertEquals(2, keywords.size());
 
-        assertEquals("red", keywords.get(0));
-        assertEquals("blue", keywords.get(1));
+        assertEquals("red", keywords.get(0).getKeyword());
+        assertEquals("blue", keywords.get(1).getKeyword());
     }
 
 

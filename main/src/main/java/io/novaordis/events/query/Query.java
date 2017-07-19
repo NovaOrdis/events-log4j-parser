@@ -18,7 +18,6 @@ package io.novaordis.events.query;
 
 import io.novaordis.events.api.event.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,25 +40,23 @@ public interface Query {
      *
      * If no query is identified, the method returns null.
      */
-    public static Query fromArguments(List<String> args, int from) throws QueryException{
+    static Query fromArguments(List<String> args, int from) throws QueryException {
 
         if (args.isEmpty()) {
 
             return null;
         }
 
-        //
-        // build the query's text
-        //
-
-        List<String> queryTokens = new ArrayList<>();
+        MixedQuery mixedQuery = new MixedQuery();
 
         for(int i = from; i < args.size(); i ++) {
 
-            queryTokens.add(args.remove(i--));
+            String token = args.remove(i--);
+
+            mixedQuery.addLiteral(token);
         }
 
-        return new MixedQuery(queryTokens);
+        return mixedQuery;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
