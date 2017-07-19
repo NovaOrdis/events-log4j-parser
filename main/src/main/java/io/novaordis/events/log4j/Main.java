@@ -66,39 +66,38 @@ public class Main {
                     //
 
                     List<Event> es = parser.parse(line);
+                    List<Event> filteredEvents = applyQuery(es, c.getQuery());
 
-                    es = applyQuery(es, c.getQuery());
-
-                    if (!es.isEmpty()) {
+                    if (!filteredEvents.isEmpty()) {
 
                         if (procedure != null) {
 
-                            procedure.process(es);
+                            procedure.process(filteredEvents);
                         }
                         else {
 
                             //
                             // accumulate in memory
                             //
-                            events.addAll(es);
+                            events.addAll(filteredEvents);
                         }
                     }
                 }
 
                 List<Event> es = parser.close();
 
-                es = applyQuery(es, c.getQuery());
+                List<Event> filteredEvents = applyQuery(es, c.getQuery());
 
                 if (procedure != null) {
 
-                    procedure.process(es);
+                    procedure.process(filteredEvents);
                 }
                 else {
 
                     //
                     // accumulate in memory
                     //
-                    events.addAll(es);
+                    events.addAll(filteredEvents);
                 }
             }
             finally {
