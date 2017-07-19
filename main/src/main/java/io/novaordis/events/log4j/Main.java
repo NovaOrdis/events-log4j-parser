@@ -19,6 +19,7 @@ package io.novaordis.events.log4j;
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.Log4jParser;
+import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
 
@@ -48,6 +49,8 @@ public class Main {
 
             Log4jParser parser = new Log4jParser();
 
+            Procedure procedure = c.getProcedure();
+
             BufferedReader br = null;
 
             try {
@@ -59,20 +62,44 @@ public class Main {
                 while ((line = br.readLine()) != null) {
 
                     //
-                    // apply the query here to avoid accumulation in memory of irrelevant events
+                    // apply the query here to avoid accumulation in memory or processing of irrelevant events
                     //
 
-                    List<Event> es = applyQuery(parser.parse(line), c.getQuery());
+                    List<Event> es = parser.parse(line);
+
+                    es = applyQuery(es, c.getQuery());
 
                     if (!es.isEmpty()) {
 
-                        events.addAll(es);
+                        if (procedure != null) {
+
+                            procedure.process(es);
+                        }
+                        else {
+
+                            //
+                            // accumulate in memory
+                            //
+                            events.addAll(es);
+                        }
                     }
                 }
 
-                List<Event> es = applyQuery(parser.close(), c.getQuery());
-                events.addAll(es);
+                List<Event> es = parser.close();
 
+                es = applyQuery(es, c.getQuery());
+
+                if (procedure != null) {
+
+                    procedure.process(es);
+                }
+                else {
+
+                    //
+                    // accumulate in memory
+                    //
+                    events.addAll(es);
+                }
             }
             finally {
 

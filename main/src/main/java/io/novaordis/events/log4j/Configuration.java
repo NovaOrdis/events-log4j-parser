@@ -43,6 +43,7 @@ class Configuration {
 
     private File file;
     private Query query;
+    private Procedure procedure;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -55,11 +56,11 @@ class Configuration {
 
         String commandOrFile = argsa[0];
 
-        Procedure p = ProcedureFactory.find(commandOrFile);
+        procedure = ProcedureFactory.find(commandOrFile);
 
         String fileName;
 
-        if (p != null) {
+        if (procedure != null) {
 
             if (argsa.length == 1) {
 
@@ -127,6 +128,14 @@ class Configuration {
     public Query getQuery() {
 
         return query;
+    }
+
+    /**
+     * May return null if there is no procedure.
+     */
+    public Procedure getProcedure() {
+
+        return procedure;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
