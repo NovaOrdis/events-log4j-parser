@@ -19,6 +19,7 @@ package io.novaordis.events.query;
 import io.novaordis.events.api.event.Event;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -127,6 +128,39 @@ public class MixedQuery implements Query {
     public List<FieldQuery> getFieldQueries() {
 
         return fieldQueries;
+    }
+
+    @Override
+    public String toString() {
+
+        String s = "";
+
+        for(Iterator<KeywordQuery> i = keywordQueries.iterator(); i.hasNext(); ) {
+
+            s += "\"" + i.next().toString()  + "\"";
+
+            if (i.hasNext()) {
+
+                s += ", ";
+            }
+        }
+
+        if (!fieldQueries.isEmpty() && !s.isEmpty()) {
+
+            s += ", ";
+        }
+
+        for(Iterator<FieldQuery> i = fieldQueries.iterator(); i.hasNext(); ) {
+
+            s += "\"" + i.next().toString()  + "\"";
+
+            if (i.hasNext()) {
+
+                s += ", ";
+            }
+        }
+
+        return s;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

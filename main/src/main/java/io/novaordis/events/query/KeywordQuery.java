@@ -108,6 +108,12 @@ public class KeywordQuery implements Query {
         this.matchingCaseSensitive = b;
     }
 
+    @Override
+    public String toString() {
+
+        return keyword;
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
