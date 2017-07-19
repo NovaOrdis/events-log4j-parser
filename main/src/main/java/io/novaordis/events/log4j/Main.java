@@ -20,6 +20,7 @@ import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.events.processing.Procedure;
+import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
 
@@ -143,6 +144,11 @@ public class Main {
      * @param q may be null
      */
     private static List<Event> applyQuery(List<Event> events, Query q) {
+
+        if (q instanceof NullQuery) {
+
+            return events;
+        }
 
         List<Event> result = null;
 
