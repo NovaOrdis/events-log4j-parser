@@ -16,6 +16,7 @@
 
 package io.novaordis.events.log4j;
 
+import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.query.MixedQuery;
 import io.novaordis.events.query.Query;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class ConfigurationTest {
     // Tests -----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void constructor() throws Exception {
+    public void constructor_NoCommand() throws Exception {
 
         File f = new File(System.getProperty("basedir"), "pom.xml");
         assertTrue(f.isFile());
@@ -74,6 +75,42 @@ public class ConfigurationTest {
         assertEquals("red", keywords.get(0));
         assertEquals("blue", keywords.get(1));
     }
+
+    @Test
+    public void constructor_Command() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                "describe",
+                f.getPath(),
+                "red",
+                "blue"
+        };
+
+        Configuration c = new Configuration(args);
+
+        File f2 = c.getFile();
+
+        assertEquals(f, f2);
+
+        Procedure p = c.getProcedure();
+        assertEquals("describe", p.getCommandLineLabel());
+
+        Query q = c.getQuery();
+
+        MixedQuery mq = (MixedQuery)q;
+
+        List<String> keywords = mq.getKeywords();
+
+        assertEquals(2, keywords.size());
+
+        assertEquals("red", keywords.get(0));
+        assertEquals("blue", keywords.get(1));
+    }
+
 
     // Package protected -----------------------------------------------------------------------------------------------
 

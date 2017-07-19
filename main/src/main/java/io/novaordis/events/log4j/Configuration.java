@@ -54,6 +54,8 @@ class Configuration {
             throw new UserErrorException("log file name missing");
         }
 
+        int next = 1;
+
         String commandOrFile = argsa[0];
 
         procedure = ProcedureFactory.find(commandOrFile);
@@ -68,6 +70,7 @@ class Configuration {
             }
 
             fileName = argsa[1];
+            next = 2;
         }
         else {
 
@@ -81,7 +84,7 @@ class Configuration {
             throw new UserErrorException("file " + file + " does not exist or cannot be read");
         }
 
-        List<String> args = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(argsa, 1, argsa.length)));
+        List<String> args = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(argsa, next, argsa.length)));
 
         //
         // separate options (-... or --...=)
