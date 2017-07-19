@@ -198,7 +198,7 @@ public class MixedQueryTest extends QueryTest {
         assertTrue(q.selects(e));
 
         GenericTimedEvent e2 = new GenericTimedEvent(Collections.singletonList(new StringProperty("color", "red")));
-        assertTrue(q.selects(e2));
+        assertFalse(q.selects(e2));
     }
 
     @Test
@@ -233,6 +233,7 @@ public class MixedQueryTest extends QueryTest {
 
         assertTrue(q.selects(e4));
     }
+
 
     // Package protected -----------------------------------------------------------------------------------------------
 

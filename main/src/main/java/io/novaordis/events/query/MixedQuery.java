@@ -64,11 +64,6 @@ public class MixedQuery implements Query {
             throw new IllegalArgumentException("null event");
         }
 
-        if (keywordQueries.isEmpty()) {
-
-            return true;
-        }
-
         for(KeywordQuery kq: keywordQueries) {
 
             if (kq.selects(e)) {
@@ -85,7 +80,7 @@ public class MixedQuery implements Query {
             }
         }
 
-        return false;
+        return keywordQueries.isEmpty() && fieldQueries.isEmpty();
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
