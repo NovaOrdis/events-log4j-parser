@@ -18,10 +18,10 @@ package io.novaordis.events.log4j.impl;
 
 import io.novaordis.events.api.event.GenericTimedEvent;
 import io.novaordis.events.api.event.StringProperty;
+import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
