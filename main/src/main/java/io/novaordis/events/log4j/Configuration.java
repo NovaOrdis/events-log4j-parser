@@ -21,6 +21,7 @@ import io.novaordis.events.processing.ProcedureFactory;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
+import io.novaordis.utilities.help.InLineHelp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,6 +58,12 @@ class Configuration {
         int next = 1;
 
         String commandOrFile = argsa[0];
+
+        if ("help".equalsIgnoreCase(commandOrFile)) {
+
+            System.out.println(InLineHelp.get());
+            System.exit(0);
+        }
 
         procedure = ProcedureFactory.find(commandOrFile);
 

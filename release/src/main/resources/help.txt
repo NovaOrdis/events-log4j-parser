@@ -1,0 +1,9 @@
+Command line tool that parses logs created with log4j.
+
+Usage:
+
+    log4jp [command] <log-file> [query]
+
+More details:
+
+    https://kb.novaordis.com/index.php/Events-log4j-parser#Usage
