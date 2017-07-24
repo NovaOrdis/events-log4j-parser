@@ -18,11 +18,28 @@ function main() {
     local classpath
     classpath=$(get-classpath $(dirname $0)/../lib) || exit 1
 
-    #
-    # support for universal command "version"
-    #
+    if ${version}; then
 
-    ${version} && command=version
+        #
+        # "version" handling - "light" version retrieval
+        #
+
+        local version=$(get-version)
+        if [ -n "${version}" ]; then
+
+            #
+            # display and exit
+            #
+            echo "${version}"
+            return 0
+        fi
+
+        #
+        # we weren't able to handle it satisfactory at the bash level, pass it to the java runtime at the front of
+        # the argument list
+        #
+        args="${command} ${args}"
+    fi
 
     java \
         -cp ${classpath} \
@@ -89,6 +106,18 @@ function get-classpath() {
         fi
         echo -n ${i}
     done
+}
+
+#
+# "Light" version retrieval. The function attempts to located the VERSION file. If found, and if carrying a valid
+# content, it is displayed. Otherwise, the calling layer should pass the command to the java runtime.
+#
+# See https://kb.novaordis.com/index.php/Nova_Ordis_Utilities_Version_Metadata_Handling#.22Light.22_Version_Reporting
+#
+function get-version() {
+
+    [ -f $(dirname $0)/../lib/VERSION ] && { cat $(dirname $0)/../lib/VERSION; return 0; }
+    return 1
 }
 
 
