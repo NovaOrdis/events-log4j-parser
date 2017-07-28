@@ -2,7 +2,7 @@ Command line tool that parses logs created with log4j.
 
 Usage:
 
-    lg [command] <log-file> [query]
+    lg [command] [command options] [query] <log-file1> [log-file2 ...]
 
 More details:
 

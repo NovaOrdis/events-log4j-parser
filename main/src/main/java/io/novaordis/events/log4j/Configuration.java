@@ -18,6 +18,8 @@ package io.novaordis.events.log4j;
 
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.ProcedureFactory;
+import io.novaordis.events.processing.exclude.Exclude;
+import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
 
@@ -136,6 +138,20 @@ class Configuration {
         if (files.isEmpty()) {
 
             throw new UserErrorException("no file specified");
+        }
+
+        //
+        // configuration heuristics
+        //
+
+        if (procedure instanceof Exclude) {
+
+            if (query == null) {
+
+                query = new NullQuery();
+            }
+
+            ((Exclude) procedure).setQuery(query);
         }
     }
 

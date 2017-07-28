@@ -19,6 +19,7 @@ package io.novaordis.events.log4j;
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.count.Count;
 import io.novaordis.events.processing.describe.Describe;
+import io.novaordis.events.processing.exclude.Exclude;
 import io.novaordis.events.query.FieldQuery;
 import io.novaordis.events.query.KeywordQuery;
 import io.novaordis.events.query.MixedQuery;
@@ -282,6 +283,33 @@ public class ConfigurationTest {
             String msg = e.getMessage();
             assertTrue(msg.contains("no file specified"));
         }
+    }
+
+    // heuristics ------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void heuristics_AnExcludeProcedureIsInitializedWithTheQuery() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                Exclude.COMMAND_LINE_LABEL,
+                "log-level:ERROR",
+                f.getPath(),
+        };
+
+        Configuration c = new Configuration(args);
+
+        //
+        // make sure the procedure is initialized with the query
+        //
+
+        Exclude exclude = (Exclude)c.getProcedure();
+
+        FieldQuery q = (FieldQuery)exclude.getQuery();
+        assertEquals("log-level", q.getFieldName());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
