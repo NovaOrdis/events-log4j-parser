@@ -35,10 +35,12 @@ public interface Query {
     /**
      * Extracts a query from the argument list, starting with "from", removing the processed arguments from the list.
      *
-     * It ingests all arguments until a non-query argument is encountered or the end of the list is reached. The
-     * remaining unprocessed arguments are left in the list.
+     * It removes from the list given as argument all elements until a non-query argument is encountered or the end of
+     * the list is reached. The remaining unprocessed arguments are left in the list.
      *
      * If no query is identified, the method returns null.
+     *
+     * @param args a mutable list.
      */
     static Query fromArguments(List<String> args, int from) throws QueryException {
 

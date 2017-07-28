@@ -24,8 +24,10 @@ import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
+import io.novaordis.utilities.help.InLineHelp;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,11 +55,20 @@ public class Main {
 
             Procedure procedure = c.getProcedure();
 
+            List<File> files = c.getFiles();
+
+            if (files.size() > 1) {
+
+                throw new RuntimeException("support for multiple files NOT YET IMPLEMENTED");
+            }
+
+            File f = files.get(0);
+
             BufferedReader br = null;
 
             try {
 
-                br = new BufferedReader(new FileReader(c.getFile()));
+                br = new BufferedReader(new FileReader(f));
 
                 String line;
 
@@ -122,7 +133,7 @@ public class Main {
                     System.out.println(log4je.getRawRepresentation());
                 }
                 else {
-                    
+
                     System.out.println(e);
                 }
             }
@@ -184,6 +195,11 @@ public class Main {
 
             return result;
         }
+    }
+
+    private static void help() throws UserErrorException {
+
+        System.out.println(InLineHelp.get());
     }
 
     // Inner classes ---------------------------------------------------------------------------------------------------

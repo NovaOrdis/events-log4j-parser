@@ -17,6 +17,8 @@
 package io.novaordis.events.log4j;
 
 import io.novaordis.events.processing.Procedure;
+import io.novaordis.events.processing.count.Count;
+import io.novaordis.events.processing.describe.Describe;
 import io.novaordis.events.query.KeywordQuery;
 import io.novaordis.events.query.MixedQuery;
 import io.novaordis.events.query.Query;
@@ -26,6 +28,8 @@ import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -46,24 +50,136 @@ public class ConfigurationTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
+    // constructor -----------------------------------------------------------------------------------------------------
+
     @Test
-    public void constructor_NoCommand() throws Exception {
+    public void constructor_NoArguments() throws Exception {
+
+        String[] args = new String[0];
+
+        Configuration c = new Configuration(args);
+
+        Procedure p = c.getProcedure();
+        assertTrue(p instanceof Help);
+
+        assertTrue(c.getFiles().isEmpty());
+    }
+
+    @Test
+    public void constructor_OneFile() throws Exception {
 
         File f = new File(System.getProperty("basedir"), "pom.xml");
         assertTrue(f.isFile());
 
         String[] args = {
-                
-                f.getPath(),
-                "red",
-                "blue"
+
+                f.getPath()
         };
 
         Configuration c = new Configuration(args);
 
-        File f2 = c.getFile();
+        List<File> files = c.getFiles();
 
-        assertEquals(f, f2);
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
+
+        assertNull(c.getProcedure());
+        assertNull(c.getQuery());
+    }
+
+    @Test
+    public void constructor_MultipleFiles() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        File f2 = new File(System.getProperty("basedir"), "src/test/resources/log4j.xml");
+        assertTrue(f2.isFile());
+
+        String[] args = {
+
+                f.getPath(),
+                f2.getPath()
+        };
+
+        Configuration c = new Configuration(args);
+
+        List<File> files = c.getFiles();
+
+        assertEquals(2, files.size());
+        assertEquals(f, files.get(0));
+        assertEquals(f2, files.get(1));
+
+        assertNull(c.getProcedure());
+        assertNull(c.getQuery());
+    }
+
+    @Test
+    public void constructor_Count_Query_File() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                "count",
+                "log-level:ERROR",
+                f.getPath()
+        };
+
+        Configuration c = new Configuration(args);
+
+        List<File> files = c.getFiles();
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
+
+        Procedure p = c.getProcedure();
+        assertTrue(p instanceof Count);
+        assertNull(c.getQuery());
+    }
+
+    @Test
+    public void constructor_AbbreviatedCount_Query_File() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                "-c",
+                "log-level:ERROR",
+                f.getPath()
+        };
+
+        Configuration c = new Configuration(args);
+
+        List<File> files = c.getFiles();
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
+
+        Procedure p = c.getProcedure();
+        assertTrue(p instanceof Count);
+        assertNull(c.getQuery());
+    }
+
+    @Test
+    public void constructor_NoCommand_MixedQuery() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                "red",
+                "blue",
+                f.getPath(),
+        };
+
+        Configuration c = new Configuration(args);
+
+        List<File> files = c.getFiles();
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
 
         Query q = c.getQuery();
 
@@ -86,19 +202,19 @@ public class ConfigurationTest {
         String[] args = {
 
                 "describe",
-                f.getPath(),
                 "red",
-                "blue"
+                "blue",
+                f.getPath(),
         };
 
         Configuration c = new Configuration(args);
 
-        File f2 = c.getFile();
+        List<File> files = c.getFiles();
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
 
-        assertEquals(f, f2);
-
-        Procedure p = c.getProcedure();
-        assertEquals("describe", p.getCommandLineLabel());
+        Describe p = (Describe)c.getProcedure();
+        assertNotNull(p);
 
         Query q = c.getQuery();
 
@@ -111,7 +227,6 @@ public class ConfigurationTest {
         assertEquals("red", keywords.get(0).getKeyword());
         assertEquals("blue", keywords.get(1).getKeyword());
     }
-
 
     // Package protected -----------------------------------------------------------------------------------------------
 

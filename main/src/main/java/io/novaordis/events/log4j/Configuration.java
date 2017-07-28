@@ -18,10 +18,8 @@ package io.novaordis.events.log4j;
 
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.ProcedureFactory;
-import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
-import io.novaordis.utilities.help.InLineHelp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,70 +40,87 @@ class Configuration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private File file;
+    private List<File> files;
     private Query query;
     private Procedure procedure;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    /**
+     * @param argsa "log4jp [command] [command options] [query] <file1> [file2 ...]
+     */
     public Configuration(String[] argsa) throws UserErrorException {
+
+        files = new ArrayList<>();
 
         if (argsa.length == 0) {
 
-            throw new UserErrorException("log file name missing");
+            //
+            // no arguments, display help
+            //
+
+            procedure = new Help();
+            return;
         }
 
-        int next = 1;
-
-        String commandOrFile = argsa[0];
-
-        if ("help".equalsIgnoreCase(commandOrFile)) {
-
-            System.out.println(InLineHelp.get());
-            System.exit(0);
-        }
-
-        procedure = ProcedureFactory.find(commandOrFile);
-
-        String fileName;
-
-        if (procedure != null) {
-
-            if (argsa.length == 1) {
-
-                throw new UserErrorException("log file name missing");
-            }
-
-            fileName = argsa[1];
-            next = 2;
-        }
-        else {
-
-            fileName = commandOrFile;
-        }
-
-        file = new File(fileName);
-
-        if (!file.isFile() || !file.canRead()) {
-
-            throw new UserErrorException("file " + file + " does not exist or cannot be read");
-        }
-
-        List<String> args = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(argsa, next, argsa.length)));
+        List<String> args = new ArrayList<>(Arrays.asList(argsa));
 
         //
-        // separate options (-... or --...=)
+        // start from the back and identify the files
         //
 
-        for(int i = 0; i < args.size(); i ++) {
+        int i;
 
-            String crt = args.get(i);
+        for(i = args.size() - 1; i >= 0; i --) {
 
-            if (crt.startsWith("-")) {
+            String arg = args.get(i);
 
-                throw new RuntimeException("we don't know how to handle " + crt);
+            File candidate = new File(arg);
+
+            if (candidate.isFile()) {
+
+                files.add(candidate);
             }
-            else if (query == null) {
+
+            else {
+
+                break;
+            }
+        }
+
+        //
+        // revert the order of the files to match the command line order
+        //
+
+        if (files.size() > 1) {
+
+            List<File> tmp = new ArrayList<>();
+
+            for(int j = files.size() - 1; j >= 0; j--) {
+
+                tmp.add(files.get(j));
+            }
+
+            files = tmp;
+        }
+
+        args = args.subList(0, i + 1);
+
+        for(i = 0; i < args.size() - 1; i ++) {
+
+            String arg = args.get(i);
+
+            if (procedure == null) {
+
+                procedure = ProcedureFactory.find(arg, i + 1, args);
+
+                if (procedure != null) {
+
+                    continue;
+                }
+            }
+
+            if (query == null) {
 
                 try {
 
@@ -116,25 +131,19 @@ class Configuration {
                     throw new UserErrorException(e);
                 }
             }
-            else {
-
-                throw new UserErrorException("unknown argument \"" + crt + "\"");
-            }
-        }
-
-        if (query == null) {
-
-            query = new NullQuery();
         }
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    public File getFile() {
+    public List<File> getFiles() {
 
-        return file;
+        return files;
     }
 
+    /**
+     * May return null if there is no query.
+     */
     public Query getQuery() {
 
         return query;
