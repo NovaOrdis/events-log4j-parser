@@ -21,6 +21,7 @@ import io.novaordis.events.api.parser.ParsingException;
 import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.events.processing.Procedure;
+import io.novaordis.events.processing.count.Count;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
@@ -120,21 +121,30 @@ public class Main {
                 }
             }
 
-            //noinspection Convert2streamapi
-            for (Event e : events) {
+            if (procedure == null) {
 
-                //
-                // events are already filtered, we don't need to filter them again
-                //
+                //noinspection Convert2streamapi
+                for (Event e : events) {
 
-                if (e instanceof Log4jEvent) {
+                    //
+                    // events are already filtered, we don't need to filter them again
+                    //
 
-                    Log4jEvent log4je = (Log4jEvent)e;
-                    System.out.println(log4je.getRawRepresentation());
+                    if (e instanceof Log4jEvent) {
+
+                        Log4jEvent log4je = (Log4jEvent) e;
+                        System.out.println(log4je.getRawRepresentation());
+                    } else {
+
+                        System.out.println(e);
+                    }
                 }
-                else {
+            }
+            else {
 
-                    System.out.println(e);
+                if (procedure instanceof Count) {
+
+                    System.out.println(((Count)procedure).getCount());
                 }
             }
         }
