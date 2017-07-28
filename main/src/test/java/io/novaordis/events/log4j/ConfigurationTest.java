@@ -19,6 +19,7 @@ package io.novaordis.events.log4j;
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.count.Count;
 import io.novaordis.events.processing.describe.Describe;
+import io.novaordis.events.query.FieldQuery;
 import io.novaordis.events.query.KeywordQuery;
 import io.novaordis.events.query.MixedQuery;
 import io.novaordis.events.query.Query;
@@ -135,7 +136,10 @@ public class ConfigurationTest {
 
         Procedure p = c.getProcedure();
         assertTrue(p instanceof Count);
-        assertNull(c.getQuery());
+
+        FieldQuery fq = (FieldQuery)c.getQuery();
+        assertEquals("log-level", fq.getFieldName());
+        assertEquals("ERROR", fq.getValue());
     }
 
     @Test
@@ -159,7 +163,10 @@ public class ConfigurationTest {
 
         Procedure p = c.getProcedure();
         assertTrue(p instanceof Count);
-        assertNull(c.getQuery());
+
+        FieldQuery fq = (FieldQuery)c.getQuery();
+        assertEquals("log-level", fq.getFieldName());
+        assertEquals("ERROR", fq.getValue());
     }
 
     @Test
@@ -226,6 +233,32 @@ public class ConfigurationTest {
 
         assertEquals("red", keywords.get(0).getKeyword());
         assertEquals("blue", keywords.get(1).getKeyword());
+    }
+
+
+    @Test
+    public void constructor_QueryAndFile() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "pom.xml");
+        assertTrue(f.isFile());
+
+        String[] args = {
+
+                "log-level:ERROR",
+                f.getPath(),
+        };
+
+        Configuration c = new Configuration(args);
+
+        List<File> files = c.getFiles();
+        assertEquals(1, files.size());
+        assertEquals(f, files.get(0));
+
+        assertNull(c.getProcedure());
+
+        FieldQuery fq = (FieldQuery)c.getQuery();
+        assertEquals("log-level", fq.getFieldName());
+        assertEquals("ERROR", fq.getValue());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

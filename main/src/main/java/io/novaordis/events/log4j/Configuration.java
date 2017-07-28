@@ -106,7 +106,7 @@ class Configuration {
 
         args = args.subList(0, i + 1);
 
-        for(i = 0; i < args.size() - 1; i ++) {
+        for(i = 0; i < args.size(); i ++) {
 
             String arg = args.get(i);
 
