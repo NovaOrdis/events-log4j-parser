@@ -132,6 +132,11 @@ class Configuration {
                 }
             }
         }
+
+        if (files.isEmpty()) {
+
+            throw new UserErrorException("no file specified");
+        }
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

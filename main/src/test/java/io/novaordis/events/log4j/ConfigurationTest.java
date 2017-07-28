@@ -23,6 +23,7 @@ import io.novaordis.events.query.FieldQuery;
 import io.novaordis.events.query.KeywordQuery;
 import io.novaordis.events.query.MixedQuery;
 import io.novaordis.events.query.Query;
+import io.novaordis.utilities.UserErrorException;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -259,6 +261,27 @@ public class ConfigurationTest {
         FieldQuery fq = (FieldQuery)c.getQuery();
         assertEquals("log-level", fq.getFieldName());
         assertEquals("ERROR", fq.getValue());
+    }
+
+    @Test
+    public void constructor_MissingFile() throws Exception {
+
+        String[] args = {
+
+                "-c",
+                "something",
+        };
+
+        try {
+
+            new Configuration(args);
+            fail("should throw exception");
+        }
+        catch(UserErrorException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("no file specified"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
