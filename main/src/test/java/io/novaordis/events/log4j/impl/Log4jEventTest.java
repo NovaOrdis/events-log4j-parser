@@ -255,16 +255,6 @@ public abstract class Log4jEventTest {
         assertNull(e.getMessage());
     }
 
-    // getRawRepresentation --------------------------------------------------------------------------------------------
-
-    @Test
-    public void getRawRepresentation() throws Exception {
-
-        Log4jEvent e = getLog4jEventToTest();
-
-        assertNull(e.getRawRepresentation());
-    }
-
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------

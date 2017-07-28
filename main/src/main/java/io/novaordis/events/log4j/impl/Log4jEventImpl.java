@@ -16,6 +16,7 @@
 
 package io.novaordis.events.log4j.impl;
 
+import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.event.GenericTimedEvent;
 import io.novaordis.events.api.event.StringProperty;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
@@ -35,7 +36,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     public static final String LOG_CATEGORY_PROPERTY_NAME = "log-category";
     public static final String THREAD_PROPERTY_NAME = "thread";
     public static final String MESSAGE_PROPERTY_NAME = "message";
-    public static final String RAW_PROPERTY_NAME = "raw";
 
     private static final DateFormat TO_STRING_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS");
 
@@ -139,19 +139,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         return sp.getString();
     }
 
-    @Override
-    public String getRawRepresentation() {
-
-        StringProperty sp = getStringProperty(RAW_PROPERTY_NAME);
-
-        if (sp == null) {
-
-            return null;
-        }
-
-        return sp.getString();
-    }
-
     // Public ----------------------------------------------------------------------------------------------------------
 
     @Override
@@ -200,7 +187,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
      */
     void append(String line) {
 
-        StringProperty p = getStringProperty(RAW_PROPERTY_NAME);
+        StringProperty p = getStringProperty(Event.RAW_PROPERTY_NAME);
 
         String rawRepresentation;
 
@@ -213,7 +200,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
             rawRepresentation = p.getString() + "\n" + line;
         }
 
-        setStringProperty(RAW_PROPERTY_NAME, rawRepresentation);
+        setStringProperty(Event.RAW_PROPERTY_NAME, rawRepresentation);
     }
 
     // Protected -------------------------------------------------------------------------------------------------------

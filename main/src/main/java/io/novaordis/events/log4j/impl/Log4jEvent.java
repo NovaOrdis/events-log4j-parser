@@ -160,9 +160,4 @@ public interface Log4jEvent extends TimedEvent {
 
     String getMessage();
 
-    /**
-     * @return the raw representation of the log event. The representation may contain multiple lines.
-     */
-    String getRawRepresentation();
-
 }
