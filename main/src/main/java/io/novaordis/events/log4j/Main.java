@@ -50,6 +50,12 @@ public class Main {
 
             Configuration c = new Configuration(args);
 
+            if (c.getProcedure() instanceof Help) {
+
+                help();
+                System.exit(0);
+            }
+
             List<Event> events = new ArrayList<>();
 
             Log4jParser parser = new Log4jParser();
