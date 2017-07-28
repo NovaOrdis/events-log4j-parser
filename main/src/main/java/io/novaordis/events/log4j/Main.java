@@ -18,6 +18,7 @@ package io.novaordis.events.log4j;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParsingException;
+import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.query.NullQuery;
@@ -115,7 +116,15 @@ public class Main {
                 // events are already filtered, we don't need to filter them again
                 //
 
-                System.out.println(e);
+                if (e instanceof Log4jEvent) {
+
+                    Log4jEvent log4je = (Log4jEvent)e;
+                    System.out.println(log4je.getRawRepresentation());
+                }
+                else {
+                    
+                    System.out.println(e);
+                }
             }
         }
         catch(UserErrorException e) {
