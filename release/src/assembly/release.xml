@@ -11,7 +11,7 @@
 
     <files>
         <file>
-            <source>./src/main/bash/log4jp</source>
+            <source>./src/main/bash/lg</source>
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
         </file>

@@ -9,7 +9,7 @@
     <parent>
         <groupId>io.novaordis.events.log4j</groupId>
         <artifactId>events-log4j-parser-root</artifactId>
-        <version>1.0.1-SNAPSHOT-9</version>
+        <version>1.0.1-SNAPSHOT-10</version>
     </parent>
 
     <artifactId>release</artifactId>
@@ -25,7 +25,7 @@
                           finalName impacts only the locally built artifact, not the name of the artifact that gets
                           deployed in the repository.
                     -->
-                    <finalName>log4jp-${project.version}</finalName>
+                    <finalName>lg-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
                         <descriptor>src/assembly/release.xml</descriptor>
