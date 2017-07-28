@@ -44,7 +44,7 @@ public class Log4jParser extends ParserBase {
 
     private List<Event> fullyParsedEvents;
 
-    private Log4jEvent currentEvent;
+    private Log4jEventImpl currentEvent;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ public class Log4jParser extends ParserBase {
 
     List<Event> matchPattern(long lineNumber, String line) throws ParsingException {
 
-        throw new RuntimeException("matchPattern() NOT YET IMPLEMENTED");
+        throw new RuntimeException("matchPattern(" + lineNumber + ", " + line + ") NOT YET IMPLEMENTED");
     }
 
     void applyHeuristics(long lineNumber, String line) throws ParsingException {
@@ -123,7 +123,7 @@ public class Log4jParser extends ParserBase {
                 fullyParsedEvents.add(currentEvent);
             }
 
-            currentEvent = Log4jEvent.build(lineNumber, t, line.substring(t.getIndexOfNextCharInLine()));
+            currentEvent = Log4jEvent.build(lineNumber, t, t.getIndexOfNextCharInLine(), line);
         }
     }
 

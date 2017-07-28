@@ -52,7 +52,7 @@ public abstract class Log4jEventTest {
 
         TimestampMatcher t = new TimestampMatcher(7L, null, 10);
 
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
@@ -60,6 +60,7 @@ public abstract class Log4jEventTest {
         assertEquals("org.jboss.modules", e.getLogCategory());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -69,7 +70,7 @@ public abstract class Log4jEventTest {
 
         TimestampMatcher t = new TimestampMatcher(7L, null, 10);
 
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
@@ -77,6 +78,7 @@ public abstract class Log4jEventTest {
         assertEquals("org.jboss.modules", e.getLogCategory());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -86,7 +88,7 @@ public abstract class Log4jEventTest {
 
         TimestampMatcher t = new TimestampMatcher(7L, null, 10);
 
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
@@ -94,6 +96,7 @@ public abstract class Log4jEventTest {
         assertEquals("org.jboss.modules", e.getLogCategory());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -102,7 +105,7 @@ public abstract class Log4jEventTest {
         String s = "ERROR [org.jboss.modules] (main) JBoss Modules version 1.3.7.Final-redhat-1";
 
         TimestampMatcher t = new TimestampMatcher(7L, null, 10);
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
@@ -110,6 +113,7 @@ public abstract class Log4jEventTest {
         assertEquals("org.jboss.modules", e.getLogCategory());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -121,7 +125,7 @@ public abstract class Log4jEventTest {
 
         try {
 
-            Log4jEvent.build(8L, t, s);
+            Log4jEvent.build(8L, t, 0, s);
             fail("should have thrown exception");
         }
         catch(ParsingException e) {
@@ -143,7 +147,7 @@ public abstract class Log4jEventTest {
 
         try {
 
-            Log4jEvent.build(8L, t, s);
+            Log4jEvent.build(8L, t, 0, s);
             fail("should have thrown exception");
         }
         catch(ParsingException e) {
@@ -162,7 +166,7 @@ public abstract class Log4jEventTest {
         String s = "ERROR [org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]] (blah) blah2";
 
         TimestampMatcher t = new TimestampMatcher(7L, null, 10);
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
@@ -170,6 +174,7 @@ public abstract class Log4jEventTest {
         assertEquals("org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]", e.getLogCategory());
         assertEquals("blah", e.getThreadName());
         assertEquals("blah2", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -179,12 +184,13 @@ public abstract class Log4jEventTest {
 
         TimestampMatcher t = new TimestampMatcher(7L, null, -1);
 
-        Log4jEvent e = Log4jEvent.build(8L, t, s);
+        Log4jEvent e = Log4jEvent.build(8L, t, 0, s);
 
         String tn = e.getThreadName();
 
         assertEquals("something (some between parantheses (and one more level) and more)", tn);
         assertEquals("something", e.getMessage());
+        assertEquals(s, e.getRawRepresentation());
     }
 
     @Test
@@ -196,7 +202,7 @@ public abstract class Log4jEventTest {
 
         try {
 
-            Log4jEvent.build(8L, t, s);
+            Log4jEvent.build(8L, t, 0, s);
             fail("should have thrown exception");
         }
         catch(ParsingException e) {
@@ -217,14 +223,6 @@ public abstract class Log4jEventTest {
         Log4jEvent e = getLog4jEventToTest();
 
         assertNull(e.getLogLevel());
-
-        e.setLogLevel(Log4jLevel.ERROR);
-
-        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
-
-        e.setLogLevel(null);
-
-        assertNull(e.getLogLevel());
     }
 
     // log category ----------------------------------------------------------------------------------------------------
@@ -233,14 +231,6 @@ public abstract class Log4jEventTest {
     public void logCategory() throws Exception {
 
         Log4jEvent e = getLog4jEventToTest();
-
-        assertNull(e.getLogCategory());
-
-        e.setLogCategory("io.novaordis");
-
-        assertEquals("io.novaordis", e.getLogCategory());
-
-        e.setLogCategory(null);
 
         assertNull(e.getLogCategory());
     }
@@ -253,14 +243,6 @@ public abstract class Log4jEventTest {
         Log4jEvent e = getLog4jEventToTest();
 
         assertNull(e.getThreadName());
-
-        e.setThreadName("some thread name");
-
-        assertEquals("some thread name", e.getThreadName());
-
-        e.setThreadName(null);
-
-        assertNull(e.getThreadName());
     }
 
     // message ---------------------------------------------------------------------------------------------------------
@@ -271,14 +253,16 @@ public abstract class Log4jEventTest {
         Log4jEvent e = getLog4jEventToTest();
 
         assertNull(e.getMessage());
+    }
 
-        e.setMessage("some message");
+    // getRawRepresentation --------------------------------------------------------------------------------------------
 
-        assertEquals("some message", e.getMessage());
+    @Test
+    public void getRawRepresentation() throws Exception {
 
-        e.setMessage(null);
+        Log4jEvent e = getLog4jEventToTest();
 
-        assertNull(e.getMessage());
+        assertNull(e.getRawRepresentation());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

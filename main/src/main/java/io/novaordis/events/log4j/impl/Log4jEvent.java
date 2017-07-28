@@ -30,7 +30,12 @@ public interface Log4jEvent extends TimedEvent {
 
     // Static ----------------------------------------------------------------------------------------------------------
 
-    static Log4jEvent build(long lineNumber, TimestampMatcher t, String restOfTheLine) throws ParsingException {
+    /**
+     * @param indexOfTheFirstCharAfterTimestamp the index of the first character that follows the timestamp.
+     */
+    static Log4jEventImpl build(
+            long lineNumber, TimestampMatcher t, int indexOfTheFirstCharAfterTimestamp, String rawLine)
+            throws ParsingException {
 
         //
         // look for org.apache.log4j.Level values, as represented in Log4jLevel
@@ -41,6 +46,8 @@ public interface Log4jEvent extends TimedEvent {
         //
         // skip the leading spaces
         //
+
+        String restOfTheLine = rawLine.substring(indexOfTheFirstCharAfterTimestamp);
 
         for(i = 0; i < restOfTheLine.length(); i ++) {
 
@@ -139,30 +146,23 @@ public interface Log4jEvent extends TimedEvent {
             message = restOfTheLine.substring(i);
         }
 
-        return new Log4jEventImpl(lineNumber, t.getTime(), level, category.getValue(), threadName.getValue(), message);
+        return new Log4jEventImpl(
+                lineNumber, t.getTime(), level, category.getValue(), threadName.getValue(), message, rawLine);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
     Log4jLevel getLogLevel();
 
-    void setLogLevel(Log4jLevel level);
-
     String getLogCategory();
-
-    void setLogCategory(String s);
 
     String getThreadName();
 
-    void setThreadName(String s);
-
     String getMessage();
 
-    void setMessage(String s);
-
     /**
-     * For multi-line log events (stack traces).
+     * @return the raw representation of the log event. The representation may contain multiple lines.
      */
-    void append(String line);
+    String getRawRepresentation();
 
 }

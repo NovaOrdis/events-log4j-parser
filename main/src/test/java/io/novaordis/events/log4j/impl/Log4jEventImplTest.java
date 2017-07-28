@@ -16,8 +16,11 @@
 
 package io.novaordis.events.log4j.impl;
 
+import io.novaordis.utilities.logging.log4j.Log4jLevel;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,15 +63,100 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
-    @Override
-    protected Log4jEventImpl getLog4jEventToTest() throws Exception {
+    // log level -------------------------------------------------------------------------------------------------------
 
-        return new Log4jEventImpl();
+    @Test
+    public void logLevel_Mutation() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        e.setLogLevel(Log4jLevel.ERROR);
+
+        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
+
+        e.setLogLevel(null);
+
+        assertNull(e.getLogLevel());
+    }
+
+    // log category ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void logCategory_Mutation() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        e.setLogCategory("io.novaordis");
+
+        assertEquals("io.novaordis", e.getLogCategory());
+
+        e.setLogCategory(null);
+
+        assertNull(e.getLogCategory());
+    }
+
+    // thread name -----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void threadName_Mutation() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        e.setThreadName("some thread name");
+
+        assertEquals("some thread name", e.getThreadName());
+
+        e.setThreadName(null);
+
+        assertNull(e.getThreadName());
+    }
+
+    // message ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void message_Mutation() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        e.setMessage("some message");
+
+        assertEquals("some message", e.getMessage());
+
+        e.setMessage(null);
+
+        assertNull(e.getMessage());
+    }
+
+    // raw representation/append() -------------------------------------------------------------------------------------
+
+    @Test
+    public void rawRepresentation_append() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        e.append("this is the first line");
+
+        String s = e.getRawRepresentation();
+
+        assertEquals("this is the first line", s);
+
+        e.append("this is the second line");
+
+        String s2 = e.getRawRepresentation();
+
+        assertEquals("this is the first line\nthis is the second line", s2);
+
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected Log4jEventImpl getLog4jEventToTest() throws Exception {
+
+        return new Log4jEventImpl();
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

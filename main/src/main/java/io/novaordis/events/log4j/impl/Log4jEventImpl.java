@@ -35,6 +35,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     public static final String LOG_CATEGORY_PROPERTY_NAME = "log-category";
     public static final String THREAD_PROPERTY_NAME = "thread";
     public static final String MESSAGE_PROPERTY_NAME = "message";
+    public static final String RAW_PROPERTY_NAME = "raw";
 
     private static final DateFormat TO_STRING_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS");
 
@@ -46,11 +47,15 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
     Log4jEventImpl() {
 
-        this(0L, 0L, null, null, null, null);
+        this(0L, 0L, null, null, null, null, null);
     }
 
-    public Log4jEventImpl(
-            long lineNumber, long timestamp, Log4jLevel level, String category, String threadName, String message) {
+    /**
+     * @param rawLine the unparsed raw line, the way it appears in the log. Necessary to keep a raw representation
+     *                of the event.
+     */
+    public Log4jEventImpl(long lineNumber, long timestamp, Log4jLevel level, String category, String threadName,
+                          String message, String rawLine) {
 
         super(timestamp);
         setLineNumber(lineNumber);
@@ -58,6 +63,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         setLogCategory(category);
         setThreadName(threadName);
         setMessage(message);
+        append(rawLine);
     }
 
     // Log4jEvent implementation ---------------------------------------------------------------------------------------
@@ -95,12 +101,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     }
 
     @Override
-    public void setLogLevel(Log4jLevel level) {
-
-        setStringProperty(LOG_LEVEL_PROPERTY_NAME, level == null ? null : level.toLiteral());
-    }
-
-    @Override
     public String getLogCategory() {
 
         StringProperty sp = getStringProperty(LOG_CATEGORY_PROPERTY_NAME);
@@ -111,12 +111,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         }
 
         return sp.getString();
-    }
-
-    @Override
-    public void setLogCategory(String s) {
-
-        setStringProperty(LOG_CATEGORY_PROPERTY_NAME, s);
     }
 
     @Override
@@ -133,12 +127,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     }
 
     @Override
-    public void setThreadName(String s) {
-
-        setStringProperty(THREAD_PROPERTY_NAME, s);
-    }
-
-    @Override
     public String getMessage() {
 
         StringProperty sp = getStringProperty(MESSAGE_PROPERTY_NAME);
@@ -152,18 +140,19 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     }
 
     @Override
-    public void setMessage(String s) {
+    public String getRawRepresentation() {
 
-        setStringProperty(MESSAGE_PROPERTY_NAME, s);
+        StringProperty sp = getStringProperty(RAW_PROPERTY_NAME);
+
+        if (sp == null) {
+
+            return null;
+        }
+
+        return sp.getString();
     }
 
-    @Override
-    public void append(String line) {
-
-        //
-        // temporarily ignoring extra lines
-        //
-    }
+    // Public ----------------------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {
@@ -184,9 +173,48 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         return s;
     }
 
-    // Public ----------------------------------------------------------------------------------------------------------
-
     // Package protected -----------------------------------------------------------------------------------------------
+
+    void setLogLevel(Log4jLevel level) {
+
+        setStringProperty(LOG_LEVEL_PROPERTY_NAME, level == null ? null : level.toLiteral());
+    }
+
+    void setLogCategory(String s) {
+
+        setStringProperty(LOG_CATEGORY_PROPERTY_NAME, s);
+    }
+
+    void setThreadName(String s) {
+
+        setStringProperty(THREAD_PROPERTY_NAME, s);
+    }
+
+    void setMessage(String s) {
+
+        setStringProperty(MESSAGE_PROPERTY_NAME, s);
+    }
+
+    /**
+     * Append the given line to the raw representation of the event. It works with all lines, including the first line.
+     */
+    void append(String line) {
+
+        StringProperty p = getStringProperty(RAW_PROPERTY_NAME);
+
+        String rawRepresentation;
+
+        if (p == null) {
+
+            rawRepresentation = line;
+        }
+        else {
+
+            rawRepresentation = p.getString() + "\n" + line;
+        }
+
+        setStringProperty(RAW_PROPERTY_NAME, rawRepresentation);
+    }
 
     // Protected -------------------------------------------------------------------------------------------------------
 
