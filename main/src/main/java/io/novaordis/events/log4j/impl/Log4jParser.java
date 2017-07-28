@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,7 +76,21 @@ public class Log4jParser extends ParserBase {
     @Override
     protected List<Event> close(long lineNumber) throws ParsingException {
 
-        return flush();
+        List<Event> result = flush();
+
+        if (currentEvent == null) {
+
+            return result;
+        }
+
+        if (result.isEmpty()) {
+
+            return Arrays.asList(currentEvent);
+        }
+
+        result.add(currentEvent);
+
+        return result;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -128,7 +143,8 @@ public class Log4jParser extends ParserBase {
     }
 
     /**
-     * Replaces the fully parsed event list with a new one, and return fully parsed event list.
+     * Returns the actual fully parsed events list instance, if it contains accumulated events, and replaces it with
+     * a new one.
      */
     List<Event> flush() {
 

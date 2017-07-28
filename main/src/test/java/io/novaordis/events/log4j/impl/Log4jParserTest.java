@@ -99,6 +99,56 @@ public class Log4jParserTest {
         assertEquals(expected, ((TimedEvent)fullyParsedEvents.get(1)).getTime().longValue());
     }
 
+    // close() ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void close_NoEvents() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+        List<Event> afterParse = p.parse(1, "this is not a matching event");
+        assertTrue(afterParse.isEmpty());
+
+        List<Event> afterClose = p.close();
+        assertTrue(afterClose.isEmpty());
+    }
+
+    @Test
+    public void close_OneEvent() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) something");
+        assertTrue(afterParse.isEmpty());
+
+        List<Event> afterClose = p.close();
+
+        assertEquals(1, afterClose.size());
+        Log4jEvent e = (Log4jEvent)afterClose.get(0);
+        assertEquals("something", e.getMessage());
+    }
+
+    @Test
+    public void close_TwoEvents() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) blue");
+        assertTrue(afterParse.isEmpty());
+
+        List<Event> afterParse2 = p.parse(2, "01/01/17 01:01:02,002 INFO [io.novaordis] (main) red");
+
+        assertEquals(1, afterParse2.size());
+        Log4jEvent e = (Log4jEvent)afterParse2.get(0);
+        assertEquals("blue", e.getMessage());
+
+         List<Event> afterClose = p.close();
+
+        assertEquals(1, afterClose.size());
+        Log4jEvent e2 = (Log4jEvent)afterClose.get(0);
+        assertEquals("red", e2.getMessage());
+    }
+
     // production ------------------------------------------------------------------------------------------------------
 
     @Test
