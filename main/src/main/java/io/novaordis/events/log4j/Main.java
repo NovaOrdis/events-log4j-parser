@@ -22,6 +22,7 @@ import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.count.Count;
+import io.novaordis.events.processing.exclude.Exclude;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
@@ -86,37 +87,69 @@ public class Main {
                     //
 
                     List<Event> es = parser.parse(line);
-                    es = applyQuery(es, c.getQuery());
 
-                    if (!es.isEmpty()) {
+                    if (procedure != null && procedure instanceof Exclude) {
 
-                        if (procedure != null) {
+                        //
+                        // for 'exclude', process the events before applying the query.
+                        //
 
-                            procedure.process(es);
-                        }
-                        else {
+                        procedure.process(es);
+                    }
+                    else {
 
-                            //
-                            // accumulate in memory
-                            //
-                            events.addAll(es);
+                        //
+                        // in all other cases, apply the query and then possibly apply the procedure
+                        //
+
+                        es = applyQuery(es, c.getQuery());
+
+                        if (!es.isEmpty()) {
+
+                            if (procedure != null) {
+
+                                procedure.process(es);
+                            }
+                            else {
+
+                                //
+                                // accumulate in memory
+                                //
+                                events.addAll(es);
+                            }
                         }
                     }
                 }
 
                 List<Event> es = parser.close();
-                es = applyQuery(es, c.getQuery());
 
-                if (procedure != null) {
+                if (procedure != null && procedure instanceof Exclude) {
+
+                    //
+                    // for 'exclude', process the events before applying the query.
+                    //
 
                     procedure.process(es);
                 }
                 else {
 
                     //
-                    // accumulate in memory
+                    // in all other cases, apply the query and then possibly apply the procedure
                     //
-                    events.addAll(es);
+
+                    es = applyQuery(es, c.getQuery());
+
+                    if (procedure != null) {
+
+                        procedure.process(es);
+                    }
+                    else {
+
+                        //
+                        // accumulate in memory
+                        //
+                        events.addAll(es);
+                    }
                 }
             }
             finally {
