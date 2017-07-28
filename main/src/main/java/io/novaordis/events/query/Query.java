@@ -49,6 +49,10 @@ public interface Query {
             return null;
         }
 
+        //
+        // TODO More efficient implementation needed
+        //
+
         MixedQuery mixedQuery = new MixedQuery();
 
         for(int i = from; i < args.size(); i ++) {
@@ -56,6 +60,19 @@ public interface Query {
             String token = args.remove(i--);
 
             mixedQuery.addLiteral(token);
+        }
+
+        List<FieldQuery> fieldQueries = mixedQuery.getFieldQueries();
+        List<KeywordQuery> keywordQueries = mixedQuery.getKeywordQueries();
+
+        if (fieldQueries.size() == 0 && keywordQueries.size() == 1) {
+
+            return keywordQueries.get(0);
+        }
+
+        if (fieldQueries.size() == 1 && keywordQueries.size() == 0) {
+
+            return fieldQueries.get(0);
         }
 
         return mixedQuery;

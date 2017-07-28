@@ -54,19 +54,13 @@ public class KeywordQueryTest extends QueryTest {
 
         List<String> arguments = new ArrayList<>(Collections.singletonList("something"));
 
-        MixedQuery q = (MixedQuery)Query.fromArguments(arguments, 0);
+        KeywordQuery q = (KeywordQuery)Query.fromArguments(arguments, 0);
 
         assertTrue(arguments.isEmpty());
 
         assertNotNull(q);
 
-        List<KeywordQuery> kqs = q.getKeywordQueries();
-
-        assertEquals(1, kqs.size());
-
-        KeywordQuery fq = kqs.get(0);
-
-        assertEquals("something", fq.getKeyword());
+        assertEquals("something", q.getKeyword());
     }
 
     // identity --------------------------------------------------------------------------------------------------------

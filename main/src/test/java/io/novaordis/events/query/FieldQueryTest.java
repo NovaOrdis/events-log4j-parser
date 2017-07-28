@@ -54,20 +54,14 @@ public class FieldQueryTest extends QueryTest {
 
         List<String> arguments = new ArrayList<>(Collections.singletonList("something:blue"));
 
-        MixedQuery q = (MixedQuery)Query.fromArguments(arguments, 0);
+        FieldQuery q = (FieldQuery)Query.fromArguments(arguments, 0);
 
         assertTrue(arguments.isEmpty());
 
         assertNotNull(q);
 
-        List<FieldQuery> fqs = q.getFieldQueries();
-
-        assertEquals(1, fqs.size());
-
-        FieldQuery fq = fqs.get(0);
-
-        assertEquals("something", fq.getFieldName());
-        assertEquals("blue", fq.getValue());
+        assertEquals("something", q.getFieldName());
+        assertEquals("blue", q.getValue());
     }
 
     // identity --------------------------------------------------------------------------------------------------------

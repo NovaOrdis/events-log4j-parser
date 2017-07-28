@@ -69,18 +69,12 @@ public class MixedQueryTest extends QueryTest {
     public void fromArguments_FieldQuery() throws Exception {
 
         List<String> args = new ArrayList<>(Collections.singletonList("something:SomethingElse"));
-        MixedQuery q = (MixedQuery)Query.fromArguments(args, 0);
+        FieldQuery q = (FieldQuery)Query.fromArguments(args, 0);
 
         assertNotNull(q);
 
-        List<KeywordQuery> keywords = q.getKeywordQueries();
-        assertTrue(keywords.isEmpty());
-
-        List<FieldQuery> fields = q.getFieldQueries();
-
-        assertEquals(1, fields.size());
-        assertEquals("something", fields.get(0).getFieldName());
-        assertEquals("SomethingElse", fields.get(0).getValue());
+        assertEquals("something", q.getFieldName());
+        assertEquals("SomethingElse", q.getValue());
 
         assertTrue(args.isEmpty());
     }
