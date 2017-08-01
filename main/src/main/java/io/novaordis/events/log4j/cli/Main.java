@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4j.cli;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParsingException;
+import io.novaordis.events.cli.Configuration;
+import io.novaordis.events.cli.ConfigurationImpl;
 import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.events.processing.Procedure;
@@ -29,8 +31,8 @@ import io.novaordis.utilities.UserErrorException;
 import io.novaordis.utilities.help.InLineHelp;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,9 +51,9 @@ public class Main {
 
         try {
 
-            Configuration c = new Configuration(args);
+            Configuration c = new ConfigurationImpl(args);
 
-            if (c.getProcedure() instanceof Help) {
+            if (c.isHelp()) {
 
                 help();
                 System.exit(0);
@@ -63,20 +65,13 @@ public class Main {
 
             Procedure procedure = c.getProcedure();
 
-            List<File> files = c.getFiles();
-
-            if (files.size() > 1) {
-
-                throw new RuntimeException("support for multiple files NOT YET IMPLEMENTED");
-            }
-
-            File f = files.get(0);
+            InputStream is = c.getInputStream();
 
             BufferedReader br = null;
 
             try {
 
-                br = new BufferedReader(new FileReader(f));
+                br = new BufferedReader(new InputStreamReader(is));
 
                 String line;
 
