@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MAIN_CLASS=io.novaordis.events.log4j.cli.Main
+
 function main() {
 
     local verbose=false
@@ -44,7 +46,7 @@ function main() {
     java \
         -cp ${classpath} \
         ${debug_option} \
-        io.novaordis.events.log4j.Main \
+        ${MAIN_CLASS} \
         ${verbose_option} \
         ${args}
 }
