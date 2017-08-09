@@ -51,7 +51,9 @@ public class Main {
 
         try {
 
-            Configuration c = new ConfigurationImpl(args, null, null);
+            LocalProcedureFactory localProcedureFactory = new LocalProcedureFactory();
+
+            Configuration c = new ConfigurationImpl(args, localProcedureFactory, null);
 
             if (c.isHelp()) {
 
