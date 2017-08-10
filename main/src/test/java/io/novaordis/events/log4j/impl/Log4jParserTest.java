@@ -16,6 +16,7 @@
 
 package io.novaordis.events.log4j.impl;
 
+import io.novaordis.events.api.event.EndOfStreamEvent;
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.event.TimedEvent;
 import io.novaordis.utilities.Files;
@@ -110,7 +111,9 @@ public class Log4jParserTest {
         assertTrue(afterParse.isEmpty());
 
         List<Event> afterClose = p.close();
-        assertTrue(afterClose.isEmpty());
+
+        assertEquals(1, afterClose.size());
+        assertTrue(afterClose.get(0) instanceof EndOfStreamEvent);
     }
 
     @Test
@@ -123,9 +126,12 @@ public class Log4jParserTest {
 
         List<Event> afterClose = p.close();
 
-        assertEquals(1, afterClose.size());
+        assertEquals(2, afterClose.size());
         Log4jEvent e = (Log4jEvent)afterClose.get(0);
         assertEquals("something", e.getMessage());
+        Event e2 = afterClose.get(1);
+        assertTrue(e2 instanceof EndOfStreamEvent);
+
     }
 
     @Test
@@ -142,11 +148,13 @@ public class Log4jParserTest {
         Log4jEvent e = (Log4jEvent)afterParse2.get(0);
         assertEquals("blue", e.getMessage());
 
-         List<Event> afterClose = p.close();
+        List<Event> afterClose = p.close();
 
-        assertEquals(1, afterClose.size());
+        assertEquals(2, afterClose.size());
         Log4jEvent e2 = (Log4jEvent)afterClose.get(0);
         assertEquals("red", e2.getMessage());
+        Event e3 = afterClose.get(1);
+        assertTrue(e3 instanceof EndOfStreamEvent);
     }
 
     // production ------------------------------------------------------------------------------------------------------
