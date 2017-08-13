@@ -3,6 +3,8 @@ target
 .idea/workspace.xml
 .DS_Store
 
+.*.swp
+
 *.class
 
 # Mobile Tools for Java (J2ME)

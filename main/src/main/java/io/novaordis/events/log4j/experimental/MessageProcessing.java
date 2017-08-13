@@ -54,13 +54,7 @@ public class MessageProcessing extends ProcedureBase {
 
     private boolean header;
 
-    private long origin;
-
     private boolean dontProcess = false;
-
-    private long previousTime = -1;
-
-    private MessagingThreadContext lastMessagingThreadContext;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -70,13 +64,6 @@ public class MessageProcessing extends ProcedureBase {
 
         this.header = true;
 
-        try {
-            this.origin = TIMESTAMP_FORMAT.parse("08/08/17 00:00:00.000").getTime() - 5L * 3600 * 1000;
-        }
-        catch(Exception e) {
-
-            throw new IllegalStateException(e);
-        }
     }
 
     // Procedure implementation ----------------------------------------------------------------------------------------
@@ -115,26 +102,6 @@ public class MessageProcessing extends ProcedureBase {
 
         String message = le.getMessage();
 
-        long time = le.getTime();
-
-        if (previousTime > time) {
-
-            //
-            // switch origin
-            //
-
-            try {
-                origin = TIMESTAMP_FORMAT.parse("08/09/17 00:00:00.000").getTime() - 5L * 3600 * 1000;
-            }
-            catch(Exception e2) {
-
-                throw new EventProcessingException(e2);
-            }
-
-        }
-        previousTime = time;
-
-
 //        System.out.println(le.getRawRepresentation());
 //        System.out.println(TIMESTAMP_FORMAT.format(origin + time));
 
@@ -166,15 +133,11 @@ public class MessageProcessing extends ProcedureBase {
             }
 
             c.delta(le);
-
-            lastMessagingThreadContext = c;
         }
         else {
 
             //log.warn("unknown message: " + in);
         }
-
-        //com.ge.mp.alexandria.service.GramListener:Thread-37 (HornetQ-client-global-threads-531916524):Alexandria GramListener[7b77d006] processing message HornetQMessage[ID:2069fa4e-7c9f-11e7-a8fb-01c94948c8e4]:PERSISTENT
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -196,7 +159,7 @@ public class MessageProcessing extends ProcedureBase {
             long t0 = in.getTime();
             long t1 = out.getTime();
 
-            System.out.println(TIMESTAMP_FORMAT.format(origin + in.getTime()) + ", " + (t1 - t0));
+            System.out.println(TIMESTAMP_FORMAT.format(in.getTime()) + ", " + (t1 - t0));
         }
     }
 
