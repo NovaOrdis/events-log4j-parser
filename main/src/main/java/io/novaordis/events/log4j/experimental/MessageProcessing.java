@@ -90,7 +90,7 @@ public class MessageProcessing extends ProcedureBase {
 
         if (header) {
 
-            System.out.println("# timestamp, message processing time (ms)");
+            System.out.println("# timestamp, calculated message processing time (ms), recorded message processing time (ms), message size (bytes)");
             header = false;
         }
 
@@ -159,7 +159,46 @@ public class MessageProcessing extends ProcedureBase {
             long t0 = in.getTime();
             long t1 = out.getTime();
 
-            System.out.println(TIMESTAMP_FORMAT.format(in.getTime()) + ", " + (t1 - t0));
+            long calculatedProcessingTime = t1 - t0;
+
+            String msg = out.getMessage();
+
+            long recordedProcessingTime = 0;
+
+            int i = msg.indexOf("Took:");
+
+            if (i != -1) {
+
+                String s = msg.substring(i + "Took:".length());
+
+                i = s.indexOf("ms");
+
+                if (i != -1) {
+
+                    s = s.substring(0, i).trim();
+
+                    recordedProcessingTime = Long.parseLong(s);
+                }
+            }
+
+            long messageSize = 0L;
+
+            i = msg.indexOf("Size:");
+
+            if (i != -1) {
+
+                String s = msg.substring(i + "Size:".length()).trim();
+
+                messageSize = Long.parseLong(s);
+            }
+
+
+            //System.out.println(TIMESTAMP_FORMAT.format(in.getTime()) + ", " + calculatedProcessingTime + ", " + recordedProcessingTime + ", " + messageSize);
+
+            if (calculatedProcessingTime > 10000L) {
+
+                System.out.println("processing time: " + calculatedProcessingTime + ", in: " + TIMESTAMP_FORMAT.format(t0) + ", thread name: " + in.getThreadName());
+            }
         }
     }
 
