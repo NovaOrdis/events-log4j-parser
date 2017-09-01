@@ -73,7 +73,7 @@ public interface Log4jEvent extends TimedEvent {
 
         if (level == null) {
 
-            throw new ParsingException("no log level found after timestamp", lineNumber);
+            throw new ParsingException(lineNumber, "no log level found after timestamp");
         }
 
         //
@@ -97,7 +97,7 @@ public interface Log4jEvent extends TimedEvent {
         if (category == null) {
 
             throw new ParsingException(
-                    "no log category found, expecting [...]", lineNumber, t.getIndexOfNextCharInLine() + i);
+                    lineNumber, t.getIndexOfNextCharInLine() + i, "no log category found, expecting [...]");
         }
 
         i = category.getNext();
@@ -122,7 +122,7 @@ public interface Log4jEvent extends TimedEvent {
 
         if (threadName == null) {
 
-            throw new ParsingException("no thread name found after the log category, expecting (...)", lineNumber);
+            throw new ParsingException(lineNumber, "no thread name found after the log category, expecting (...)");
         }
 
         i = threadName.getNext();

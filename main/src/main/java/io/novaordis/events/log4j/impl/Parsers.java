@@ -87,7 +87,7 @@ public class Parsers {
             }
         }
 
-        throw new ParsingException("unbalanced " + leftMarker + "..." + rightMarker, lineNumber, start);
+        throw new ParsingException(lineNumber, start, "unbalanced " + leftMarker + "..." + rightMarker);
     }
 
     // Attributes ------------------------------------------------------------------------------------------------------

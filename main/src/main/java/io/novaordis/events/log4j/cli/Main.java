@@ -28,6 +28,7 @@ import io.novaordis.events.processing.exclude.Exclude;
 import io.novaordis.events.query.NullQuery;
 import io.novaordis.events.query.Query;
 import io.novaordis.utilities.UserErrorException;
+import io.novaordis.utilities.appspec.ApplicationSpecificBehavior;
 import io.novaordis.utilities.help.InLineHelp;
 
 import java.io.BufferedReader;
@@ -53,7 +54,9 @@ public class Main {
 
             LocalProcedureFactory localProcedureFactory = new LocalProcedureFactory();
 
-            Configuration c = new ConfigurationImpl(args, localProcedureFactory, null);
+            ApplicationSpecificBehavior b = new ApplicationSpecificBehavior(localProcedureFactory);
+
+            Configuration c = new ConfigurationImpl(args, b);
 
             if (c.isHelp()) {
 

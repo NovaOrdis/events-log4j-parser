@@ -95,7 +95,7 @@ public class LogProcessing {
 
         if (!restOfTheLine.startsWith("[")) {
 
-            throw new ParsingException("[logger... not found", lineNumber);
+            throw new ParsingException(lineNumber, "[logger... not found");
         }
 
         int i = restOfTheLine.indexOf(']');
@@ -112,7 +112,7 @@ public class LogProcessing {
 
         if (i == -1) {
 
-            throw new ParsingException("(thread-name... not found", lineNumber);
+            throw new ParsingException(lineNumber, "(thread-name... not found");
         }
 
         //
@@ -145,7 +145,7 @@ public class LogProcessing {
 
         if (j == restOfTheLine.length()) {
 
-            throw new ParsingException("unbalanced thread name parantheses", lineNumber);
+            throw new ParsingException(lineNumber, "unbalanced thread name parantheses");
         }
 
         error.setThreadName(restOfTheLine.substring(i + 1, j));

@@ -132,7 +132,7 @@ public class TimestampMatcher {
                 }
                 catch(ParseException pe) {
 
-                    throw new ParsingException("invalid timestamp \"" + s + "\"", pe, lineNumber);
+                    throw new ParsingException(lineNumber, "invalid timestamp \"" + s + "\"", pe);
                 }
 
                 return new TimestampMatcher(d.getTime(), DATE_FORMATS[dateFormatIndex], offset + m.end(2));
