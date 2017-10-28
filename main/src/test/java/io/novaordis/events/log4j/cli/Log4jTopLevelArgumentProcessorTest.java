@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.ConfigurationImpl;
+import io.novaordis.events.log4j.Log4jPatternLayout;
 import io.novaordis.utilities.UserErrorException;
 
 import static org.junit.Assert.assertEquals;
@@ -98,7 +99,10 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         Log4jConfiguration log4jc = (Log4jConfiguration)c.getApplicationSpecificConfiguration();
         assertNotNull(log4jc);
-        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", log4jc.getPatternLayoutString());
+
+        Log4jPatternLayout pl = log4jc.getPatternLayout();
+        assertNotNull(pl);
+        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
     }
 
     @Test
@@ -204,14 +208,10 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         Log4jConfiguration log4jc = (Log4jConfiguration)c.getApplicationSpecificConfiguration();
         assertNotNull(log4jc);
-        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", log4jc.getPatternLayoutString());
-    }
 
-    @Test
-    public void process_FormatLongOption_SimpleQuotes() throws Exception {
-
-        fail("return here");
-
+        Log4jPatternLayout pl = log4jc.getPatternLayout();
+        assertNotNull(pl);
+        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
     }
 
     // processLog4jPatternLayoutLiteral() ------------------------------------------------------------------------------
@@ -259,7 +259,30 @@ public class Log4jTopLevelArgumentProcessorTest {
         p.processLog4jPatternLayoutLiteral("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", c);
 
         Log4jConfiguration ac = (Log4jConfiguration)c.getApplicationSpecificConfiguration();
-        assertEquals("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", ac.getPatternLayoutString());
+
+        Log4jPatternLayout pl = ac.getPatternLayout();
+        assertNotNull(pl);
+
+        assertEquals("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
+    }
+
+    @Test
+    public void processLog4jPatternLayoutLiteral_InvalidPatternLayout() throws Exception {
+
+        Log4jTopLevelArgumentProcessor p = new Log4jTopLevelArgumentProcessor();
+        Configuration c = new ConfigurationImpl(new String[0], null);
+
+        try {
+
+            p.processLog4jPatternLayoutLiteral("TODO: replace this with a pattern layout that cannot be parsed", c);
+
+            fail("should have failed");
+        }
+        catch(UserErrorException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("TODO: replace with the real message"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
-
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+package io.novaordis.events.log4j;
 
 /**
+ * A parsed representation of a Log4j pattern layout.
+ *
+ * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/28/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class Log4jPatternLayout {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,25 +32,30 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
+    private String literal;
 
     // Constructors ----------------------------------------------------------------------------------------------------
+
+    public Log4jPatternLayout(String literal) throws Log4jPatternLayoutException {
+
+        if (literal == null) {
+
+            throw new IllegalArgumentException("null log4j pattern layout literal");
+        }
+
+        this.literal = literal;
+    }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+     * @return the literal representation of the pattern layout, as provided to this instance by the layer that creates
+     * it.
      */
-    public Log4jPatternLayout getPatternLayout() {
+    public String getLiteral() {
 
-        return patternLayout;
-    }
+        return literal;
 
-    public void setPatternLayout(Log4jPatternLayout l) {
-
-        this.patternLayout = l;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

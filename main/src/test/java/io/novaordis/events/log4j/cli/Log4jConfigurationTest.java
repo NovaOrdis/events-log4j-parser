@@ -18,6 +18,10 @@ package io.novaordis.events.log4j.cli;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.Log4jPatternLayout;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/28/17
@@ -40,7 +44,12 @@ public class Log4jConfigurationTest {
     public void constructor() throws Exception {
 
         Log4jConfiguration c = new Log4jConfiguration();
-        c.getPatternLayoutString();
+
+        Log4jPatternLayout pl = new Log4jPatternLayout("%c");
+        c.setPatternLayout(pl);
+
+        Log4jPatternLayout pl2 = c.getPatternLayout();
+        assertEquals("%c", pl2.getLiteral());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

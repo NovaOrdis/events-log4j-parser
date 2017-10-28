@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
+package io.novaordis.events.log4j;
 
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/28/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class Log4jPatternLayoutTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,25 +34,37 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
-     */
-    public Log4jPatternLayout getPatternLayout() {
+    // Tests -----------------------------------------------------------------------------------------------------------
 
-        return patternLayout;
+    // constructors ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void constructor_NullLiteral() throws Exception {
+
+        try {
+
+            new Log4jPatternLayout(null);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("null log4j pattern layout literal"));
+        }
     }
 
-    public void setPatternLayout(Log4jPatternLayout l) {
+    @Test
+    public void constructor() throws Exception {
 
-        this.patternLayout = l;
+        Log4jPatternLayout pl = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
+
+        fail("return here");
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

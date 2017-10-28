@@ -20,6 +20,8 @@ import java.util.List;
 
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.TopLevelArgumentProcessor;
+import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.events.log4j.Log4jPatternLayoutException;
 import io.novaordis.utilities.UserErrorException;
 
 /**
@@ -109,6 +111,18 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
             throw new IllegalArgumentException("null configuration");
         }
 
+
+        Log4jPatternLayout log4jPatternLayout;
+
+        try {
+
+            log4jPatternLayout = new Log4jPatternLayout(log4jPatternLayoutLiteral);
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            throw new UserErrorException(e);
+        }
+
         Log4jConfiguration lc = (Log4jConfiguration)c.getApplicationSpecificConfiguration();
 
         if (lc == null) {
@@ -117,7 +131,7 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
             c.setApplicationSpecificConfiguration(lc);
         }
 
-        lc.setPatternLayoutString(log4jPatternLayoutLiteral);
+        lc.setPatternLayout(log4jPatternLayout);
     }
 
     // Protected -------------------------------------------------------------------------------------------------------

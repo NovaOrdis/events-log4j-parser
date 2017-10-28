@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
-
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+package io.novaordis.events.log4j;
 
 /**
+ * A human-readable message carrying exception.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/28/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class Log4jPatternLayoutException extends Exception {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,26 +30,14 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    public Log4jPatternLayoutException(String msg) {
+
+        super(msg);
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
-
-    /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
-     */
-    public Log4jPatternLayout getPatternLayout() {
-
-        return patternLayout;
-    }
-
-    public void setPatternLayout(Log4jPatternLayout l) {
-
-        this.patternLayout = l;
-    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
