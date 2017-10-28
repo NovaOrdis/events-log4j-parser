@@ -16,7 +16,7 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.api.parser.ParsingException;
+import io.novaordis.utilities.parsing.ParsingException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>

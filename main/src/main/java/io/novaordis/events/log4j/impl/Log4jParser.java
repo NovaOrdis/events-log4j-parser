@@ -16,16 +16,17 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.api.event.Event;
-import io.novaordis.events.api.parser.*;
-import io.novaordis.events.api.parser.ParsingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.novaordis.events.api.event.Event;
+import io.novaordis.events.api.parser.ParserBase;
+import io.novaordis.utilities.parsing.ParsingException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>

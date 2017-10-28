@@ -8,7 +8,7 @@
 
     <groupId>io.novaordis.events.log4j</groupId>
     <artifactId>events-log4j-parser-root</artifactId>
-    <version>1.0.5-SNAPSHOT-14</version>
+    <version>1.0.5-SNAPSHOT-15</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -17,10 +17,10 @@
             Dependencies
         -->
 
-        <novaordis.utilities.version>4.7.11-SNAPSHOT-5</novaordis.utilities.version>
-        <events.api.version>1.2.2-SNAPSHOT-39</events.api.version>
-        <events.processing.version>1.1.1-SNAPSHOT-40</events.processing.version>
-        <events.cli.version>1.0.2-SNAPSHOT-26</events.cli.version>
+        <novaordis.utilities.version>4.7.12</novaordis.utilities.version>
+        <events.api.version>1.2.2</events.api.version>
+        <events.processing.version>1.1.2-SNAPSHOT-1</events.processing.version>
+        <events.cli.version>1.0.3-SNAPSHOT-2</events.cli.version>
 
         <slf4j.version>1.7.6</slf4j.version>
         <log4j.version>1.2.17</log4j.version>

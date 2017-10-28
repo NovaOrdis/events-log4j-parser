@@ -16,8 +16,9 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.api.parser.ParsingException;
 import org.junit.Test;
+
+import io.novaordis.utilities.parsing.ParsingException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

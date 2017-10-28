@@ -16,14 +16,14 @@
 
 package io.novaordis.events.log4j;
 
-import io.novaordis.events.api.parser.ParsingException;
-import io.novaordis.events.log4j.impl.TimestampMatcher;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.novaordis.events.log4j.impl.TimestampMatcher;
+import io.novaordis.utilities.parsing.ParsingException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
