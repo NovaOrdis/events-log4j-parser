@@ -16,9 +16,9 @@
 
 package io.novaordis.events.log4j.impl;
 
-import org.junit.Test;
-
 import java.text.SimpleDateFormat;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -101,6 +101,7 @@ public class TimestampMatcherTest {
         assertEquals(new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS").parse("07/18/17 12:57:28,348").getTime(), time);
         assertEquals(s.indexOf('W'), i);
     }
+
 
     // Package protected -----------------------------------------------------------------------------------------------
 
