@@ -49,12 +49,75 @@ public class MainTest {
     // Tests -----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void jbossServerLogEndToEnd() throws Exception {
+    public void jbossServerLogEndToEnd_NoPatternLayout() throws Exception {
 
         File f = new File(System.getProperty("basedir"), "src/test/resources/data/jboss.server.log");
         assertTrue(f.isFile());
 
         String[] args = new String[] { f.getPath() };
+
+        //
+        // install a mock System.out so we can capture the output
+        //
+
+        PrintStream originalSystemOut = System.out;
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream mockOut = new PrintStream(baos);
+
+        try {
+
+            System.setOut(mockOut);
+
+            Main.main(args);
+        }
+        finally {
+
+            System.setOut(originalSystemOut);
+        }
+
+        assertTrue(baos.size() != 0);
+
+        BufferedReader originalContentReader = new BufferedReader(new FileReader(f));
+        BufferedReader parsedContentReader =
+                new BufferedReader(new InputStreamReader(new ByteArrayInputStream(baos.toByteArray())));
+
+        int lineNumber = 0;
+
+        String originalLine, lineAfterParsing;
+
+        while((originalLine = originalContentReader.readLine()) != null) {
+
+            lineNumber ++;
+            lineAfterParsing = parsedContentReader.readLine();
+
+            if (!originalLine.equals(lineAfterParsing)) {
+
+                fail("lines " + lineNumber + " differ");
+            }
+        }
+
+        //
+        // we should also have consumed all parsed lines
+        //
+
+        assertNull(parsedContentReader.readLine());
+
+        originalContentReader.close();
+        parsedContentReader.close();
+    }
+
+    @Test
+    public void jbossServerLogEndToEnd_WithPatternLayout() throws Exception {
+
+        File f = new File(System.getProperty("basedir"), "src/test/resources/data/jboss.server.log");
+        assertTrue(f.isFile());
+
+        String[] args = new String[] {
+                "-f",
+                "d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
+                f.getPath()
+        };
 
         //
         // install a mock System.out so we can capture the output

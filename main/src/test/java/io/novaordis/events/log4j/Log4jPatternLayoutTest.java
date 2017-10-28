@@ -62,6 +62,7 @@ public class Log4jPatternLayoutTest {
     public void constructor() throws Exception {
 
         Log4jPatternLayout pl = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
         assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
 
         fail("return here");

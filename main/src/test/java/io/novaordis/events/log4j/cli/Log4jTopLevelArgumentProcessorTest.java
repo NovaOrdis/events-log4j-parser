@@ -25,6 +25,7 @@ import org.junit.Test;
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.ConfigurationImpl;
 import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.utilities.UserErrorException;
 
 import static org.junit.Assert.assertEquals;
@@ -89,6 +90,8 @@ public class Log4jTopLevelArgumentProcessorTest {
                 Arrays.asList("A", "B", "-f", "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", "C"));
 
         ConfigurationImpl c = new ConfigurationImpl(new String[0], null);
+        Log4jParser log4jParser = new Log4jParser();
+        c.setParser(log4jParser);
 
         p.process(args, c);
 
@@ -103,6 +106,9 @@ public class Log4jTopLevelArgumentProcessorTest {
         Log4jPatternLayout pl = log4jc.getPatternLayout();
         assertNotNull(pl);
         assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
+
+        Log4jPatternLayout pl2 = ((Log4jParser)c.getParser()).getPatternLayout();
+        assertEquals(pl, pl2);
     }
 
     @Test
@@ -198,6 +204,8 @@ public class Log4jTopLevelArgumentProcessorTest {
                 Arrays.asList("A", "B", "--format=%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", "C"));
 
         ConfigurationImpl c = new ConfigurationImpl(new String[0], null);
+        Log4jParser log4jParser = new Log4jParser();
+        c.setParser(log4jParser);
 
         p.process(args, c);
 
@@ -212,6 +220,9 @@ public class Log4jTopLevelArgumentProcessorTest {
         Log4jPatternLayout pl = log4jc.getPatternLayout();
         assertNotNull(pl);
         assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
+
+        Log4jPatternLayout pl2 = ((Log4jParser)c.getParser()).getPatternLayout();
+        assertEquals(pl, pl2);
     }
 
     // processLog4jPatternLayoutLiteral() ------------------------------------------------------------------------------
@@ -251,10 +262,32 @@ public class Log4jTopLevelArgumentProcessorTest {
     }
 
     @Test
-    public void processLog4jPatternLayoutLiteral() throws Exception {
+    public void processLog4jPatternLayoutLiteral_NoParser() throws Exception {
 
         Log4jTopLevelArgumentProcessor p = new Log4jTopLevelArgumentProcessor();
         Configuration c = new ConfigurationImpl(new String[0], null);
+        assertNull(c.getParser());
+
+        try {
+
+            p.processLog4jPatternLayoutLiteral("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", c);
+            fail("should have thrown exception");
+        }
+        catch(IllegalStateException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("we expect a Log4jParser instance but we got null"));
+        }
+    }
+
+    @Test
+    public void processLog4jPatternLayoutLiteral() throws Exception {
+
+        Log4jTopLevelArgumentProcessor p = new Log4jTopLevelArgumentProcessor();
+        ConfigurationImpl c = new ConfigurationImpl(new String[0], null);
+        Log4jParser log4jParser = new Log4jParser();
+        assertNull(log4jParser.getPatternLayout());
+        c.setParser(log4jParser);
 
         p.processLog4jPatternLayoutLiteral("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", c);
 
@@ -264,6 +297,11 @@ public class Log4jTopLevelArgumentProcessorTest {
         assertNotNull(pl);
 
         assertEquals("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
+
+        Log4jParser log4jParser2 = (Log4jParser)c.getParser();
+        Log4jPatternLayout pl2 = log4jParser2.getPatternLayout();
+
+        assertEquals(pl, pl2);
     }
 
     @Test

@@ -16,15 +16,17 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.events.api.event.EndOfStreamEvent;
-import io.novaordis.events.api.event.Event;
-import io.novaordis.events.api.event.TimedEvent;
-import io.novaordis.utilities.Files;
-import org.junit.Test;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import org.junit.Test;
+
+import io.novaordis.events.api.event.EndOfStreamEvent;
+import io.novaordis.events.api.event.Event;
+import io.novaordis.events.api.event.TimedEvent;
+import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.utilities.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -47,6 +49,32 @@ public class Log4jParserTest {
     // Public ----------------------------------------------------------------------------------------------------------
 
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    // constructors ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void constructor() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+        assertNull(p.getPatternLayout());
+    }
+
+    // setPatternLayout()/getPatternLayout() ---------------------------------------------------------------------------
+
+    @Test
+    public void setAndGetPatterLayout() throws Exception {
+
+        Log4jParser p = new Log4jParser();
+
+        Log4jPatternLayout l = new Log4jPatternLayout("%c");
+
+        p.setPatternLayout(l);
+
+        Log4jPatternLayout l2 = p.getPatternLayout();
+
+        assertEquals(l, l2);
+    }
 
     // applyHeuristics() -----------------------------------------------------------------------------------------------
 

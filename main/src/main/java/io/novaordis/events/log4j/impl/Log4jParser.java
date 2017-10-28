@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
+import io.novaordis.events.log4j.Log4jPatternLayout;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -42,7 +43,7 @@ public class Log4jParser extends ParserBase {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPattern pattern;
+    private Log4jPatternLayout patternLayout;
 
     private List<Event> fullyParsedEvents;
 
@@ -52,7 +53,7 @@ public class Log4jParser extends ParserBase {
 
     public Log4jParser() {
 
-        pattern = null;
+        patternLayout = null;
         fullyParsedEvents = new ArrayList<>();
     }
 
@@ -61,7 +62,7 @@ public class Log4jParser extends ParserBase {
     @Override
     protected List<Event> parse(long lineNumber, String line) throws ParsingException {
 
-        if (pattern != null) {
+        if (patternLayout != null) {
 
             matchPattern(lineNumber, line);
         }
@@ -95,6 +96,25 @@ public class Log4jParser extends ParserBase {
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
+
+    /**
+     * The pattern layout can be injected into the parser instance after it is constructed, as long as it is done
+     * before the instance is used to parse content.
+     */
+    public void setPatternLayout(Log4jPatternLayout patternLayout) {
+
+        this.patternLayout = patternLayout;
+
+        log.debug(this + " installed a log4j pattern layout: " + patternLayout);
+    }
+
+    /**
+     * May return null, and in this case, the parser will have to use heuristics.
+     */
+    public Log4jPatternLayout getPatternLayout() {
+
+        return patternLayout;
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

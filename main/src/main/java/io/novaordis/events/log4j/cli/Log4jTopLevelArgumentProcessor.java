@@ -18,10 +18,12 @@ package io.novaordis.events.log4j.cli;
 
 import java.util.List;
 
+import io.novaordis.events.api.parser.Parser;
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.TopLevelArgumentProcessor;
 import io.novaordis.events.log4j.Log4jPatternLayout;
 import io.novaordis.events.log4j.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.utilities.UserErrorException;
 
 /**
@@ -99,6 +101,10 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
 
     // Package protected -----------------------------------------------------------------------------------------------
 
+    /**
+     * Process the literal: parse it to detect syntax errors and if the format is correct, update the internal state,
+     * by injecting it where it is necessary.
+     */
     void processLog4jPatternLayoutLiteral(String log4jPatternLayoutLiteral, Configuration c) throws UserErrorException {
 
         if (log4jPatternLayoutLiteral == null) {
@@ -123,6 +129,10 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
             throw new UserErrorException(e);
         }
 
+        //
+        // we inject the log4j pattern layout into the application-specific configuration ...
+        //
+
         Log4jConfiguration lc = (Log4jConfiguration)c.getApplicationSpecificConfiguration();
 
         if (lc == null) {
@@ -132,6 +142,21 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
         }
 
         lc.setPatternLayout(log4jPatternLayout);
+
+        //
+        // ... and into the parser, so the parser can avoid heuristics
+        //
+
+        Parser p = c.getParser();
+
+        if (!(p instanceof Log4jParser)) {
+
+            throw new IllegalStateException("we expect a Log4jParser instance but we got " + p);
+        }
+
+        Log4jParser log4jParser = (Log4jParser)p;
+
+        log4jParser.setPatternLayout(log4jPatternLayout);
     }
 
     // Protected -------------------------------------------------------------------------------------------------------
