@@ -9,7 +9,7 @@
     <parent>
         <groupId>io.novaordis.events.log4j</groupId>
         <artifactId>events-log4j-parser-root</artifactId>
-        <version>1.0.5-SNAPSHOT-13</version>
+        <version>1.0.5-SNAPSHOT-14</version>
     </parent>
 
     <artifactId>release</artifactId>
