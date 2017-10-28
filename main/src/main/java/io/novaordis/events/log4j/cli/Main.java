@@ -43,6 +43,7 @@ public class Main {
 
             ApplicationSpecificBehavior b = new ApplicationSpecificBehavior(
                     new Log4jParser(),
+                    new Log4jTopLevelArgumentProcessor(),
                     new Log4jParserProcedureFactory());
 
             EventParserRuntime runtime = new EventParserRuntime(args, APPLICATION_NAME, b);
