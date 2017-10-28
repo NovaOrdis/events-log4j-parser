@@ -16,18 +16,17 @@
 
 package io.novaordis.events.log4j.cli;
 
+import java.util.List;
+
 import io.novaordis.events.log4j.experimental.MessageProcessing;
 import io.novaordis.events.processing.Procedure;
 import io.novaordis.events.processing.ProcedureFactory;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 8/9/17
  */
-public class LocalProcedureFactory implements ProcedureFactory {
+public class Log4jParserProcedureFactory implements ProcedureFactory {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
