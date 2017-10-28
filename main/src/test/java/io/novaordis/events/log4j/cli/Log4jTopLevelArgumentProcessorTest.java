@@ -149,7 +149,7 @@ public class Log4jTopLevelArgumentProcessorTest {
         catch(UserErrorException e) {
 
             String msg = e.getMessage();
-            assertTrue(msg.contains("missing log4j pattern layout specification"));
+            assertTrue(msg.contains("invalid log4j pattern layout specification:"));
         }
     }
 
@@ -312,7 +312,7 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         try {
 
-            p.processLog4jPatternLayoutLiteral("TODO: replace this with a pattern layout that cannot be parsed", c);
+            p.processLog4jPatternLayoutLiteral("TODO: replace it with a real invalid pattern", c);
 
             fail("should have failed");
         }

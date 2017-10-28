@@ -16,6 +16,15 @@
 
 package io.novaordis.events.log4j;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.pattern.PatternParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A parsed representation of a Log4j pattern layout.
  *
@@ -28,7 +37,22 @@ public class Log4jPatternLayout {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
+    private static final Logger log = LoggerFactory.getLogger(Log4jPatternLayout.class);
+
     // Static ----------------------------------------------------------------------------------------------------------
+
+    public static void experimental(String patternLiteral) throws Exception {
+
+        log.info("hook");
+
+        Map converterRegistry = new HashMap<>();
+
+        List patternConverters = new ArrayList<>();
+        List formattingInfos = new ArrayList<>();
+
+        PatternParser.parse(patternLiteral, patternConverters, formattingInfos, null, null);
+
+    }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
@@ -44,6 +68,15 @@ public class Log4jPatternLayout {
         }
 
         this.literal = literal;
+
+        //
+        // very crude parsing, replace it with something better
+        //
+
+        if (!literal.contains("%")) {
+
+            throw new Log4jPatternLayoutException("invalid log4j pattern layout specification: " + literal);
+        }
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

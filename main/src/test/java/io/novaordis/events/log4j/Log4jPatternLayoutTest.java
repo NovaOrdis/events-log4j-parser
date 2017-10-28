@@ -68,6 +68,13 @@ public class Log4jPatternLayoutTest {
         fail("return here");
     }
 
+    @Test
+    public void experimental() throws Exception {
+
+        Log4jPatternLayout.experimental("%c");
+    }
+
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
