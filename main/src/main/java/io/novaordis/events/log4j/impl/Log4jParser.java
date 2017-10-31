@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**

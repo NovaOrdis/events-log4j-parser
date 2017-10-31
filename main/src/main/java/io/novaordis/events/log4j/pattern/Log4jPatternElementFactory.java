@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
-
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+package io.novaordis.events.log4j.pattern;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class Log4jPatternElementFactory {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,25 +28,36 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
-     */
-    public Log4jPatternLayout getPatternLayout() {
+    public Log4jPatternElement getInstance(char c) throws Log4jPatternLayoutException {
 
-        return patternLayout;
-    }
+        if (DatePatternElement.VALUE == c) {
 
-    public void setPatternLayout(Log4jPatternLayout l) {
+            return new DatePatternElement();
+        }
+        else if (LevelPatternElement.VALUE == c) {
 
-        this.patternLayout = l;
+            return new LevelPatternElement();
+        }
+        else if (LineSeparatorPatternElement.VALUE == c) {
+
+            return new LineSeparatorPatternElement();
+        }
+        else if (LoggerPatternElement.VALUE == c) {
+
+            return new LoggerPatternElement();
+        }
+        else if (ThreadNamePatternElement.VALUE == c) {
+
+            return new ThreadNamePatternElement();
+        }
+        else {
+
+            return new UnknownPatternElement();
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

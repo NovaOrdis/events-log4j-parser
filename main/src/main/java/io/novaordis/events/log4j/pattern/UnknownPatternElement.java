@@ -14,81 +14,42 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.pattern.PatternParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package io.novaordis.events.log4j.pattern;
 
 /**
- * A parsed representation of a Log4j pattern layout.
- *
- * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+ * Models unrecognized pattern elements.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jPatternLayout {
+public class UnknownPatternElement implements Log4jPatternElement {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    private static final Logger log = LoggerFactory.getLogger(Log4jPatternLayout.class);
-
     // Static ----------------------------------------------------------------------------------------------------------
-
-    public static void experimental(String patternLiteral) throws Exception {
-
-        log.info("hook");
-
-        Map converterRegistry = new HashMap<>();
-
-        List patternConverters = new ArrayList<>();
-        List formattingInfos = new ArrayList<>();
-
-        PatternParser.parse(patternLiteral, patternConverters, formattingInfos, null, null);
-
-    }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private String literal;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public Log4jPatternLayout(String literal) throws Log4jPatternLayoutException {
-
-        if (literal == null) {
-
-            throw new IllegalArgumentException("null log4j pattern layout literal");
-        }
-
-        this.literal = literal;
-
-        //
-        // very crude parsing, replace it with something better
-        //
-
-        if (!literal.contains("%")) {
-
-            throw new Log4jPatternLayoutException("invalid log4j pattern layout specification: " + literal);
-        }
+    /**
+     * Instances of this class can only be created by the Log4jPatternElementFactory or within the package.
+     */
+    protected UnknownPatternElement() {
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the literal representation of the pattern layout, as provided to this instance by the layer that creates
-     * it.
-     */
+    // Log4jPatternElement implementation ------------------------------------------------------------------------------
+
+    @Override
     public String getLiteral() {
+        throw new RuntimeException("getLiteral() NOT YET IMPLEMENTED");
+    }
 
-        return literal;
-
+    @Override
+    public AddResult add(char c) throws Log4jPatternLayoutException {
+        throw new RuntimeException("add() NOT YET IMPLEMENTED");
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

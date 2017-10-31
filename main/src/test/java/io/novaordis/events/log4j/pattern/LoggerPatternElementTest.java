@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
+package io.novaordis.events.log4j.pattern;
 
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+import org.junit.Test;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class LoggerPatternElementTest extends Log4jPatternElementTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,30 +30,35 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
-     */
-    public Log4jPatternLayout getPatternLayout() {
+    // Overrides -------------------------------------------------------------------------------------------------------
 
-        return patternLayout;
+    @Test
+    @Override
+    public void addAfterLast() throws Exception {
+        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
     }
 
-    public void setPatternLayout(Log4jPatternLayout l) {
-
-        this.patternLayout = l;
+    @Test
+    @Override
+    public void addAfterNotAccepted() throws Exception {
+        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
     }
+
+    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected LoggerPatternElement getLog4jPatternElementToTest() throws Exception {
+
+        return new LoggerPatternElement();
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

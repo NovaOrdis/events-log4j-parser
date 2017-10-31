@@ -21,8 +21,8 @@ import java.util.List;
 import io.novaordis.events.api.parser.Parser;
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.TopLevelArgumentProcessor;
-import io.novaordis.events.log4j.Log4jPatternLayout;
-import io.novaordis.events.log4j.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.utilities.UserErrorException;
 

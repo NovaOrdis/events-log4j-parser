@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jPatternLayoutTest {
+public class ThreadNamePatternElementTest extends Log4jPatternElementTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -38,46 +34,31 @@ public class Log4jPatternLayoutTest {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
+    // Overrides -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @Override
+    public void addAfterLast() throws Exception {
+        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
+    }
+
+    @Test
+    @Override
+    public void addAfterNotAccepted() throws Exception {
+        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
+    }
+
     // Tests -----------------------------------------------------------------------------------------------------------
-
-    // constructors ----------------------------------------------------------------------------------------------------
-
-    @Test
-    public void constructor_NullLiteral() throws Exception {
-
-        try {
-
-            new Log4jPatternLayout(null);
-
-            fail("should have thrown exception");
-        }
-        catch(IllegalArgumentException e) {
-
-            String msg = e.getMessage();
-            assertTrue(msg.contains("null log4j pattern layout literal"));
-        }
-    }
-
-    @Test
-    public void constructor() throws Exception {
-
-        Log4jPatternLayout pl = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
-
-        assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
-
-        fail("return here");
-    }
-
-    @Test
-    public void experimental() throws Exception {
-
-        Log4jPatternLayout.experimental("%c");
-    }
-
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected ThreadNamePatternElement getLog4jPatternElementToTest() throws Exception {
+
+        return new ThreadNamePatternElement();
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

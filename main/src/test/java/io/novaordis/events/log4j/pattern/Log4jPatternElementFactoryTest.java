@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
+package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
-import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jConfigurationTest {
+public class Log4jPatternElementFactoryTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -38,18 +36,64 @@ public class Log4jConfigurationTest {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    // Tests -----------------------------------------------------------------------------------------------------------
+    @Test
+    public void getInstance_Date() throws Exception {
+
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+
+        DatePatternElement e = (DatePatternElement)f.getInstance(DatePatternElement.VALUE);
+
+        assertNotNull(e);
+    }
 
     @Test
-    public void constructor() throws Exception {
+    public void getInstance_Level() throws Exception {
 
-        Log4jConfiguration c = new Log4jConfiguration();
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
 
-        Log4jPatternLayout pl = new Log4jPatternLayout("%c");
-        c.setPatternLayout(pl);
+        LevelPatternElement e = (LevelPatternElement)f.getInstance(LevelPatternElement.VALUE);
 
-        Log4jPatternLayout pl2 = c.getPatternLayout();
-        assertEquals("%c", pl2.getLiteral());
+        assertNotNull(e);
+    }
+
+    @Test
+    public void getInstance_LineSeparator() throws Exception {
+
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+
+        LineSeparatorPatternElement e = (LineSeparatorPatternElement)f.getInstance(LineSeparatorPatternElement.VALUE);
+
+        assertNotNull(e);
+    }
+
+    @Test
+    public void getInstance_Logger() throws Exception {
+
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+
+        LoggerPatternElement e = (LoggerPatternElement)f.getInstance(LoggerPatternElement.VALUE);
+
+        assertNotNull(e);
+    }
+
+    @Test
+    public void getInstance_ThreadName() throws Exception {
+
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+
+        ThreadNamePatternElement e = (ThreadNamePatternElement)f.getInstance(ThreadNamePatternElement.VALUE);
+
+        assertNotNull(e);
+    }
+
+    @Test
+    public void getInstance_Unknown() throws Exception {
+
+        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+
+        UnknownPatternElement e = (UnknownPatternElement)f.getInstance('s');
+
+        assertNotNull(e);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

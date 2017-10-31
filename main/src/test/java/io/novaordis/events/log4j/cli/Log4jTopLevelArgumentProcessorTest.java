@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import io.novaordis.events.cli.Configuration;
 import io.novaordis.events.cli.ConfigurationImpl;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.impl.Log4jParser;
 import io.novaordis.utilities.UserErrorException;
 

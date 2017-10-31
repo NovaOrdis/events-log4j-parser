@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
+package io.novaordis.events.log4j.pattern;
 
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+import org.junit.Test;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public abstract class Log4jPatternElementTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,30 +30,32 @@ public class Log4jConfiguration implements ApplicationSpecificConfiguration {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
+    // Tests -----------------------------------------------------------------------------------------------------------
+
     /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
+     * AddResult.LAST throws Log4jPatternLayoutException.
      */
-    public Log4jPatternLayout getPatternLayout() {
+    @Test
+    public abstract void addAfterLast() throws Exception;
 
-        return patternLayout;
-    }
+    /**
+     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
+     * AddResult.NOT_ACCEPTED throws Log4jPatternLayoutException.
+     */
+    @Test
+    public abstract void addAfterNotAccepted() throws Exception;
 
-    public void setPatternLayout(Log4jPatternLayout l) {
-
-        this.patternLayout = l;
-    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    protected abstract Log4jPatternElement getLog4jPatternElementToTest() throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

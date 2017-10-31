@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j;
+package io.novaordis.events.log4j.pattern;
+
+import org.junit.Test;
 
 /**
- * A human-readable message carrying exception.
- *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jPatternLayoutException extends Exception {
+public class LevelPatternElementTest extends Log4jPatternElementTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -32,16 +32,33 @@ public class Log4jPatternLayoutException extends Exception {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public Log4jPatternLayoutException(String msg) {
+    // Public ----------------------------------------------------------------------------------------------------------
 
-        super(msg);
+    // Overrides -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @Override
+    public void addAfterLast() throws Exception {
+        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
     }
 
-    // Public ----------------------------------------------------------------------------------------------------------
+    @Test
+    @Override
+    public void addAfterNotAccepted() throws Exception {
+        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
+    }
+
+    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected LevelPatternElement getLog4jPatternElementToTest() throws Exception {
+
+        return new LevelPatternElement();
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

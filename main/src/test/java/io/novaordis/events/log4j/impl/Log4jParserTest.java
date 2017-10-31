@@ -25,7 +25,7 @@ import org.junit.Test;
 import io.novaordis.events.api.event.EndOfStreamEvent;
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.event.TimedEvent;
-import io.novaordis.events.log4j.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.utilities.Files;
 
 import static org.junit.Assert.assertEquals;

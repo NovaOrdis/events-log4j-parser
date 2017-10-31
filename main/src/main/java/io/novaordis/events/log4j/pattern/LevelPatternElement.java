@@ -14,43 +14,48 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.cli;
-
-import io.novaordis.events.cli.ApplicationSpecificConfiguration;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+package io.novaordis.events.log4j.pattern;
 
 /**
+ * The level of the logging event.
+ *
+ * p
+ *
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/28/17
+ * @since 10/30/17
  */
-public class Log4jConfiguration implements ApplicationSpecificConfiguration {
+public class LevelPatternElement implements Log4jPatternElement {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char VALUE = 'p';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private Log4jPatternLayout patternLayout;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    // Public ----------------------------------------------------------------------------------------------------------
-
     /**
-     * @return the parsed log4j pattern layout. May return null.
-     *
-     * See http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+     * Instances of this class can only be created by the Log4jPatternElementFactory or within the package.
      */
-    public Log4jPatternLayout getPatternLayout() {
-
-        return patternLayout;
+    protected LevelPatternElement() {
     }
 
-    public void setPatternLayout(Log4jPatternLayout l) {
+    // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
-        this.patternLayout = l;
+    @Override
+    public String getLiteral() {
+        throw new RuntimeException("getLiteral() NOT YET IMPLEMENTED");
     }
+
+    @Override
+    public AddResult add(char c) throws Log4jPatternLayoutException {
+        throw new RuntimeException("add() NOT YET IMPLEMENTED");
+    }
+
+    // Public ----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
