@@ -71,7 +71,7 @@ public class Log4jPatternLayout {
 
     public Iterator<Log4jPatternElement> getPatternElementIterator() {
 
-        throw new RuntimeException("NYE");
+        return elements.iterator();
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -84,8 +84,8 @@ public class Log4jPatternLayout {
 
         int i = 0;
 
-        Log4jPatternElement current = null;
-        Log4jPatternElementFactory patternElementFactory = new Log4jPatternElementFactory();
+        ElementHolder current = new ElementHolder();
+        Log4jPatternElementFinder patternElementFactory = new Log4jPatternElementFinder();
 
         for(; i < patternLiteral.length(); i ++) {
 
@@ -93,12 +93,12 @@ public class Log4jPatternLayout {
 
             if (c == PATTERN_ELEMENT_MARKER) {
 
-                if (current != null) {
+                if (current.get() != null) {
 
                     //
-                    // record the current one
+                    // record the current element
                     //
-                    elements.add(current);
+                    elements.add(current.remove());
                 }
 
                 if (i == patternLiteral.length() - 1) {
@@ -107,23 +107,53 @@ public class Log4jPatternLayout {
                             "' not followed by any pattern element");
                 }
 
-                char patternElementChar = patternLiteral.charAt(++ i);
-                current = patternElementFactory.getInstance(patternElementChar);
+                i = patternElementFactory.lookup(patternLiteral, i + 1, current);
             }
-            else if (current != null) {
+            else if (current.get() != null) {
 
-                AddResult result = current.add(c);
+                Log4jPatternElement e = current.get();
 
-                if (AddResult.LAST.equals(result)) {
+                AddResult result = e.add(c);
 
-                    elements.add(current);
-                    current = null;
+                if (AddResult.NOT_ACCEPTED.equals(result) || AddResult.LAST.equals(result)) {
+
+                    elements.add(e);
+                    current.remove();
                 }
-                else {
 
-                    throw new RuntimeException("NYE");
+                if (AddResult.NOT_ACCEPTED.equals(result)) {
+
+                    i --;
+                }
+
+                //
+                // else continue adding to the current element ...
+                //
+            }
+            else {
+
+                //
+                // the current element is null and the current character is not an element marker, start a literal
+                //
+
+                LiteralPatternElement e = new LiteralPatternElement();
+                
+                current.set(e);
+
+                AddResult result = e.add(c);
+
+                if (AddResult.NOT_ACCEPTED.equals(result)) {
+
+                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
                 }
             }
+        }
+
+        Log4jPatternElement last = current.get();
+
+        if (last != null) {
+
+            elements.add(last);
         }
     }
 

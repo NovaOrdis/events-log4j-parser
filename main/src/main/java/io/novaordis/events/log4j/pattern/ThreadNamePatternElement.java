@@ -25,11 +25,11 @@ package io.novaordis.events.log4j.pattern;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class ThreadNamePatternElement implements Log4jPatternElement {
+public class ThreadNamePatternElement extends Log4jPatternElementBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char VALUE = 't';
+    public static final char IDENTIFIER = 't';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -37,22 +37,12 @@ public class ThreadNamePatternElement implements Log4jPatternElement {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    /**
-     * Instances of this class can only be created by the Log4jPatternElementFactory or within the package.
-     */
-    protected ThreadNamePatternElement() {
-    }
-
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
     @Override
-    public String getLiteral() {
-        throw new RuntimeException("getLiteral() NOT YET IMPLEMENTED");
-    }
+    public Character getIdentifier() {
 
-    @Override
-    public AddResult add(char c) throws Log4jPatternLayoutException {
-        throw new RuntimeException("add() NOT YET IMPLEMENTED");
+        return IDENTIFIER;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

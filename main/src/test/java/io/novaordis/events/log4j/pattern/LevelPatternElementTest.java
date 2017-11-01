@@ -18,6 +18,10 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -39,16 +43,74 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     @Override
     public void addAfterLast() throws Exception {
-        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
+
+        //
+        // noop
+        //
     }
 
     @Test
     @Override
     public void addAfterNotAccepted() throws Exception {
-        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
+
+        LevelPatternElement e = getLog4jPatternElementToTest();
+
+        AddResult r = e.add(' ');
+        assertEquals(AddResult.NOT_ACCEPTED, r);
+
+        try {
+
+            e.add(' ');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+        }
     }
 
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void add() throws Exception {
+
+        LevelPatternElement e = getLog4jPatternElementToTest();
+
+        AddResult r = e.add(' ');
+        assertEquals(AddResult.NOT_ACCEPTED, r);
+
+        try {
+
+            e.add(' ');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+        }
+    }
+
+    @Test
+    public void getLiteral() throws Exception {
+
+        LevelPatternElement e = getLog4jPatternElementToTest();
+
+        assertEquals("%p", e.getLiteral());
+    }
+
+    @Test
+    public void getLiteral_FormatModifier() throws Exception {
+
+        LevelPatternElement e = getLog4jPatternElementToTest();
+
+        e.setFormatModifierLiteral("-5");
+
+        assertEquals("%-5p", e.getLiteral());
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

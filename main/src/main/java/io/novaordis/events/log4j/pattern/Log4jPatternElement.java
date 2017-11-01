@@ -29,11 +29,29 @@ public interface Log4jPatternElement {
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
+     * One char identifier:
+     *
+     * 'd' - date
+     * 'p' - level
+     * 'n' - line separator
+     * 'c' - logger
+     * 't' - thread name
+     *
+     * May return null.
+     */
+    Character getIdentifier();
+
+    /**
      * @return the pattern element literal - the pattern element marker ('%') and the defining character, possibly
      * followed by any extra format specification. For LiteralPatternElement, it is the sequence of characters that
-     * will be copied in the log.
+     * will be copied in the log. May return null if the element is not initialized yet.
      */
     String getLiteral();
+
+    /**
+     * May return null if the element has no format modifier.
+     */
+    String getFormatModifierLiteral();
 
     /**
      * Attempt to add to the pattern element the next character read from the pattern element literal stream. The

@@ -22,7 +22,7 @@ package io.novaordis.events.log4j.pattern;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class UnknownPatternElement implements Log4jPatternElement {
+public class UnknownPatternElement extends Log4jPatternElementBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -30,12 +30,13 @@ public class UnknownPatternElement implements Log4jPatternElement {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    private char identifier;
+
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    /**
-     * Instances of this class can only be created by the Log4jPatternElementFactory or within the package.
-     */
-    protected UnknownPatternElement() {
+    protected UnknownPatternElement(char identifier) {
+
+        this.identifier = identifier;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -43,13 +44,9 @@ public class UnknownPatternElement implements Log4jPatternElement {
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
     @Override
-    public String getLiteral() {
-        throw new RuntimeException("getLiteral() NOT YET IMPLEMENTED");
-    }
+    public Character getIdentifier() {
 
-    @Override
-    public AddResult add(char c) throws Log4jPatternLayoutException {
-        throw new RuntimeException("add() NOT YET IMPLEMENTED");
+        return identifier;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

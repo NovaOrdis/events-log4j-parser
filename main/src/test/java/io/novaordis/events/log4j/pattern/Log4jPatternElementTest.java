@@ -18,6 +18,9 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -50,6 +53,46 @@ public abstract class Log4jPatternElementTest {
     @Test
     public abstract void addAfterNotAccepted() throws Exception;
 
+    @Test
+    public void getFormatModifierLiteral() throws Exception {
+
+        //
+        // by default, the elements have no format modifier literal
+        //
+
+        Log4jPatternElement e = getLog4jPatternElementToTest();
+
+        String m = e.getFormatModifierLiteral();
+
+        assertNull(m);
+    }
+
+    // getLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void getLiteral() throws Exception {
+
+        Log4jPatternElement e = getLog4jPatternElementToTest();
+        assertNull(e.getFormatModifierLiteral());
+
+        String expected = "%" + e.getIdentifier();
+        String l = e.getLiteral();
+
+        assertEquals(expected, l);
+    }
+
+    @Test
+    public void getLiteral_WithFormatModifier() throws Exception {
+
+        Log4jPatternElement e = getLog4jPatternElementToTest();
+
+        ((Log4jPatternElementBase)e).setFormatModifierLiteral("-5");
+
+        String expected = "%-5" + e.getIdentifier();
+        String l = e.getLiteral();
+
+        assertEquals(expected, l);
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

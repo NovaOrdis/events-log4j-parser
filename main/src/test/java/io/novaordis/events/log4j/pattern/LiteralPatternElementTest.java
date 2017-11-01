@@ -18,6 +18,9 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -39,16 +42,89 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
     @Test
     @Override
     public void addAfterLast() throws Exception {
-        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
+
+        //
+        // noop
+        //
     }
 
     @Test
     @Override
     public void addAfterNotAccepted() throws Exception {
-        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
+
+        //
+        // noop
+        //
     }
 
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void add() throws Exception {
+
+        LiteralPatternElement e = getLog4jPatternElementToTest();
+
+        assertNull(e.getLiteral());
+
+        AddResult result = e.add('b');
+        assertEquals(AddResult.ACCEPTED, result);
+
+        assertEquals("b", e.getLiteral());
+
+        AddResult result2 = e.add('l');
+        assertEquals(AddResult.ACCEPTED, result2);
+
+        assertEquals("bl", e.getLiteral());
+
+        AddResult result3 = e.add('a');
+        assertEquals(AddResult.ACCEPTED, result3);
+
+        assertEquals("bla", e.getLiteral());
+
+        AddResult result4 = e.add('h');
+        assertEquals(AddResult.ACCEPTED, result4);
+
+        assertEquals("blah", e.getLiteral());
+
+        AddResult result5 = e.add(' ');
+        assertEquals(AddResult.ACCEPTED, result5);
+
+        assertEquals("blah ", e.getLiteral());
+
+        AddResult result6 = e.add('[');
+        assertEquals(AddResult.ACCEPTED, result6);
+
+        assertEquals("blah [", e.getLiteral());
+    }
+
+    // getLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    @Override
+    public void getLiteral() throws Exception {
+
+        LiteralPatternElement e = new LiteralPatternElement();
+
+        e.add('b');
+        e.add('l');
+        e.add('a');
+        e.add('h');
+
+        assertNull(e.getFormatModifierLiteral());
+
+        String l = e.getLiteral();
+
+        assertEquals("blah", l);
+    }
+
+    @Test
+    @Override
+    public void getLiteral_WithFormatModifier() throws Exception {
+
+        //
+        // noop
+        //
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

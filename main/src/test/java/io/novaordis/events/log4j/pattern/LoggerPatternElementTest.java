@@ -18,6 +18,10 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -39,13 +43,32 @@ public class LoggerPatternElementTest extends Log4jPatternElementTest {
     @Test
     @Override
     public void addAfterLast() throws Exception {
-        throw new RuntimeException("addAfterLast() NOT YET IMPLEMENTED");
+
+        //
+        // noop
+        //
     }
 
     @Test
     @Override
     public void addAfterNotAccepted() throws Exception {
-        throw new RuntimeException("addAfterNotAccepted() NOT YET IMPLEMENTED");
+
+        LoggerPatternElement e = getLog4jPatternElementToTest();
+
+        AddResult r = e.add(' ');
+        assertEquals(AddResult.NOT_ACCEPTED, r);
+
+        try {
+
+            e.add(' ');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+        }
     }
 
     // Tests -----------------------------------------------------------------------------------------------------------

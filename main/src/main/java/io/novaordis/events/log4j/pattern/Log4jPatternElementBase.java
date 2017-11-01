@@ -18,9 +18,9 @@ package io.novaordis.events.log4j.pattern;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 10/31/17
  */
-public class Log4jPatternElementFactory {
+public abstract class Log4jPatternElementBase implements Log4jPatternElement {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -28,39 +28,63 @@ public class Log4jPatternElementFactory {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    private String formatModifierLiteral;
+
+    private boolean closed;
+
     // Constructors ----------------------------------------------------------------------------------------------------
+
+    /**
+     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
+     */
+    protected Log4jPatternElementBase() {
+
+        this.closed = false;
+    }
+
+    // Log4jPatternElement implementation ------------------------------------------------------------------------------
+
+    @Override
+    public String getFormatModifierLiteral() {
+
+        return formatModifierLiteral;
+    }
+
+    @Override
+    public String getLiteral() {
+
+        String m = getFormatModifierLiteral();
+
+        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m) + getIdentifier();
+    }
+
+    @Override
+    public AddResult add(char c) throws Log4jPatternLayoutException {
+
+        if (closed) {
+
+            throw new Log4jPatternLayoutException("attempt to add more characters to a closed element");
+        }
+
+        closed = true;
+
+        return AddResult.NOT_ACCEPTED;
+    }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    public Log4jPatternElement getInstance(char c) throws Log4jPatternLayoutException {
+    @Override
+    public String toString() {
 
-        if (DatePatternElement.VALUE == c) {
-
-            return new DatePatternElement();
-        }
-        else if (LevelPatternElement.VALUE == c) {
-
-            return new LevelPatternElement();
-        }
-        else if (LineSeparatorPatternElement.VALUE == c) {
-
-            return new LineSeparatorPatternElement();
-        }
-        else if (LoggerPatternElement.VALUE == c) {
-
-            return new LoggerPatternElement();
-        }
-        else if (ThreadNamePatternElement.VALUE == c) {
-
-            return new ThreadNamePatternElement();
-        }
-        else {
-
-            return new UnknownPatternElement();
-        }
+        return getLiteral();
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
+
+    void setFormatModifierLiteral(String s) throws Log4jPatternLayoutException {
+
+        this.formatModifierLiteral = s;
+    }
 
     // Protected -------------------------------------------------------------------------------------------------------
 

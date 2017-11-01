@@ -90,6 +90,8 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
+    // add() -----------------------------------------------------------------------------------------------------------
+
     @Test
     public void add_SimpleDateFormat() throws Exception {
 
@@ -329,6 +331,26 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
             String msg = e.getMessage();
             assertEquals("Support for UNIX_MILLIS pattern NOT YET IMPLEMENTED", msg);
         }
+    }
+
+    // getLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void getLiteral() throws Exception {
+
+        DatePatternElement e = getLog4jPatternElementToTest();
+
+        assertEquals("%d", e.getLiteral());
+    }
+
+    @Test
+    public void getLiteral_FormatModifier() throws Exception {
+
+        DatePatternElement e = getLog4jPatternElementToTest();
+
+        e.setFormatModifierLiteral("-5");
+
+        assertEquals("%-5d", e.getLiteral());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

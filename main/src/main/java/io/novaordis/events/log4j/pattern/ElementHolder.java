@@ -16,15 +16,13 @@
 
 package io.novaordis.events.log4j.pattern;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-
 /**
+ * Utility class that allows the factory to return an extracted element in other way than through a result.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 10/31/17
  */
-public class Log4jPatternElementFactoryTest {
+class ElementHolder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -32,68 +30,40 @@ public class Log4jPatternElementFactoryTest {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    private Log4jPatternElement element;
+
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    @Test
-    public void getInstance_Date() throws Exception {
+    /**
+     * May return null.
+     */
+    public Log4jPatternElement get() {
 
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
-
-        DatePatternElement e = (DatePatternElement)f.getInstance(DatePatternElement.VALUE);
-
-        assertNotNull(e);
+        return element;
     }
 
-    @Test
-    public void getInstance_Level() throws Exception {
+    /**
+     * May return null.
+     */
+    public Log4jPatternElement remove() {
 
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
-
-        LevelPatternElement e = (LevelPatternElement)f.getInstance(LevelPatternElement.VALUE);
-
-        assertNotNull(e);
+        Log4jPatternElement result = element;
+        element = null;
+        return result;
     }
 
-    @Test
-    public void getInstance_LineSeparator() throws Exception {
 
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
+    public void set(Log4jPatternElement element) {
 
-        LineSeparatorPatternElement e = (LineSeparatorPatternElement)f.getInstance(LineSeparatorPatternElement.VALUE);
-
-        assertNotNull(e);
+        this.element = element;
     }
 
-    @Test
-    public void getInstance_Logger() throws Exception {
+    @Override
+    public String toString() {
 
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
-
-        LoggerPatternElement e = (LoggerPatternElement)f.getInstance(LoggerPatternElement.VALUE);
-
-        assertNotNull(e);
-    }
-
-    @Test
-    public void getInstance_ThreadName() throws Exception {
-
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
-
-        ThreadNamePatternElement e = (ThreadNamePatternElement)f.getInstance(ThreadNamePatternElement.VALUE);
-
-        assertNotNull(e);
-    }
-
-    @Test
-    public void getInstance_Unknown() throws Exception {
-
-        Log4jPatternElementFactory f = new Log4jPatternElementFactory();
-
-        UnknownPatternElement e = (UnknownPatternElement)f.getInstance('s');
-
-        assertNotNull(e);
+        return "o->" + element;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

@@ -26,9 +26,11 @@ import java.text.SimpleDateFormat;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class DatePatternElement implements Log4jPatternElement {
+public class DatePatternElement extends Log4jPatternElementBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char IDENTIFIER = 'd';
 
     public static final String DEFAULT = "DEFAULT";
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
@@ -52,8 +54,6 @@ public class DatePatternElement implements Log4jPatternElement {
 
     public static final String UNIX_MILLIS = "UNIX_MILLIS";
 
-    public static final char VALUE = 'd';
-
     private static final short NEW = 0;
     private static final short READING_DATE_PATTERN = 1;
     private static final short CLOSED = 2;
@@ -69,7 +69,7 @@ public class DatePatternElement implements Log4jPatternElement {
     // Constructors ----------------------------------------------------------------------------------------------------
 
     /**
-     * Instances of this class can only be created by the Log4jPatternElementFactory or within the package.
+     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
      */
     protected DatePatternElement() {
 
@@ -79,9 +79,15 @@ public class DatePatternElement implements Log4jPatternElement {
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
     @Override
+    public Character getIdentifier() {
+
+        return IDENTIFIER;
+    }
+
+    @Override
     public String getLiteral() {
 
-        String s = "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + VALUE;
+        String s = super.getLiteral();
 
         if (datePatternLiteral != null) {
 
