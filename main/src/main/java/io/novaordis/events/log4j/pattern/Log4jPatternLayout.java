@@ -74,6 +74,12 @@ public class Log4jPatternLayout {
         return elements.iterator();
     }
 
+    @Override
+    public String toString() {
+
+        return "Log4jPatternLayout[" + getLiteral() + "]";
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------

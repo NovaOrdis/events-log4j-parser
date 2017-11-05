@@ -115,7 +115,7 @@ public class MainTest {
 
         String[] args = new String[] {
                 "-f",
-                "d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
+                "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
                 f.getPath()
         };
 

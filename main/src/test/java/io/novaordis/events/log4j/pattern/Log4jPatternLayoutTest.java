@@ -168,6 +168,23 @@ public class Log4jPatternLayoutTest {
         assertFalse(i.hasNext());
     }
 
+    @Test
+    public void constructor_InvalidDateFormat() throws Exception {
+
+        try {
+
+            new Log4jPatternLayout("%d{blah}");
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("invalid date format"));
+            assertTrue(msg.contains("blah"));
+        }
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------

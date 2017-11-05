@@ -126,7 +126,8 @@ public class Log4jTopLevelArgumentProcessor implements TopLevelArgumentProcessor
         }
         catch(Log4jPatternLayoutException e) {
 
-            throw new UserErrorException(e);
+            String msg = "invalid log4j pattern layout specification: " + e.getMessage();
+            throw new UserErrorException(msg, e);
         }
 
         //

@@ -179,7 +179,7 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         Log4jTopLevelArgumentProcessor p = new Log4jTopLevelArgumentProcessor();
 
-        List<String> args = new ArrayList<>(Arrays.asList("--format=blah"));
+        List<String> args = new ArrayList<>(Arrays.asList("--format=%d{blah}"));
 
         ConfigurationImpl c = new ConfigurationImpl(new String[0], null);
 
@@ -192,6 +192,8 @@ public class Log4jTopLevelArgumentProcessorTest {
 
             String msg = e.getMessage();
             assertTrue(msg.contains("invalid log4j pattern layout specification"));
+            assertTrue(msg.contains("invalid date format"));
+            assertTrue(msg.contains("blah"));
         }
     }
 
@@ -251,7 +253,7 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         try {
 
-            p.processLog4jPatternLayoutLiteral("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", null);
+            p.processLog4jPatternLayoutLiteral("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", null);
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -270,7 +272,7 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         try {
 
-            p.processLog4jPatternLayoutLiteral("d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", c);
+            p.processLog4jPatternLayoutLiteral("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", c);
             fail("should have thrown exception");
         }
         catch(IllegalStateException e) {
@@ -312,14 +314,16 @@ public class Log4jTopLevelArgumentProcessorTest {
 
         try {
 
-            p.processLog4jPatternLayoutLiteral("TODO: replace it with a real invalid pattern", c);
+            p.processLog4jPatternLayoutLiteral("%d{blah}", c);
 
             fail("should have failed");
         }
         catch(UserErrorException e) {
 
             String msg = e.getMessage();
-            assertTrue(msg.contains("TODO: replace with the real message"));
+            assertTrue(msg.contains("invalid log4j pattern layout specification"));
+            assertTrue(msg.contains("invalid date format"));
+            assertTrue(msg.contains("blah"));
         }
     }
 

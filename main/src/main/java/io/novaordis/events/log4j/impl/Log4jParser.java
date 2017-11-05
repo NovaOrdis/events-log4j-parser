@@ -116,6 +116,19 @@ public class Log4jParser extends ParserBase {
         return patternLayout;
     }
 
+    @Override
+    public String toString() {
+
+        if (patternLayout == null) {
+
+            return "Heuristic Log4jParser[" + Integer.toHexString(System.identityHashCode(this)) + "]";
+        }
+
+        String patternLiteral = patternLayout.getLiteral();
+
+        return "Log4jParser[" + patternLiteral + "]";
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     List<Event> matchPattern(long lineNumber, String line) throws ParsingException {

@@ -29,6 +29,7 @@ import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.utilities.Files;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -74,6 +75,24 @@ public class Log4jParserTest {
         Log4jPatternLayout l2 = p.getPatternLayout();
 
         assertEquals(l, l2);
+    }
+
+    // parse() ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void parse_Log4jPatternLayout() throws Exception {
+
+        String line = "09:01:55,011 INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.8.Final-redhat-1";
+
+        Log4jParser p = new Log4jParser();
+
+        Log4jPatternLayout layout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        p.setPatternLayout(layout);
+
+        List<Event> events = p.parse(1, line);
+        assertNotNull(events);
+
     }
 
     // applyHeuristics() -----------------------------------------------------------------------------------------------
