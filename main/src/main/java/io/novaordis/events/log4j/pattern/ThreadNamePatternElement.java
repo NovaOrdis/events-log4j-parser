@@ -21,6 +21,7 @@ package io.novaordis.events.log4j.pattern;
  *
  * 't'
  *
+ * The type of the corresponding parsed object instance is a String containing the thread name.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -43,6 +44,11 @@ public class ThreadNamePatternElement extends Log4jPatternElementBase {
     public Character getIdentifier() {
 
         return IDENTIFIER;
+    }
+
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

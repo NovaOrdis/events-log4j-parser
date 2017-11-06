@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -124,6 +125,50 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
         //
         // noop
         //
+    }
+
+    // parse() ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void parse() throws Exception {
+
+        String line = "something that does not matter something else blah";
+
+        int from = 31;
+
+        LiteralPatternElement pe = new LiteralPatternElement("something else");
+
+        ParsedElement p = pe.parse(line, from, null);
+
+        String s = (String)p.get();
+
+        assertEquals("something else", s);
+
+        assertEquals(31, p.from());
+        assertEquals(45, p.to());
+        assertEquals("something else", p.getLiteral());
+    }
+
+    @Test
+    public void parse_LiteralsDoNotMatch() throws Exception {
+
+        String line = "a blah";
+
+        int from = 2;
+
+        LiteralPatternElement pe = new LiteralPatternElement("blih");
+
+        try {
+
+            pe.parse(line, from, null);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertEquals("pattern element's literal \"blih\" does not match the parsed string literal \"blah\"", msg);
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

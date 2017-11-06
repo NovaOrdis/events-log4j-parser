@@ -55,7 +55,7 @@ public class Log4jPatternLayout {
 
         this.elements = new ArrayList<>();
 
-        parse();
+        parsePatternLayout();
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -67,6 +67,14 @@ public class Log4jPatternLayout {
     public String getLiteral() {
 
         return patternLiteral;
+    }
+
+    /**
+     * @return the number of distinct pattern elements. Literal pattern elements count as distinct pattern elements.
+     */
+    public int getPatternElementCount() {
+
+        return elements.size();
     }
 
     public Iterator<Log4jPatternElement> getPatternElementIterator() {
@@ -86,7 +94,7 @@ public class Log4jPatternLayout {
 
     // Private ---------------------------------------------------------------------------------------------------------
 
-    private void parse() throws Log4jPatternLayoutException {
+    private void parsePatternLayout() throws Log4jPatternLayoutException {
 
         int i = 0;
 

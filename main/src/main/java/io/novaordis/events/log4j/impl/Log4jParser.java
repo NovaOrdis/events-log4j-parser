@@ -19,6 +19,7 @@ package io.novaordis.events.log4j.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -26,7 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
+import io.novaordis.events.log4j.pattern.Log4jPatternElement;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ParsedElement;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -40,6 +44,67 @@ public class Log4jParser extends ParserBase {
     private static final Logger log = LoggerFactory.getLogger(Log4jParser.class);
 
     // Static ----------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return the parsed objects that correspond to the given pattern elements. The objects can be Strings,
+     * Date instances, numbers, etc. The returned list size is equal to Log4jPatternLayout.getPatternElementCount()
+     * value. The type correspondence is presented below:
+     *
+     * date pattern - java.lang.Date
+     *
+     * level pattern - io.novaordis.events.log4j.impl.Log4jLevel
+     *
+     * line separator pattern - platform specific line separator, as String.
+     *
+     * literal pattern - a string containing the literal
+     *
+     * logger - a string containing the logger
+     *
+     * thread name - a string containing the thread name
+     *
+     * @throws ParsingException
+     */
+    public static List<Object> matchPatterns(Long lineNumber, Log4jPatternLayout patternLayout, String line)
+            throws ParsingException {
+
+        Iterator<Log4jPatternElement> i = patternLayout.getPatternElementIterator();
+
+        if (!i.hasNext()) {
+
+            return Collections.emptyList();
+        }
+
+        Log4jPatternElement current = i.next();
+        Log4jPatternElement next = null;
+        int from = 0;
+
+        List<Object> result = new ArrayList<>();
+
+        do {
+
+            if (i.hasNext()) {
+
+                next = i.next();
+            }
+
+            try {
+
+                ParsedElement pe = current.parse(line, from, next);
+                result.add(pe.get());
+                from = pe.to();
+
+            }
+            catch(Log4jPatternLayoutException e) {
+
+                throw new ParsingException(lineNumber, e);
+            }
+
+            current = next;
+        }
+        while(current != null);
+
+        return result;
+    }
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
@@ -64,7 +129,7 @@ public class Log4jParser extends ParserBase {
 
         if (patternLayout != null) {
 
-            matchPattern(lineNumber, line);
+            matchPatterns(lineNumber, line);
         }
         else {
 
@@ -131,7 +196,9 @@ public class Log4jParser extends ParserBase {
 
     // Package protected -----------------------------------------------------------------------------------------------
 
-    List<Event> matchPattern(long lineNumber, String line) throws ParsingException {
+    List<Event> matchPatterns(long lineNumber, String line) throws ParsingException {
+
+        List<Object> parsedElements = matchPatterns(lineNumber, this.patternLayout, line);
 
         throw new RuntimeException("matchPattern(" + lineNumber + ", " + line + ") NOT YET IMPLEMENTED");
     }

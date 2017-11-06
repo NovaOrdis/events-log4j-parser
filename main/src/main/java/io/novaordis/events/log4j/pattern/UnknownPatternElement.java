@@ -49,6 +49,11 @@ public class UnknownPatternElement extends Log4jPatternElementBase {
         return identifier;
     }
 
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------

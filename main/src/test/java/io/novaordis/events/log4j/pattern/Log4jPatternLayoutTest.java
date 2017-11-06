@@ -87,6 +87,8 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
 
+        assertEquals(11, pl.getPatternElementCount());
+
         Iterator<Log4jPatternElement> i = pl.getPatternElementIterator();
 
         assertTrue(i.hasNext());

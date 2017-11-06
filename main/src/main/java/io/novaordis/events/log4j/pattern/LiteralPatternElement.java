@@ -19,8 +19,7 @@ package io.novaordis.events.log4j.pattern;
 /**
  * The name of the logger that publishes the logging event.
  *
- * c{precision}
- *
+ * The type of the corresponding parsed object instance is a String containing the literal value.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -41,6 +40,24 @@ public class LiteralPatternElement extends Log4jPatternElementBase {
      * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
      */
     protected LiteralPatternElement() {
+    }
+
+    /**
+     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
+     */
+    protected LiteralPatternElement(String literal) {
+
+        for(char c: literal.toCharArray()) {
+
+            try {
+
+                add(c);
+            }
+            catch(Log4jPatternLayoutException e) {
+
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
@@ -70,6 +87,24 @@ public class LiteralPatternElement extends Log4jPatternElementBase {
         }
 
         return AddResult.ACCEPTED;
+    }
+
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+
+        int length = literal.length();
+        int to = from + length;
+
+        String s2 = s.substring(from, to);
+
+        if (!literal.equals(s2)) {
+
+            throw new Log4jPatternLayoutException(
+                    "pattern element's literal \"" + literal +
+                            "\" does not match the parsed string literal \"" + s2 + "\"");
+        }
+
+        return new ParsedElement(literal, literal, from, to);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

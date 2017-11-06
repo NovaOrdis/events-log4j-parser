@@ -19,8 +19,9 @@ package io.novaordis.events.log4j.pattern;
 /**
  * The name of the logger that publishes the logging event.
  *
- * c{precision}
+ * n
  *
+ * The type of the corresponding parsed object instance is a String containing platform-specific line separator.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -43,6 +44,12 @@ public class LineSeparatorPatternElement extends Log4jPatternElementBase {
     public Character getIdentifier() {
 
         return IDENTIFIER;
+    }
+
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+
+        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

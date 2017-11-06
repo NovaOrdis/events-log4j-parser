@@ -16,12 +16,16 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Outputs the date of the logging event.
  *
  * 'd{pattern}'
+ *
+ * The type of the corresponding parsed object instance is java.lang.Date.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -74,6 +78,14 @@ public class DatePatternElement extends Log4jPatternElementBase {
     protected DatePatternElement() {
 
         this.state = NEW;
+    }
+
+    /**
+     * @param pattern, without the pattern element marker ('%'). Example: "d{HH:mm:ss,SSS}"
+     */
+    protected DatePatternElement(String pattern) throws Log4jPatternLayoutException {
+
+        super(pattern);
     }
 
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
@@ -145,6 +157,27 @@ public class DatePatternElement extends Log4jPatternElementBase {
 
             throw new IllegalStateException("unknown state " + state);
         }
+    }
+
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+
+        int length = dateFormat.toPattern().length();
+
+        String s2 = s.substring(from, from + length);
+
+        Date d;
+
+        try {
+
+            d =  dateFormat.parse(s2);
+        }
+        catch(ParseException e) {
+
+            throw new Log4jPatternLayoutException("date \"" + s2 + "\" does not match pattern " + getLiteral());
+        }
+
+        return new ParsedElement(d, s2, from, from + length);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

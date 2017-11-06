@@ -42,6 +42,60 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
         this.closed = false;
     }
 
+    /**
+     * @param pattern, without the pattern element marker ('%'). Example: "-5p" or "d{HH}".
+     */
+    protected Log4jPatternElementBase(String pattern) throws Log4jPatternLayoutException {
+
+        char[] chars = pattern.toCharArray();
+
+        String formatModifier = null;
+        char identifier = getIdentifier();
+        boolean add = false;
+
+        for (char c : chars) {
+
+            if (add) {
+
+                add(c);
+            }
+            else if (c == identifier) {
+
+                add = true;
+            }
+            else {
+
+                if (formatModifier == null) {
+
+                    formatModifier = "" + c;
+                }
+                else {
+
+                    formatModifier += c;
+                }
+            }
+        }
+
+        if (!add) {
+
+            //
+            // identifier not encountered
+            //
+
+            throw new Log4jPatternLayoutException("identifier '" + identifier + "' not encountered");
+        }
+        else {
+
+            closed = true;
+        }
+
+        if (formatModifier != null) {
+
+            setFormatModifierLiteral(formatModifier);
+        }
+
+    }
+
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
     @Override

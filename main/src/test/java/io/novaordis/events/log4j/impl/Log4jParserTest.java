@@ -18,6 +18,7 @@ package io.novaordis.events.log4j.impl;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -93,6 +95,68 @@ public class Log4jParserTest {
         List<Event> events = p.parse(1, line);
         assertNotNull(events);
 
+        fail("return here");
+
+    }
+
+    // static matchPatterns() -------------------------------------------------------------------------------------------
+
+    @Test
+    public void matchPatterns() throws Exception {
+
+        String line = "09:01:55,011 INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.8.Final-redhat-1";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        int elementCount = patternLayout.getPatternElementCount();
+
+        assertEquals(11, elementCount);
+
+        List<Object> parsedObjects = Log4jParser.matchPatterns(7L, patternLayout, line);
+
+        assertEquals(elementCount, parsedObjects.size());
+
+        Date d = (Date)parsedObjects.get(0);
+
+        Date expected = new SimpleDateFormat("{HH:mm:ss,SSS").parse("09:01:55,011");
+
+        assertEquals(expected, d);
+
+        String literal = (String)parsedObjects.get(1);
+
+        assertEquals(" ", literal);
+
+        Log4jLevel level = (Log4jLevel)parsedObjects.get(2);
+
+        assertEquals(Log4jLevel.INFO, level);
+
+        String literal2 = (String)parsedObjects.get(3);
+
+        assertEquals(" [", literal2);
+
+        String logger = (String)parsedObjects.get(4);
+
+        assertEquals("org.jboss.modules", logger);
+
+        String literal3 = (String)parsedObjects.get(5);
+
+        assertEquals("] (", literal3);
+
+        String threadName = (String)parsedObjects.get(6);
+
+        assertEquals("main", threadName);
+
+        String literal4 = (String)parsedObjects.get(7);
+
+        assertEquals(") ", literal4);
+
+        fail("return here");
+    }
+
+    @Test
+    public void matchPatterns_AllKnownPatternElements() throws Exception {
+
+        fail("return here");
     }
 
     // applyHeuristics() -----------------------------------------------------------------------------------------------

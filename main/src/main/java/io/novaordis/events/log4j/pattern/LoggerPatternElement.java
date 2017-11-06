@@ -21,6 +21,7 @@ package io.novaordis.events.log4j.pattern;
  *
  * c{precision}
  *
+ * The type of the corresponding parsed object instance is a String containing the logger value.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -43,6 +44,11 @@ public class LoggerPatternElement extends Log4jPatternElementBase {
     public Character getIdentifier() {
 
         return IDENTIFIER;
+    }
+
+    @Override
+    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

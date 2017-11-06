@@ -17,6 +17,7 @@
 package io.novaordis.events.log4j.pattern;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.junit.Test;
 
@@ -89,6 +90,24 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     }
 
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    // constructors ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void constructor_InvalidIdentifier() throws Exception {
+
+        try {
+
+            new DatePatternElement("e{HH}");
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("invalid date pattern element identifier: 'e'"));
+        }
+    }
 
     // add() -----------------------------------------------------------------------------------------------------------
 
@@ -351,6 +370,30 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         e.setFormatModifierLiteral("-5");
 
         assertEquals("%-5d", e.getLiteral());
+    }
+
+    // parse() ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void parse() throws Exception {
+
+        String line = "something that does not matter 09:01:55,011 INFO";
+
+        int from = 31;
+
+        LiteralPatternElement next = new LiteralPatternElement(" ");
+
+        DatePatternElement pe = new DatePatternElement("d{HH:mm:ss,SSS}");
+
+        ParsedElement p = pe.parse(line, from, next);
+
+        Date d = (Date)p.get();
+
+        assertEquals("09:01:55,011", new SimpleDateFormat("HH:mm:ss,SSS").format(d));
+
+        assertEquals(31, p.from());
+        assertEquals(43, p.to());
+        assertEquals("09:01:55,011", p.getLiteral());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

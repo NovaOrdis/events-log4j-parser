@@ -67,4 +67,17 @@ public interface Log4jPatternElement {
      */
     AddResult add(char c) throws Log4jPatternLayoutException;
 
+    /**
+     * Extract and parse the string value corresponding to this pattern element, returning the parsed element value. May
+     * not return a null value, if no string representation of this element is found at the given position in the
+     * string, Log4jPatternLayoutException is thrown.
+     *
+     * @exception Log4jPatternLayoutException if no valid string representation of this element is found at the given
+     * position in the string,
+     *
+     * @param next the next pattern element that follows this one in the log4j pattern layout, or null if this is the
+     *             last pattern element in the pattern layout.
+     */
+    ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException;
+
 }
