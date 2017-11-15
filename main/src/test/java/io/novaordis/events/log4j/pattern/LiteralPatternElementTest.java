@@ -111,7 +111,7 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
         e.add('a');
         e.add('h');
 
-        assertNull(e.getFormatModifierLiteral());
+        assertNull(e.getFormatModifier());
 
         String l = e.getLiteral();
 

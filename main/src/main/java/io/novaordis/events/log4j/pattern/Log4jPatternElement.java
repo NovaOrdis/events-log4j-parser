@@ -49,9 +49,9 @@ public interface Log4jPatternElement {
     String getLiteral();
 
     /**
-     * May return null if the element has no format modifier.
+     * May return null if hte element has no format modifier.
      */
-    String getFormatModifierLiteral();
+    FormatModifier getFormatModifier();
 
     /**
      * Attempt to add to the pattern element the next character read from the pattern element literal stream. The

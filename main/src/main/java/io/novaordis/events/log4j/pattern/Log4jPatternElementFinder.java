@@ -53,7 +53,7 @@ class Log4jPatternElementFinder {
         }
 
         int i = from;
-        String formatModifier = null;
+        String formatModifierLiteral = null;
         Log4jPatternElementBase element = null;
 
         while(element == null) {
@@ -86,13 +86,13 @@ class Log4jPatternElementFinder {
                 // format modifier
                 //
 
-                if (formatModifier == null) {
+                if (formatModifierLiteral == null) {
 
-                    formatModifier = "" + c;
+                    formatModifierLiteral = "" + c;
                 }
                 else {
 
-                    formatModifier += c;
+                    formatModifierLiteral += c;
                 }
 
                 i ++;
@@ -103,9 +103,10 @@ class Log4jPatternElementFinder {
             }
         }
 
-        if (formatModifier != null) {
+        if (formatModifierLiteral != null) {
 
-            element.setFormatModifierLiteral(formatModifier);
+            FormatModifier m = new FormatModifier(formatModifierLiteral);
+            element.setFormatModifier(m);
         }
 
         holder.set(element);

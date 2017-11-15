@@ -17,20 +17,19 @@
 package io.novaordis.events.log4j.pattern;
 
 /**
- * The level of the logging event.
+ * A log4j pattern layout format modifier representation. It can be used to to change the minimum field width, the
+ * maximum field width and justification.
  *
- * p
+ * Example: the "-5" from "%-5p".
  *
- * The type of the corresponding parsed object instance is io.novaordis.events.log4j.impl.Log4jLevel
+ * See https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Format_Modifier
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 11/15/17
  */
-public class LevelPatternElement extends Log4jPatternElementBase {
+public class FormatModifier {
 
     // Constants -------------------------------------------------------------------------------------------------------
-
-    public static final char IDENTIFIER = 'p';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -38,39 +37,19 @@ public class LevelPatternElement extends Log4jPatternElementBase {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    protected LevelPatternElement() {
-    }
+    public FormatModifier(String literal) throws Log4jPatternLayoutException {
 
-    /**
-     * @param pattern, without the pattern element marker ('%'). Example: "-5p"
-     */
-    protected LevelPatternElement(String pattern) throws Log4jPatternLayoutException {
-
-        super(pattern);
-    }
-
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
-
-    @Override
-    public Character getIdentifier() {
-
-        return IDENTIFIER;
-    }
-
-    @Override
-    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
-
-        FormatModifier m = getFormatModifier();
-
-        if (m != null) {
-
-
-        }
-
-        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return the format modifier literal. Will never return null.
+     */
+    public String getLiteral() {
+
+        throw new RuntimeException("NOT YET IMPLEMENTED");
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

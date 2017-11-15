@@ -110,7 +110,8 @@ public class Log4jPatternLayoutTest {
         LevelPatternElement p = (LevelPatternElement)i.next();
 
         assertEquals("%-5p", p.getLiteral());
-        assertEquals("-5", p.getFormatModifierLiteral());
+        FormatModifier m = p.getFormatModifier();
+        assertEquals("-5", m.getLiteral());
         assertEquals(LevelPatternElement.IDENTIFIER, p.getIdentifier().charValue());
 
         assertTrue(i.hasNext());
@@ -124,7 +125,7 @@ public class Log4jPatternLayoutTest {
         LoggerPatternElement c = (LoggerPatternElement)i.next();
 
         assertEquals("%c", c.getLiteral());
-        assertNull(c.getFormatModifierLiteral());
+        assertNull(c.getFormatModifier());
         assertEquals(LoggerPatternElement.IDENTIFIER, c.getIdentifier().charValue());
 
         assertTrue(i.hasNext());
@@ -138,7 +139,7 @@ public class Log4jPatternLayoutTest {
         ThreadNamePatternElement t = (ThreadNamePatternElement)i.next();
 
         assertEquals("%t", t.getLiteral());
-        assertNull(t.getFormatModifierLiteral());
+        assertNull(t.getFormatModifier());
         assertEquals(ThreadNamePatternElement.IDENTIFIER, t.getIdentifier().charValue());
 
         assertTrue(i.hasNext());
@@ -164,7 +165,7 @@ public class Log4jPatternLayoutTest {
         assertTrue(i.hasNext());
 
         LineSeparatorPatternElement n = (LineSeparatorPatternElement)i.next();
-        assertNull(n.getFormatModifierLiteral());
+        assertNull(n.getFormatModifier());
         assertEquals(LineSeparatorPatternElement.IDENTIFIER, n.getIdentifier().charValue());
 
         assertFalse(i.hasNext());

@@ -367,7 +367,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         DatePatternElement e = getLog4jPatternElementToTest();
 
-        e.setFormatModifierLiteral("-5");
+        e.setFormatModifier(new FormatModifier("-5"));
 
         assertEquals("%-5d", e.getLiteral());
     }

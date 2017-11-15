@@ -84,7 +84,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
         LevelPatternElement e = new LevelPatternElement("p");
 
         assertEquals(LevelPatternElement.IDENTIFIER, e.getIdentifier().charValue());
-        assertNull(e.getFormatModifierLiteral());
+        assertNull(e.getFormatModifier());
         assertEquals("%p", e.getLiteral());
     }
 
@@ -94,7 +94,8 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
         LevelPatternElement e = new LevelPatternElement("-5p");
 
         assertEquals(LevelPatternElement.IDENTIFIER, e.getIdentifier().charValue());
-        assertEquals("-5", e.getFormatModifierLiteral());
+        FormatModifier m = e.getFormatModifier();
+        assertEquals("-5", m.getLiteral());
         assertEquals("%-5p", e.getLiteral());
     }
 
@@ -151,7 +152,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
 
         LevelPatternElement e = getLog4jPatternElementToTest();
 
-        e.setFormatModifierLiteral("-5");
+        e.setFormatModifier(new FormatModifier("-5"));
 
         assertEquals("%-5p", e.getLiteral());
     }

@@ -19,13 +19,12 @@ package io.novaordis.events.log4j.pattern;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 11/15/17
  */
-public abstract class Log4jPatternElementTest {
+public class FormatModifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -39,66 +38,69 @@ public abstract class Log4jPatternElementTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
-    /**
-     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
-     * AddResult.LAST throws Log4jPatternLayoutException.
-     */
     @Test
-    public abstract void addAfterLast() throws Exception;
+    public void constructor_Literal() throws Exception {
 
-    /**
-     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
-     * AddResult.NOT_ACCEPTED throws Log4jPatternLayoutException.
-     */
-    @Test
-    public abstract void addAfterNotAccepted() throws Exception;
+        String s = "20";
 
-    @Test
-    public void getFormatModifierLiteral() throws Exception {
+        FormatModifier m = new FormatModifier(s);
 
-        //
-        // by default, the elements have no format modifier literal
-        //
-
-        Log4jPatternElement e = getLog4jPatternElementToTest();
-
-        FormatModifier m = e.getFormatModifier();
-
-        assertNull(m);
-    }
-
-    // getLiteral() ----------------------------------------------------------------------------------------------------
-
-    @Test
-    public void getLiteral() throws Exception {
-
-        Log4jPatternElement e = getLog4jPatternElementToTest();
-        assertNull(e.getFormatModifier());
-
-        String expected = "%" + e.getIdentifier();
-        String l = e.getLiteral();
-
-        assertEquals(expected, l);
+        assertEquals("20", m.getLiteral());
     }
 
     @Test
-    public void getLiteral_WithFormatModifier() throws Exception {
+    public void constructor_Literal2() throws Exception {
 
-        Log4jPatternElement e = getLog4jPatternElementToTest();
+        String s = "-20";
 
-        ((Log4jPatternElementBase)e).setFormatModifier(new FormatModifier("-5"));
+        FormatModifier m = new FormatModifier(s);
 
-        String expected = "%-5" + e.getIdentifier();
-        String l = e.getLiteral();
+        assertEquals("-20", m.getLiteral());
+    }
 
-        assertEquals(expected, l);
+    @Test
+    public void constructor_Literal3() throws Exception {
+
+        String s = "%.30";
+
+        FormatModifier m = new FormatModifier(s);
+
+        assertEquals(".30", m.getLiteral());
+    }
+
+    @Test
+    public void constructor_Literal4() throws Exception {
+
+        String s = "20.30";
+
+        FormatModifier m = new FormatModifier(s);
+
+        assertEquals("20.30", m.getLiteral());
+    }
+
+    @Test
+    public void constructor_Literal5() throws Exception {
+
+        String s = "-20.30";
+
+        FormatModifier m = new FormatModifier(s);
+
+        assertEquals("-20.30", m.getLiteral());
+    }
+
+    @Test
+    public void constructor_Literal6() throws Exception {
+
+        String s = "-20.-30";
+
+        FormatModifier m = new FormatModifier(s);
+
+        assertEquals("-20.-30", m.getLiteral());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    protected abstract Log4jPatternElement getLog4jPatternElementToTest() throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

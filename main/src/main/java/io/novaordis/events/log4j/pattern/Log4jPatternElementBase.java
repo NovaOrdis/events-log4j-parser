@@ -28,7 +28,7 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private String formatModifierLiteral;
+    private FormatModifier formatModifier;
 
     private boolean closed;
 
@@ -49,7 +49,7 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
 
         char[] chars = pattern.toCharArray();
 
-        String formatModifier = null;
+        String formatModifierLiteral = null;
         char identifier = getIdentifier();
         boolean add = false;
 
@@ -65,13 +65,13 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
             }
             else {
 
-                if (formatModifier == null) {
+                if (formatModifierLiteral == null) {
 
-                    formatModifier = "" + c;
+                    formatModifierLiteral = "" + c;
                 }
                 else {
 
-                    formatModifier += c;
+                    formatModifierLiteral += c;
                 }
             }
         }
@@ -89,9 +89,11 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
             closed = true;
         }
 
-        if (formatModifier != null) {
+        if (formatModifierLiteral != null) {
 
-            setFormatModifierLiteral(formatModifier);
+            FormatModifier m = new FormatModifier(formatModifierLiteral);
+
+            setFormatModifier(m);
         }
 
     }
@@ -99,17 +101,17 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
     // Log4jPatternElement implementation ------------------------------------------------------------------------------
 
     @Override
-    public String getFormatModifierLiteral() {
+    public String getLiteral() {
 
-        return formatModifierLiteral;
+        FormatModifier m = getFormatModifier();
+
+        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m.getLiteral()) + getIdentifier();
     }
 
     @Override
-    public String getLiteral() {
+    public FormatModifier getFormatModifier() {
 
-        String m = getFormatModifierLiteral();
-
-        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m) + getIdentifier();
+        return formatModifier;
     }
 
     @Override
@@ -135,9 +137,9 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
 
     // Package protected -----------------------------------------------------------------------------------------------
 
-    void setFormatModifierLiteral(String s) throws Log4jPatternLayoutException {
+    void setFormatModifier(FormatModifier m) throws Log4jPatternLayoutException {
 
-        this.formatModifierLiteral = s;
+        this.formatModifier = m;
     }
 
     // Protected -------------------------------------------------------------------------------------------------------

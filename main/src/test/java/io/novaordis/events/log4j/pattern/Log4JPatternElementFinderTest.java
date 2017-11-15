@@ -169,7 +169,7 @@ public class Log4JPatternElementFinderTest {
 
         assertNotNull(e);
 
-        assertEquals("10", e.getFormatModifierLiteral());
+        assertEquals("10", e.getFormatModifier().getLiteral());
     }
 
     @Test
@@ -187,7 +187,7 @@ public class Log4JPatternElementFinderTest {
 
         assertNotNull(e);
 
-        assertEquals("-5", e.getFormatModifierLiteral());
+        assertEquals("-5", e.getFormatModifier().getLiteral());
 
         String s = e.toString();
 
@@ -209,7 +209,7 @@ public class Log4JPatternElementFinderTest {
 
         assertNotNull(e);
 
-        assertEquals(".30", e.getFormatModifierLiteral());
+        assertEquals(".30", e.getFormatModifier().getLiteral());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class Log4JPatternElementFinderTest {
 
         assertNotNull(e);
 
-        assertNull(e.getFormatModifierLiteral());
+        assertNull(e.getFormatModifier());
 
         assertEquals('s', e.getIdentifier().charValue());
     }
