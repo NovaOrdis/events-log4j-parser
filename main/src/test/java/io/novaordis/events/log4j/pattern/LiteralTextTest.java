@@ -114,7 +114,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         LiteralText pe = new LiteralText("something else");
 
-        RenderedLogEventElement p = pe.parse(line, from, null);
+        RenderedLogEvent p = pe.parseLogContent(line, from, null);
 
         String s = (String)p.get();
 
@@ -136,7 +136,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         try {
 
-            pe.parse(line, from, null);
+            pe.parseLogContent(line, from, null);
 
             fail("should have thrown exception");
         }
@@ -154,7 +154,13 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
     @Override
     protected LiteralText getConversionPatternComponentToTest() throws Exception {
 
-        return new LiteralText();
+        return new LiteralText(") something (");
+    }
+
+    @Override
+    protected String getMatchingLogContent() throws Exception {
+
+        return ") something (";
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

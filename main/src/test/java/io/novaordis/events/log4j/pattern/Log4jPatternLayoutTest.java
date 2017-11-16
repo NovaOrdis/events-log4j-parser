@@ -103,7 +103,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%d{HH:mm:ss,SSS}", d.getLiteral());
         assertEquals("HH:mm:ss,SSS", d.getSimpleDateFormat().toPattern());
-        assertEquals(Date.IDENTIFIER, d.getConversionCharacter().charValue());
+        assertEquals(Date.CONVERSION_CHARACTER, d.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
@@ -118,7 +118,7 @@ public class Log4jPatternLayoutTest {
         assertEquals("%-5p", p.getLiteral());
         FormatModifier m = p.getFormatModifier();
         assertEquals("-5", m.getLiteral());
-        assertEquals(Level.IDENTIFIER, p.getConversionCharacter().charValue());
+        assertEquals(Level.CONVERSION_CHARACTER, p.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
@@ -132,7 +132,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%c", c.getLiteral());
         assertNull(c.getFormatModifier());
-        assertEquals(Logger.IDENTIFIER, c.getConversionCharacter().charValue());
+        assertEquals(Logger.CONVERSION_CHARACTER, c.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
@@ -146,7 +146,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%t", t.getLiteral());
         assertNull(t.getFormatModifier());
-        assertEquals(ThreadName.IDENTIFIER, t.getConversionCharacter().charValue());
+        assertEquals(ThreadName.CONVERSION_CHARACTER, t.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
@@ -174,7 +174,7 @@ public class Log4jPatternLayoutTest {
 
         LineSeparator n = (LineSeparator)i.next();
         assertNull(n.getFormatModifier());
-        assertEquals(LineSeparator.IDENTIFIER, n.getConversionCharacter().charValue());
+        assertEquals(LineSeparator.CONVERSION_CHARACTER, n.getConversionCharacter().charValue());
 
         assertFalse(i.hasNext());
     }

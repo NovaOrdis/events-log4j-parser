@@ -21,9 +21,10 @@ import org.junit.Test;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponentTest;
 import io.novaordis.events.log4j.pattern.FormatModifier;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -45,6 +46,8 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
+    // add() -----------------------------------------------------------------------------------------------------------
+
     /**
      * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
      * AddResult.LAST throws Log4jPatternLayoutException.
@@ -58,6 +61,8 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
      */
     @Test
     public abstract void addAfterNotAccepted() throws Exception;
+
+    // getFormatModifier() ---------------------------------------------------------------------------------------------
 
     @Test
     public void getFormatModifier() throws Exception {
@@ -84,7 +89,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     // getLiteral() ----------------------------------------------------------------------------------------------------
 
     @Test
-    public void getLiteral() throws Exception {
+    public void getLiteral_ConversionSpecifier() throws Exception {
 
         ConversionSpecifier e = getConversionSpecifierToTest(null);
 
@@ -97,7 +102,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void getLiteral_WithFormatModifier() throws Exception {
+    public void getLiteral_ConversionSpecifier_WithFormatModifier() throws Exception {
 
         ConversionSpecifier e = getConversionSpecifierToTest(null);
 
@@ -109,41 +114,53 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
         assertEquals(expected, l);
     }
     
-    // parse() ---------------------------------------------------------------------------------------------------------
+    // parseLogContent() -----------------------------------------------------------------------------------------------
     
     @Test
-    public void parse_NoFormatModifier() throws Exception {
+    public void parseLogContent_NoFormatModifier() throws Exception {
 
         FormatModifier m = null;
 
-        String s = ">" + renderWithConversionSpecifierToTest(m);
+        //noinspection ConstantConditions
+        String rendering = getMatchingLogContent(m);
 
+        //noinspection ConstantConditions
+        String s = ">" + rendering;
+
+        //noinspection ConstantConditions
         ConversionSpecifier cs = getConversionSpecifierToTest(m);
 
-        RenderedLogEventElement e = cs.parse(s, 1, null);
+        RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        e.getLiteral();
-        e.get();
-        e.from();
-        e.to();
+        assertEquals(rendering, e.getLiteral());
+        assertNotNull(e.get());
+        assertEquals(1, e.from());
+        assertEquals(s.length(), e.to());
     }
 
     @Test
-    public void parse_WithFormatModifier() throws Exception {
+    public void parseLogContent_WithFormatModifier() throws Exception {
 
         String ms = "20";
 
         FormatModifier m = new FormatModifier(ms);
 
-        String s = ">" + renderWithConversionSpecifierToTest(m);
+        String rendering = getMatchingLogContent(m);
+
+        String s = ">" + rendering + "<";
 
         ConversionSpecifier cs = getConversionSpecifierToTest(m);
 
-        RenderedLogEventElement e = cs.parse(s, 1, null);
+        RenderedLogEvent e = cs.parseLogContent(s, 1, null);
+
+        assertEquals(rendering, e.getLiteral());
+        assertNotNull(e.get());
+        assertEquals(1, e.from());
+        assertEquals(1 + rendering.length(), e.to());
     }
 
     @Test
-    public void parse_WithFormatModifier2() throws Exception {
+    public void parseLogContent_WithFormatModifier2() throws Exception {
 
         String ms = "-20";
 
@@ -151,7 +168,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void parse_WithFormatModifier3() throws Exception {
+    public void parseLogContent_WithFormatModifier3() throws Exception {
 
         String ms = ".30";
 
@@ -159,7 +176,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void parse_WithFormatModifier4() throws Exception {
+    public void parseLogContent_WithFormatModifier4() throws Exception {
 
         String ms = "   .30";
 
@@ -167,7 +184,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void parse_WithFormatModifier5() throws Exception {
+    public void parseLogContent_WithFormatModifier5() throws Exception {
 
         String ms = "20.30";
 
@@ -175,7 +192,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void parse_WithFormatModifier6() throws Exception {
+    public void parseLogContent_WithFormatModifier6() throws Exception {
 
         String ms = "-20.30";
 
@@ -183,7 +200,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void parse_WithFormatModifier7() throws Exception {
+    public void parseLogContent_WithFormatModifier7() throws Exception {
 
         String ms = "-20.-30";
 
@@ -203,9 +220,10 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     protected abstract ConversionSpecifier getConversionSpecifierToTest(FormatModifier m) throws Exception;
 
     /**
-     * @param m may be null, which means no format modifier.
+     * @param m may be null, which means no format modifier. If m is not null, render the log content using the given
+     *          format modifier.
      */
-    protected abstract String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception;
+    protected abstract String getMatchingLogContent(FormatModifier m) throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern.convspec.wildfly;
 
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
-import io.novaordis.utilities.logging.log4j.Log4jLevel;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierTest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -33,7 +33,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LevelTest extends ConversionSpecifierTest {
+public class WildFlyMessageTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -60,14 +60,14 @@ public class LevelTest extends ConversionSpecifierTest {
     @Override
     public void addAfterNotAccepted() throws Exception {
 
-        Level e = getConversionSpecifierToTest(null);
+        WildFlyMessage s = getConversionSpecifierToTest(null);
 
-        AddResult r = e.add(' ');
+        AddResult r = s.add(' ');
         assertEquals(AddResult.NOT_ACCEPTED, r);
 
         try {
 
-            e.add(' ');
+            s.add(' ');
 
             fail("should have thrown exception");
         }
@@ -85,22 +85,22 @@ public class LevelTest extends ConversionSpecifierTest {
     @Test
     public void constructor() throws Exception {
 
-        Level e = new Level("p");
+        WildFlyMessage s = new WildFlyMessage("s");
 
-        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter().charValue());
-        assertNull(e.getFormatModifier());
-        assertEquals("%p", e.getLiteral());
+        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertNull(s.getFormatModifier());
+        assertEquals("%s", s.getLiteral());
     }
 
     @Test
     public void constructor_WithFormatModifier() throws Exception {
 
-        Level e = new Level("-5p");
+        WildFlyMessage s = new WildFlyMessage("-5s");
 
-        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter().charValue());
-        FormatModifier m = e.getFormatModifier();
+        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        FormatModifier m = s.getFormatModifier();
         assertEquals("-5", m.getLiteral());
-        assertEquals("%-5p", e.getLiteral());
+        assertEquals("%-5s", s.getLiteral());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
         try {
 
-            new Level("c");
+            new WildFlyMessage("c");
 
             fail("should have thrown exception");
         }
@@ -116,99 +116,87 @@ public class LevelTest extends ConversionSpecifierTest {
 
             String msg = e.getMessage();
 
-            assertTrue(msg.contains("identifier '" + Level.CONVERSION_CHARACTER + "' not encountered"));
+            assertTrue(msg.contains("expected identifier '" + WildFlyMessage.CONVERSION_CHARACTER + "' not found"));
         }
     }
 
-    // add() -----------------------------------------------------------------------------------------------------------
+    // getLiteral() ----------------------------------------------------------------------------------------------------
 
     @Test
-    public void add() throws Exception {
+    public void getLiteral_TypeSpecific() throws Exception {
 
-        Level e = getConversionSpecifierToTest(null);
+        WildFlyMessage s = getConversionSpecifierToTest(null);
 
-        AddResult r = e.add(' ');
-        assertEquals(AddResult.NOT_ACCEPTED, r);
-
-        try {
-
-            e.add(' ');
-
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException ex) {
-
-            String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
-        }
+        assertEquals("%s", s.getLiteral());
     }
 
     @Test
-    public void getLiteral() throws Exception {
+    public void getLiteral_TypeSpecific_FormatModifier() throws Exception {
 
-        Level e = getConversionSpecifierToTest(null);
+        FormatModifier m = new FormatModifier("-5");
+        WildFlyMessage s = getConversionSpecifierToTest(m);
 
-        assertEquals("%p", e.getLiteral());
+        assertEquals("%-5s", s.getLiteral());
     }
 
-    @Test
-    public void getLiteral_FormatModifier() throws Exception {
-
-        Level e = getConversionSpecifierToTest(null);
-
-        e.setFormatModifier(new FormatModifier("-5"));
-
-        assertEquals("%-5p", e.getLiteral());
-    }
-
-    // parse() ---------------------------------------------------------------------------------------------------------
+    // parseLogContent() -----------------------------------------------------------------------------------------------
 
     @Test
-    public void parse() throws Exception {
+    public void parseLogContent_TypeSpecific() throws Exception {
 
-        String line = "INFO BLAHBLAH";
+        String line = "this is some message";
 
         int from = 0;
 
-        Level pe = new Level("-5p");
+        WildFlyMessage pe = new WildFlyMessage();
 
         RenderedLogEvent p = pe.parseLogContent(line, from, null);
 
-        Log4jLevel l = (Log4jLevel)p.get();
-
-        assertEquals(Log4jLevel.INFO, l);
+        String s = (String)p.get();
 
         assertEquals(0, p.from());
-        assertEquals(5, p.to());
-        assertEquals("INFO ", p.getLiteral());
+        assertEquals(20, p.to());
+        assertEquals("this is some message", p.getLiteral());
+        assertEquals("this is some message", s);
     }
 
     @Test
-    public void parse_PatternMismatch() throws Exception {
+    public void parseLogContent_PatternMismatch() throws Exception {
 
-        fail("return here");
+        //
+        // we cannot really mismatch a message, as anything is valid as a message - noop
+        //
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
+    private String matchingLogContent = "this is a synthetic message";
+
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        return matchingLogContent;
     }
 
     @Override
-    protected Level getConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected WildFlyMessage getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        Level cs = new Level();
+        WildFlyMessage cs = new WildFlyMessage();
         cs.setFormatModifier(m);
         return cs;
     }
 
     @Override
     protected String getMatchingLogContent(FormatModifier m) throws Exception {
-        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
+
+        if (m == null) {
+
+            return matchingLogContent;
+        }
+
+        return m.render(matchingLogContent);
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

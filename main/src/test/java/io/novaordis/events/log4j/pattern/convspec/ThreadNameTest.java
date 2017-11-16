@@ -82,6 +82,11 @@ public class ThreadNameTest extends ConversionSpecifierTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
+    protected String getMatchingLogContent() throws Exception {
+        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+    }
+
+    @Override
     protected ThreadName getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
         ThreadName cs = new ThreadName();
@@ -90,7 +95,7 @@ public class ThreadNameTest extends ConversionSpecifierTest {
     }
 
     @Override
-    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected String getMatchingLogContent(FormatModifier m) throws Exception {
         throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 

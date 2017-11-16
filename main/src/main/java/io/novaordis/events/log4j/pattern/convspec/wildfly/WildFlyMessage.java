@@ -14,33 +14,43 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern.convspec.wildfly;
 
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
 
 /**
- * The name of the logger that publishes the logging event.
+ * A WildFly log4j pattern layout extension that renders the log event message. Equivalent with "m".
  *
- * n
- *
- * The type of the corresponding parsed object instance is a String containing platform-specific line separator.
+ * The type of the corresponding parsed object instance is a String.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LineSeparator extends ConversionSpecifierBase {
+public class WildFlyMessage extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char CONVERSION_CHARACTER = 'n';
+    public static final char CONVERSION_CHARACTER = 's';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
     // Constructors ----------------------------------------------------------------------------------------------------
+
+    public WildFlyMessage() {
+    }
+
+    /**
+     * @param pattern, without the pattern element marker ('%'). Example: "-5s"
+     */
+    protected WildFlyMessage(String pattern) throws Log4jPatternLayoutException {
+
+        super(pattern);
+    }
 
     // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
@@ -52,8 +62,24 @@ public class LineSeparator extends ConversionSpecifierBase {
 
     @Override
     protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
+
+        if (next != null) {
+
+            //
+            // if there's another conversion pattern component, we may use it to gather more information about
+            // how long the message may be, otherwise we assume it's to the end of the line
+            //
+
+            throw new RuntimeException("WildFlyMessage DOES NOT KNOW HOW TO HANDLE A next COMPONENT");
+        }
+
+        //
+        // we assume the message extends to the end of the line
+        //
+
+        String message = logContent.substring(from);
+        return new RenderedLogEvent(message, message, from, logContent.length());
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

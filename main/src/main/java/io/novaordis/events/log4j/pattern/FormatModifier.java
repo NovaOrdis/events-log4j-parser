@@ -16,6 +16,8 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import java.util.Arrays;
+
 /**
  * A log4j pattern layout format modifier representation. It can be used to to change the minimum field width, the
  * maximum field width and justification.
@@ -118,6 +120,64 @@ public class FormatModifier {
         return literal;
     }
 
+    /**
+     * Render the string representation of the given object according to the format modifier. Null will throw an
+     * IllegalArgumentException.
+     */
+    public String render(Object o) {
+
+        if (o == null) {
+
+            throw new IllegalArgumentException("null argument");
+        }
+
+        String s = o.toString();
+
+        if (minimumFieldWidth != null && s.length() < minimumFieldWidth) {
+
+            char[] content = new char[minimumFieldWidth - s.length()];
+            Arrays.fill(content, ' ');
+
+            if (rightJustified) {
+
+
+                s = new String(content) + s;
+
+            }
+            else {
+
+                s = s + new String(content);
+            }
+        }
+
+        if (maximumFieldWidth != null && s.length() > maximumFieldWidth) {
+
+            if (truncateFromFront) {
+
+                s = s.substring(s.length() - maximumFieldWidth);
+
+            }
+            else {
+
+                s = s.substring(0, maximumFieldWidth);
+            }
+        }
+
+
+        return s;
+    }
+
+    @Override
+    public String toString() {
+
+        if (literal == null) {
+
+            return "UNINITIALIZED";
+        }
+
+        return literal;
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
@@ -204,6 +264,6 @@ public class FormatModifier {
         }
     }
 
-// Inner classes ---------------------------------------------------------------------------------------------------
+    // Inner classes ---------------------------------------------------------------------------------------------------
 
 }

@@ -82,7 +82,7 @@ public class LiteralText implements ConversionPatternComponent {
     }
 
     @Override
-    public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+    public RenderedLogEvent parseLogContent(String s, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException {
 
         int length = literal.length();
@@ -98,7 +98,7 @@ public class LiteralText implements ConversionPatternComponent {
                             "\" does not match the parsed string literal \"" + s2 + "\"");
         }
 
-        return new RenderedLogEventElement(literal, literal, from, to);
+        return new RenderedLogEvent(literal, literal, from, to);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

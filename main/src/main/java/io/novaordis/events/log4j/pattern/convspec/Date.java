@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
  * Outputs the date of the logging event.
@@ -38,7 +38,7 @@ public class Date extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char IDENTIFIER = 'd';
+    public static final char CONVERSION_CHARACTER = 'd';
 
     public static final String DEFAULT = "DEFAULT";
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
@@ -94,7 +94,7 @@ public class Date extends ConversionSpecifierBase {
     @Override
     public Character getConversionCharacter() {
 
-        return IDENTIFIER;
+        return CONVERSION_CHARACTER;
     }
 
     @Override
@@ -161,7 +161,7 @@ public class Date extends ConversionSpecifierBase {
     }
 
     @Override
-    public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+    public RenderedLogEvent parseLogContent(String s, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException {
 
         int length = dateFormat.toPattern().length();
@@ -179,11 +179,12 @@ public class Date extends ConversionSpecifierBase {
             throw new Log4jPatternLayoutException("date \"" + s2 + "\" does not match pattern " + getLiteral());
         }
 
-        return new RenderedLogEventElement(d, s2, from, from + length);
+        return new RenderedLogEvent(d, s2, from, from + length);
     }
 
     @Override
-    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
+            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
         throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierFinder;
+
 /**
  * A parsed representation of a Log4j pattern layout.
  *
@@ -100,7 +102,7 @@ public class Log4jPatternLayout {
 
         ConversionPatternComponentHolder current = new ConversionPatternComponentHolder();
 
-        ConversionPatternComponentFinder componentFinder = new ConversionPatternComponentFinder();
+        ConversionSpecifierFinder conversionSpecifierFinder = new ConversionSpecifierFinder();
 
         for(; i < patternLiteral.length(); i ++) {
 
@@ -122,7 +124,7 @@ public class Log4jPatternLayout {
                             "' not followed by any pattern element");
                 }
 
-                i = componentFinder.lookup(patternLiteral, i + 1, current);
+                i = conversionSpecifierFinder.lookup(patternLiteral, i + 1, current);
             }
             else if (current.getInstance() != null) {
 
@@ -151,15 +153,15 @@ public class Log4jPatternLayout {
                 // the current element is null and the current character is not an element marker, start a literal
                 //
 
-                LiteralText e = new LiteralText();
+                LiteralText txt = new LiteralText();
 
-                current.setInstance(e);
+                current.setInstance(txt);
 
-                AddResult result = e.add(c);
+                AddResult result = txt.add(c);
 
                 if (AddResult.NOT_ACCEPTED.equals(result)) {
 
-                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
+                    throw new IllegalStateException("'" + c + "' not accepted by literal " + txt);
                 }
             }
         }

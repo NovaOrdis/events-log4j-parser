@@ -23,7 +23,7 @@ package io.novaordis.events.log4j.pattern;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/31/17
  */
-class ConversionPatternComponentHolder {
+public class ConversionPatternComponentHolder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ class ConversionPatternComponentHolder {
     @Override
     public String toString() {
 
-        return "o->" + c;
+        return "HOLDER:" + (c == null ? "EMPTY" : c.getClass().getSimpleName() + ":" + c.getLiteral());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

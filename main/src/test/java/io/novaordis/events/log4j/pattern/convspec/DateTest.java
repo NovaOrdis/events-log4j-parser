@@ -25,7 +25,7 @@ import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.LiteralText;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -391,7 +391,7 @@ public class DateTest extends ConversionSpecifierTest {
 
         Date pe = new Date("d{HH:mm:ss,SSS}");
 
-        RenderedLogEventElement p = pe.parse(line, from, next);
+        RenderedLogEvent p = pe.parseLogContent(line, from, next);
 
         java.util.Date d = (java.util.Date)p.get();
 
@@ -407,6 +407,11 @@ public class DateTest extends ConversionSpecifierTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
+    protected String getMatchingLogContent() throws Exception {
+        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+    }
+
+    @Override
     protected Date getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
         Date cs = new Date();
@@ -415,7 +420,7 @@ public class DateTest extends ConversionSpecifierTest {
     }
 
     @Override
-    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected String getMatchingLogContent(FormatModifier m) throws Exception {
         throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 

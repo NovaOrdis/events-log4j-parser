@@ -16,8 +16,9 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
  * The name of the thread that generated the logging event.
@@ -33,7 +34,7 @@ public class ThreadName extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char IDENTIFIER = 't';
+    public static final char CONVERSION_CHARACTER = 't';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -46,11 +47,12 @@ public class ThreadName extends ConversionSpecifierBase {
     @Override
     public Character getConversionCharacter() {
 
-        return IDENTIFIER;
+        return CONVERSION_CHARACTER;
     }
 
     @Override
-    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
+            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
         throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 

@@ -59,52 +59,71 @@ public class FormatModifierTest {
     }
 
     @Test
-    public void constructor_Literal() throws Exception {
+    public void constructor_and_render_Literal() throws Exception {
 
-        String s = "20";
+        String s = "5";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals("20", m.getLiteral());
+        assertEquals("5", m.getLiteral());
 
-        assertEquals(20, m.getMinimumFieldWidth().intValue());
+        assertEquals(5, m.getMinimumFieldWidth().intValue());
         assertTrue(m.isRightJustified());
         assertNull(m.getMaximumFieldWidth());
         assertTrue(m.isTruncateFromFront());
+
+
+        assertEquals("     ", m.render(""));
+        assertEquals("    a", m.render("a"));
+        assertEquals("   aa", m.render("aa"));
+        assertEquals("aaaaa", m.render("aaaaa"));
+        assertEquals("aaaaaa", m.render("aaaaaa"));
     }
 
     @Test
-    public void constructor_Literal2() throws Exception {
+    public void constructor_and_render_Literal2() throws Exception {
 
-        String s = "-20";
+        String s = "-5";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals("-20", m.getLiteral());
+        assertEquals("-5", m.getLiteral());
 
-        assertEquals(20, m.getMinimumFieldWidth().intValue());
+        assertEquals(5, m.getMinimumFieldWidth().intValue());
         assertFalse(m.isRightJustified());
         assertNull(m.getMaximumFieldWidth());
         assertTrue(m.isTruncateFromFront());
+
+        assertEquals("     ", m.render(""));
+        assertEquals("a    ", m.render("a"));
+        assertEquals("aa   ", m.render("aa"));
+        assertEquals("aaaaa", m.render("aaaaa"));
+        assertEquals("aaaaaa", m.render("aaaaaa"));
     }
 
     @Test
-    public void constructor_Literal3() throws Exception {
+    public void constructor_and_render_Literal3() throws Exception {
 
-        String s = ".30";
+        String s = ".3";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals(".30", m.getLiteral());
+        assertEquals(".3", m.getLiteral());
 
         assertNull(m.getMinimumFieldWidth());
         assertTrue(m.isRightJustified());
-        assertEquals(30, m.getMaximumFieldWidth().intValue());
+        assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
+
+        assertEquals("", m.render(""));
+        assertEquals("A", m.render("A"));
+        assertEquals("AB", m.render("AB"));
+        assertEquals("ABC", m.render("ABC"));
+        assertEquals("BCD", m.render("ABCD"));
     }
 
     @Test
-    public void constructor_Literal3_1() throws Exception {
+    public void constructor_and_render_Literal3_1() throws Exception {
 
         // empty space is acceptable
         String s = "   .30";
@@ -120,52 +139,70 @@ public class FormatModifierTest {
     }
 
     @Test
-    public void constructor_Literal4() throws Exception {
+    public void constructor_and_render_Literal4() throws Exception {
 
-        String s = "20.30";
+        String s = "2.3";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals("20.30", m.getLiteral());
+        assertEquals("2.3", m.getLiteral());
 
-        assertEquals(20, m.getMinimumFieldWidth().intValue());
+        assertEquals(2, m.getMinimumFieldWidth().intValue());
         assertTrue(m.isRightJustified());
-        assertEquals(30, m.getMaximumFieldWidth().intValue());
+        assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
+
+        assertEquals("  ", m.render(""));
+        assertEquals(" A", m.render("A"));
+        assertEquals("AB", m.render("AB"));
+        assertEquals("ABC", m.render("ABC"));
+        assertEquals("BCD", m.render("ABCD"));
     }
 
     @Test
-    public void constructor_Literal5() throws Exception {
+    public void constructor_and_render_Literal5() throws Exception {
 
-        String s = "-20.30";
+        String s = "-2.3";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals("-20.30", m.getLiteral());
+        assertEquals("-2.3", m.getLiteral());
 
-        assertEquals(20, m.getMinimumFieldWidth().intValue());
+        assertEquals(2, m.getMinimumFieldWidth().intValue());
         assertFalse(m.isRightJustified());
-        assertEquals(30, m.getMaximumFieldWidth().intValue());
+        assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
+
+        assertEquals("  ", m.render(""));
+        assertEquals("A ", m.render("A"));
+        assertEquals("AB", m.render("AB"));
+        assertEquals("ABC", m.render("ABC"));
+        assertEquals("BCD", m.render("ABCD"));
     }
 
     @Test
-    public void constructor_Literal6() throws Exception {
+    public void constructor_and_render_Literal6() throws Exception {
 
-        String s = "-20.-30";
+        String s = "-2.-3";
 
         FormatModifier m = new FormatModifier(s);
 
-        assertEquals("-20.-30", m.getLiteral());
+        assertEquals("-2.-3", m.getLiteral());
 
-        assertEquals(20, m.getMinimumFieldWidth().intValue());
+        assertEquals(2, m.getMinimumFieldWidth().intValue());
         assertFalse(m.isRightJustified());
-        assertEquals(30, m.getMaximumFieldWidth().intValue());
+        assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertFalse(m.isTruncateFromFront());
+
+        assertEquals("  ", m.render(""));
+        assertEquals("A ", m.render("A"));
+        assertEquals("AB", m.render("AB"));
+        assertEquals("ABC", m.render("ABC"));
+        assertEquals("ABC", m.render("ABCD"));
     }
 
     @Test
-    public void constructor_Literal7() throws Exception {
+    public void constructor_and_render_Literal7() throws Exception {
 
         String s = "-blah";
 
@@ -182,6 +219,29 @@ public class FormatModifierTest {
             assertTrue(e.getCause() instanceof NumberFormatException);
         }
     }
+
+    @Test
+    public void render_Null() throws Exception {
+
+        FormatModifier m = new FormatModifier("1");
+
+        try {
+
+            m.render(null);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("null argument"));
+        }
+    }
+
+    // render() --------------------------------------------------------------------------------------------------------
+    
+    @Test
+    public void render() throws Exception {}
 
     // Package protected -----------------------------------------------------------------------------------------------
 

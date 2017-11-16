@@ -22,7 +22,7 @@ package io.novaordis.events.log4j.pattern;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 11/5/17
  */
-public class RenderedLogEventElement {
+public class RenderedLogEvent {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ public class RenderedLogEventElement {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public RenderedLogEventElement(Object o, String literal, int from, int to) {
+    public RenderedLogEvent(Object o, String literal, int from, int to) {
 
         this.object = o;
         this.literal = literal;
@@ -56,7 +56,8 @@ public class RenderedLogEventElement {
     }
 
     /**
-     * @return the position in string of the first character that immediately follows the element.
+     * @return the position in string of the first character that immediately follows the element. It may go beyond the
+     * end of the string.
      */
     public int to() {
 

@@ -82,6 +82,11 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
+    protected String getMatchingLogContent() throws Exception {
+        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+    }
+
+    @Override
     protected LineSeparator getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
         LineSeparator cs = new LineSeparator();
@@ -90,7 +95,7 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
     }
 
     @Override
-    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected String getMatchingLogContent(FormatModifier m) throws Exception {
         throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 

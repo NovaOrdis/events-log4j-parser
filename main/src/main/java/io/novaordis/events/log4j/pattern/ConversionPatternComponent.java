@@ -17,6 +17,8 @@
 package io.novaordis.events.log4j.pattern;
 
 /**
+ * The representation of an individual element (component) in a conversion pattern string.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 11/15/17
  */
@@ -50,8 +52,9 @@ public interface ConversionPatternComponent {
     AddResult add(char c) throws Log4jPatternLayoutException;
 
     /**
-     * Extract and parse the string value corresponding to this pattern component, returning the parsed component value.
-     * May not return a null value, if no string representation of this component is found at the given position in the
+     * Identify the boundaries, then extract and parse the log content string value corresponding to this conversion
+     * pattern component. The method returns a composite structure, including, among others, the parsed component value.
+     * Must not return a null value. If no string representation of this component is found at the given position in the
      * string, Log4jPatternLayoutException is thrown.
      *
      * @exception Log4jPatternLayoutException if no valid string representation of this component is found at the given
@@ -60,7 +63,7 @@ public interface ConversionPatternComponent {
      * @param next the next pattern component that follows this one in the log4j pattern layout, or null if this is the
      *             last pattern component in the pattern layout.
      */
-    RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+    RenderedLogEvent parseLogContent(String logContent, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException;
 
 

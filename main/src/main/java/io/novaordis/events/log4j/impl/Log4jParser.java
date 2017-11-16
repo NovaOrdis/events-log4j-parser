@@ -30,7 +30,7 @@ import io.novaordis.events.api.parser.ParserBase;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -89,7 +89,7 @@ public class Log4jParser extends ParserBase {
 
             try {
 
-                RenderedLogEventElement pe = current.parse(line, from, next);
+                RenderedLogEvent pe = current.parseLogContent(line, from, next);
                 result.add(pe.get());
                 from = pe.to();
 

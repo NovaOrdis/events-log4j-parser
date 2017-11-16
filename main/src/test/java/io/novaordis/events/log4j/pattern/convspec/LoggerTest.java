@@ -82,6 +82,11 @@ public class LoggerTest extends ConversionSpecifierTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
+    protected String getMatchingLogContent() throws Exception {
+        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+    }
+
+    @Override
     protected Logger getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
         Logger cs = new Logger();
@@ -90,7 +95,7 @@ public class LoggerTest extends ConversionSpecifierTest {
     }
 
     @Override
-    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected String getMatchingLogContent(FormatModifier m) throws Exception {
         throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 

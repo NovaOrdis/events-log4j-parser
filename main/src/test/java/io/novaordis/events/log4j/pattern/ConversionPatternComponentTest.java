@@ -18,7 +18,8 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -40,18 +41,34 @@ public abstract class ConversionPatternComponentTest {
 
     // getLiteral() ----------------------------------------------------------------------------------------------------
 
+    /**
+     * May be overridden by subclasses.
+     */
     @Test
     public void getLiteral() throws Exception {
 
-        fail("return here");
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        String literal = c.getLiteral();
+
+        assertNotNull(literal);
     }
 
-    // parse() ---------------------------------------------------------------------------------------------------------
+    // parseLogContent() -----------------------------------------------------------------------------------------------
 
     @Test
-    public void parse() throws Exception {
+    public void parseLogContent() throws Exception {
 
-        fail("return here");
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        String matchingLogContent = getMatchingLogContent();
+
+        RenderedLogEvent rendering = c.parseLogContent(matchingLogContent, 0, null);
+
+        assertEquals(matchingLogContent, rendering.getLiteral());
+        assertNotNull(rendering.get());
+        assertEquals(0, rendering.from());
+        assertEquals(matchingLogContent.length(), rendering.to());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -59,6 +76,8 @@ public abstract class ConversionPatternComponentTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     protected abstract ConversionPatternComponent getConversionPatternComponentToTest() throws Exception;
+
+    protected abstract String getMatchingLogContent() throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

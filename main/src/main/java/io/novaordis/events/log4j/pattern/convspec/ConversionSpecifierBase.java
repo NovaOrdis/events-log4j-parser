@@ -21,7 +21,7 @@ import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -89,7 +89,7 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
             // identifier not encountered
             //
 
-            throw new Log4jPatternLayoutException("identifier '" + identifier + "' not encountered");
+            throw new Log4jPatternLayoutException("expected identifier '" + identifier + "' not found");
         }
         else {
 
@@ -112,11 +112,12 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
         FormatModifier m = getFormatModifier();
 
-        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m.getLiteral()) + getConversionCharacter();
+        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
+                (m == null ? "" : m.getLiteral()) + getConversionCharacter();
     }
 
     @Override
-    public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+    public RenderedLogEvent parseLogContent(String logContent, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException {
 
         //
@@ -134,7 +135,7 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
         }
 
 
-        return parseLiteralAfterFormatModifierHandling();
+        return parseLiteralAfterFormatModifierHandling(logContent, from, next);
     }
 
     // ConversionSpecifier implementation ------------------------------------------------------------------------------
@@ -160,6 +161,11 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
+    public void setFormatModifier(FormatModifier m) throws Log4jPatternLayoutException {
+
+        this.formatModifier = m;
+    }
+
     @Override
     public String toString() {
 
@@ -168,17 +174,13 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
     // Package protected -----------------------------------------------------------------------------------------------
 
-    void setFormatModifier(FormatModifier m) throws Log4jPatternLayoutException {
-
-        this.formatModifier = m;
-    }
-
     // Protected -------------------------------------------------------------------------------------------------------
 
     /**
      * Handles the literal after the format modifier information has been factored in.
      */
-    protected abstract RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException;
+    protected abstract RenderedLogEvent parseLiteralAfterFormatModifierHandling(
+            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

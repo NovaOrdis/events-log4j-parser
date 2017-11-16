@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
-import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
-import io.novaordis.events.log4j.pattern.convspec.Date;
-import io.novaordis.events.log4j.pattern.convspec.Level;
-import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
-import io.novaordis.events.log4j.pattern.convspec.Logger;
-import io.novaordis.events.log4j.pattern.convspec.ThreadName;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponentHolder;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-class ConversionPatternComponentFinder {
+public class ConversionSpecifierFinder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -54,7 +51,7 @@ class ConversionPatternComponentFinder {
      *
      * @throws Log4jPatternLayoutException
      */
-    int lookup(String patternLiteral, int from, ConversionPatternComponentHolder holder)
+    public int lookup(String patternLiteral, int from, ConversionPatternComponentHolder holder)
             throws Log4jPatternLayoutException {
 
         if (from >= patternLiteral.length()) {
@@ -70,23 +67,23 @@ class ConversionPatternComponentFinder {
 
             char c = patternLiteral.charAt(i);
 
-            if (Date.IDENTIFIER == c) {
+            if (Date.CONVERSION_CHARACTER == c) {
 
                 component = new Date();
             }
-            else if (Level.IDENTIFIER == c) {
+            else if (Level.CONVERSION_CHARACTER == c) {
 
                 component = new Level();
             }
-            else if (LineSeparator.IDENTIFIER == c) {
+            else if (LineSeparator.CONVERSION_CHARACTER == c) {
 
                 component = new LineSeparator();
             }
-            else if (Logger.IDENTIFIER == c) {
+            else if (Logger.CONVERSION_CHARACTER == c) {
 
                 component = new Logger();
             }
-            else if (ThreadName.IDENTIFIER == c) {
+            else if (ThreadName.CONVERSION_CHARACTER == c) {
 
                 component = new ThreadName();
             }
@@ -116,8 +113,7 @@ class ConversionPatternComponentFinder {
         if (formatModifierLiteral != null) {
 
             FormatModifier m = new FormatModifier(formatModifierLiteral);
-            throw new RuntimeException("RETURN HERE");
-            //component.setFormatModifier(m);
+            component.setFormatModifier(m);
         }
 
         holder.setInstance(component);
