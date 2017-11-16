@@ -76,10 +76,7 @@ public class Date extends ConversionSpecifierBase {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    /**
-     * Instances of this class can only be created by the ConversionSpecifierFinder or within the package.
-     */
-    protected Date() {
+    public Date() {
 
         this.state = NEW;
     }

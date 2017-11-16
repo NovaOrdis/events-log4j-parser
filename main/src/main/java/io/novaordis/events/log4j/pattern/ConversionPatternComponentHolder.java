@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern;
 
 /**
  * Utility class that allows the factory to return an extracted conversion specifier instance in other way than through
@@ -23,7 +23,7 @@ package io.novaordis.events.log4j.pattern.convspec;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/31/17
  */
-class ConversionSpecifierHolder {
+class ConversionPatternComponentHolder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ class ConversionSpecifierHolder {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private ConversionSpecifier cs;
+    private ConversionPatternComponent c;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -40,32 +40,32 @@ class ConversionSpecifierHolder {
     /**
      * May return null.
      */
-    public ConversionSpecifier getInstance() {
+    public ConversionPatternComponent getInstance() {
 
-        return cs;
+        return c;
     }
 
     /**
      * May return null.
      */
-    public ConversionSpecifier removeInstance() {
+    public ConversionPatternComponent removeInstance() {
 
-        ConversionSpecifier result = cs;
+        ConversionPatternComponent result = c;
 
-        cs = null;
+        c = null;
 
         return result;
     }
 
-    public void setInstance(ConversionSpecifier element) {
+    public void setInstance(ConversionPatternComponent element) {
 
-        this.cs = element;
+        this.c = element;
     }
 
     @Override
     public String toString() {
 
-        return "o->" + cs;
+        return "o->" + c;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

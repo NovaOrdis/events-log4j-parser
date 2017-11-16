@@ -16,11 +16,8 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
-import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.FormatModifier;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-
 /**
  * A conversion specifier: https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Specifier.
  *
@@ -50,20 +47,5 @@ public interface ConversionSpecifier extends ConversionPatternComponent {
      * May return null if hte element has no format modifier.
      */
     FormatModifier getFormatModifier();
-
-    /**
-     * Attempt to add to the pattern element the next character read from the pattern element literal stream. The
-     * character may be accepted or not, and the decision is reflected in the return value of the add() method:
-     *
-     * @return AddResult.ACCEPTED if the character was accepted, and it is not the last character, more characters may
-     * be added, AddResult.LAST if the character was accepted, but is the last character, and no more characters can be
-     * added (an attempt to invoke add() again will throw Log4jPatternLayoutException) and AddResult.NOT_ACCEPTED if
-     * the character was not accepted.
-     *
-     * @exception Log4jPatternLayoutException if the character cannot be possibly part of a valid pattern element
-     * specification, or the internal state of this ConversionSpecifier instance does not allow adding.
-     */
-    AddResult add(char c) throws Log4jPatternLayoutException;
-
 
 }

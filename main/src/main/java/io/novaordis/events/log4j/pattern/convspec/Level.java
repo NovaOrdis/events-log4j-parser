@@ -41,7 +41,7 @@ public class Level extends ConversionSpecifierBase {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    protected Level() {
+    public Level() {
     }
 
     /**

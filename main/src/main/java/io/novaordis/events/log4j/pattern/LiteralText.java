@@ -67,6 +67,21 @@ public class LiteralText implements ConversionPatternComponent {
     }
 
     @Override
+    public AddResult add(char c) throws Log4jPatternLayoutException {
+
+        if (literal == null) {
+
+            literal = new String(new char[] {c});
+        }
+        else {
+
+            literal += c;
+        }
+
+        return AddResult.ACCEPTED;
+    }
+
+    @Override
     public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException {
 

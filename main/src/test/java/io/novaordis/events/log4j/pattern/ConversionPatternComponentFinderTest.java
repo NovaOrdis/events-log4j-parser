@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
+
+import io.novaordis.events.log4j.pattern.convspec.Date;
+import io.novaordis.events.log4j.pattern.convspec.Level;
+import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
+import io.novaordis.events.log4j.pattern.convspec.Logger;
+import io.novaordis.events.log4j.pattern.convspec.ThreadName;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +33,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class ConversionSpecifierFinderTest {
+public class ConversionPatternComponentFinderTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -42,11 +48,11 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_InvalidFrom() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
         try {
 
-            f.lookup("blah", 4, new ConversionSpecifierHolder());
+            f.lookup("blah", 4, new ConversionPatternComponentHolder());
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -59,11 +65,11 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_InvalidFrom2() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
         try {
 
-            f.lookup("blah", 5, new ConversionSpecifierHolder());
+            f.lookup("blah", 5, new ConversionPatternComponentHolder());
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -76,9 +82,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_Date() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
-        
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
+
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%" + Date.IDENTIFIER, 1, holder);
         
@@ -92,9 +98,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_Level() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%" + Level.IDENTIFIER, 1, holder);
 
@@ -108,9 +114,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_LineSeparator() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%" + LineSeparator.IDENTIFIER, 1, holder);
 
@@ -124,9 +130,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_Logger() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%" + Logger.IDENTIFIER, 1, holder);
 
@@ -140,9 +146,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_ThreadName() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%" + ThreadName.IDENTIFIER, 1, holder);
 
@@ -156,9 +162,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_LeftPad() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%10p   ", 1, holder);
 
@@ -174,9 +180,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_RightPad() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%-5p   ", 1, holder);
 
@@ -196,9 +202,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_Truncate() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%.30p   ", 1, holder);
 
@@ -214,9 +220,9 @@ public class ConversionSpecifierFinderTest {
     @Test
     public void lookup_Unknown() throws Exception {
 
-        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+        ConversionPatternComponentFinder f = new ConversionPatternComponentFinder();
 
-        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
         int i = f.lookup("%s   ", 1, holder);
 

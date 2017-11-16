@@ -96,82 +96,80 @@ public class Log4jPatternLayout {
 
     private void parsePatternLayout() throws Log4jPatternLayoutException {
 
-        throw new RuntimeException("NYE");
+        int i = 0;
 
-//        int i = 0;
-//
-//        ConversionSpecifierHolder current = new ConversionSpecifierHolder();
-//
-//        Log4jPatternElementFinder patternElementFactory = new Log4jPatternElementFinder();
-//
-//        for(; i < patternLiteral.length(); i ++) {
-//
-//            char c = patternLiteral.charAt(i);
-//
-//            if (c == PATTERN_ELEMENT_MARKER) {
-//
-//                if (current.getInstance() != null) {
-//
-//                    //
-//                    // record the current element
-//                    //
-//                    components.add(current.removeInstance());
-//                }
-//
-//                if (i == patternLiteral.length() - 1) {
-//
-//                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
-//                            "' not followed by any pattern element");
-//                }
-//
-//                i = patternElementFactory.lookup(patternLiteral, i + 1, current);
-//            }
-//            else if (current.getInstance() != null) {
-//
-//                ConversionSpecifier e = current.getInstance();
-//
-//                AddResult result = e.add(c);
-//
-//                if (AddResult.NOT_ACCEPTED.equals(result) || AddResult.LAST.equals(result)) {
-//
-//                    components.add(e);
-//                    current.removeInstance();
-//                }
-//
-//                if (AddResult.NOT_ACCEPTED.equals(result)) {
-//
-//                    i --;
-//                }
-//
-//                //
-//                // else continue adding to the current element ...
-//                //
-//            }
-//            else {
-//
-//                //
-//                // the current element is null and the current character is not an element marker, start a literal
-//                //
-//
-//                LiteralText e = new LiteralText();
-//
-//                current.setInstance(e);
-//
-//                AddResult result = e.add(c);
-//
-//                if (AddResult.NOT_ACCEPTED.equals(result)) {
-//
-//                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
-//                }
-//            }
-//        }
-//
-//        ConversionSpecifier last = current.getInstance();
-//
-//        if (last != null) {
-//
-//            components.add(last);
-//        }
+        ConversionPatternComponentHolder current = new ConversionPatternComponentHolder();
+
+        ConversionPatternComponentFinder componentFinder = new ConversionPatternComponentFinder();
+
+        for(; i < patternLiteral.length(); i ++) {
+
+            char c = patternLiteral.charAt(i);
+
+            if (c == PATTERN_ELEMENT_MARKER) {
+
+                if (current.getInstance() != null) {
+
+                    //
+                    // record the current element
+                    //
+                    components.add(current.removeInstance());
+                }
+
+                if (i == patternLiteral.length() - 1) {
+
+                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
+                            "' not followed by any pattern element");
+                }
+
+                i = componentFinder.lookup(patternLiteral, i + 1, current);
+            }
+            else if (current.getInstance() != null) {
+
+                ConversionPatternComponent e = current.getInstance();
+
+                AddResult result = e.add(c);
+
+                if (AddResult.NOT_ACCEPTED.equals(result) || AddResult.LAST.equals(result)) {
+
+                    components.add(e);
+                    current.removeInstance();
+                }
+
+                if (AddResult.NOT_ACCEPTED.equals(result)) {
+
+                    i --;
+                }
+
+                //
+                // else continue adding to the current element ...
+                //
+            }
+            else {
+
+                //
+                // the current element is null and the current character is not an element marker, start a literal
+                //
+
+                LiteralText e = new LiteralText();
+
+                current.setInstance(e);
+
+                AddResult result = e.add(c);
+
+                if (AddResult.NOT_ACCEPTED.equals(result)) {
+
+                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
+                }
+            }
+        }
+
+        ConversionPatternComponent last = current.getInstance();
+
+        if (last != null) {
+
+            components.add(last);
+        }
     }
 
     // Inner classes ---------------------------------------------------------------------------------------------------

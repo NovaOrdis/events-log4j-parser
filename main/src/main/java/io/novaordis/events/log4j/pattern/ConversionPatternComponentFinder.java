@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern;
 
-import io.novaordis.events.log4j.pattern.FormatModifier;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
+import io.novaordis.events.log4j.pattern.convspec.Date;
+import io.novaordis.events.log4j.pattern.convspec.Level;
+import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
+import io.novaordis.events.log4j.pattern.convspec.Logger;
+import io.novaordis.events.log4j.pattern.convspec.ThreadName;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-class ConversionSpecifierFinder {
+class ConversionPatternComponentFinder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -50,7 +54,8 @@ class ConversionSpecifierFinder {
      *
      * @throws Log4jPatternLayoutException
      */
-    int lookup(String patternLiteral, int from, ConversionSpecifierHolder holder)  throws Log4jPatternLayoutException {
+    int lookup(String patternLiteral, int from, ConversionPatternComponentHolder holder)
+            throws Log4jPatternLayoutException {
 
         if (from >= patternLiteral.length()) {
 
@@ -59,31 +64,31 @@ class ConversionSpecifierFinder {
 
         int i = from;
         String formatModifierLiteral = null;
-        ConversionSpecifierBase element = null;
+        ConversionSpecifierBase component = null;
 
-        while(element == null) {
+        while(component == null) {
 
             char c = patternLiteral.charAt(i);
 
             if (Date.IDENTIFIER == c) {
 
-                element = new Date();
+                component = new Date();
             }
             else if (Level.IDENTIFIER == c) {
 
-                element = new Level();
+                component = new Level();
             }
             else if (LineSeparator.IDENTIFIER == c) {
 
-                element = new LineSeparator();
+                component = new LineSeparator();
             }
             else if (Logger.IDENTIFIER == c) {
 
-                element = new Logger();
+                component = new Logger();
             }
             else if (ThreadName.IDENTIFIER == c) {
 
-                element = new ThreadName();
+                component = new ThreadName();
             }
             else if ('0' <= c && c <= '9' || c == '.' || c == '-') {
 
@@ -111,10 +116,11 @@ class ConversionSpecifierFinder {
         if (formatModifierLiteral != null) {
 
             FormatModifier m = new FormatModifier(formatModifierLiteral);
-            element.setFormatModifier(m);
+            throw new RuntimeException("RETURN HERE");
+            //component.setFormatModifier(m);
         }
 
-        holder.setInstance(element);
+        holder.setInstance(component);
 
         return i;
     }

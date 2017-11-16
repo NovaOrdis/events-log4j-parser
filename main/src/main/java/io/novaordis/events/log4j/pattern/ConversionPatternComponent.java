@@ -36,6 +36,20 @@ public interface ConversionPatternComponent {
     String getLiteral();
 
     /**
+     * Attempt to add to the pattern element the next character read from the pattern element literal stream. The
+     * character may be accepted or not, and the decision is reflected in the return value of the add() method:
+     *
+     * @return AddResult.ACCEPTED if the character was accepted, and it is not the last character, more characters may
+     * be added, AddResult.LAST if the character was accepted, but is the last character, and no more characters can be
+     * added (an attempt to invoke add() again will throw Log4jPatternLayoutException) and AddResult.NOT_ACCEPTED if
+     * the character was not accepted.
+     *
+     * @exception Log4jPatternLayoutException if the character cannot be possibly part of a valid pattern element
+     * specification, or the internal state of this ConversionSpecifier instance does not allow adding.
+     */
+    AddResult add(char c) throws Log4jPatternLayoutException;
+
+    /**
      * Extract and parse the string value corresponding to this pattern component, returning the parsed component value.
      * May not return a null value, if no string representation of this component is found at the given position in the
      * string, Log4jPatternLayoutException is thrown.
