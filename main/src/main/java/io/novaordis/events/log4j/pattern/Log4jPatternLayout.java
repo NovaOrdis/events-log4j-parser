@@ -40,7 +40,7 @@ public class Log4jPatternLayout {
 
     private String patternLiteral;
 
-    private List<Log4jPatternElement> elements;
+    private List<ConversionPatternComponent> components;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ public class Log4jPatternLayout {
 
         this.patternLiteral = literal;
 
-        this.elements = new ArrayList<>();
+        this.components = new ArrayList<>();
 
         parsePatternLayout();
     }
@@ -72,14 +72,14 @@ public class Log4jPatternLayout {
     /**
      * @return the number of distinct pattern elements. Literal pattern elements count as distinct pattern elements.
      */
-    public int getPatternElementCount() {
+    public int getPatternComponentCount() {
 
-        return elements.size();
+        return components.size();
     }
 
-    public Iterator<Log4jPatternElement> getPatternElementIterator() {
+    public Iterator<ConversionPatternComponent> getPatternComponentIterator() {
 
-        return elements.iterator();
+        return components.iterator();
     }
 
     @Override
@@ -96,79 +96,82 @@ public class Log4jPatternLayout {
 
     private void parsePatternLayout() throws Log4jPatternLayoutException {
 
-        int i = 0;
+        throw new RuntimeException("NYE");
 
-        ElementHolder current = new ElementHolder();
-        Log4jPatternElementFinder patternElementFactory = new Log4jPatternElementFinder();
-
-        for(; i < patternLiteral.length(); i ++) {
-
-            char c = patternLiteral.charAt(i);
-
-            if (c == PATTERN_ELEMENT_MARKER) {
-
-                if (current.get() != null) {
-
-                    //
-                    // record the current element
-                    //
-                    elements.add(current.remove());
-                }
-
-                if (i == patternLiteral.length() - 1) {
-
-                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
-                            "' not followed by any pattern element");
-                }
-
-                i = patternElementFactory.lookup(patternLiteral, i + 1, current);
-            }
-            else if (current.get() != null) {
-
-                Log4jPatternElement e = current.get();
-
-                AddResult result = e.add(c);
-
-                if (AddResult.NOT_ACCEPTED.equals(result) || AddResult.LAST.equals(result)) {
-
-                    elements.add(e);
-                    current.remove();
-                }
-
-                if (AddResult.NOT_ACCEPTED.equals(result)) {
-
-                    i --;
-                }
-
-                //
-                // else continue adding to the current element ...
-                //
-            }
-            else {
-
-                //
-                // the current element is null and the current character is not an element marker, start a literal
-                //
-
-                LiteralPatternElement e = new LiteralPatternElement();
-                
-                current.set(e);
-
-                AddResult result = e.add(c);
-
-                if (AddResult.NOT_ACCEPTED.equals(result)) {
-
-                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
-                }
-            }
-        }
-
-        Log4jPatternElement last = current.get();
-
-        if (last != null) {
-
-            elements.add(last);
-        }
+//        int i = 0;
+//
+//        ConversionSpecifierHolder current = new ConversionSpecifierHolder();
+//
+//        Log4jPatternElementFinder patternElementFactory = new Log4jPatternElementFinder();
+//
+//        for(; i < patternLiteral.length(); i ++) {
+//
+//            char c = patternLiteral.charAt(i);
+//
+//            if (c == PATTERN_ELEMENT_MARKER) {
+//
+//                if (current.getInstance() != null) {
+//
+//                    //
+//                    // record the current element
+//                    //
+//                    components.add(current.removeInstance());
+//                }
+//
+//                if (i == patternLiteral.length() - 1) {
+//
+//                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
+//                            "' not followed by any pattern element");
+//                }
+//
+//                i = patternElementFactory.lookup(patternLiteral, i + 1, current);
+//            }
+//            else if (current.getInstance() != null) {
+//
+//                ConversionSpecifier e = current.getInstance();
+//
+//                AddResult result = e.add(c);
+//
+//                if (AddResult.NOT_ACCEPTED.equals(result) || AddResult.LAST.equals(result)) {
+//
+//                    components.add(e);
+//                    current.removeInstance();
+//                }
+//
+//                if (AddResult.NOT_ACCEPTED.equals(result)) {
+//
+//                    i --;
+//                }
+//
+//                //
+//                // else continue adding to the current element ...
+//                //
+//            }
+//            else {
+//
+//                //
+//                // the current element is null and the current character is not an element marker, start a literal
+//                //
+//
+//                LiteralText e = new LiteralText();
+//
+//                current.setInstance(e);
+//
+//                AddResult result = e.add(c);
+//
+//                if (AddResult.NOT_ACCEPTED.equals(result)) {
+//
+//                    throw new IllegalStateException("'" + c + "' not accepted by literal " + e);
+//                }
+//            }
+//        }
+//
+//        ConversionSpecifier last = current.getInstance();
+//
+//        if (last != null) {
+//
+//            components.add(last);
+//        }
     }
 
     // Inner classes ---------------------------------------------------------------------------------------------------

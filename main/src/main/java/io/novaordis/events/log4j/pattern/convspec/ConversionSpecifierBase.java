@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/31/17
  */
-public abstract class Log4jPatternElementBase implements Log4jPatternElement {
+public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -35,9 +42,9 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
     // Constructors ----------------------------------------------------------------------------------------------------
 
     /**
-     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
+     * Instances of this class can only be created by the ConversionSpecifierFinder or within the package.
      */
-    protected Log4jPatternElementBase() {
+    protected ConversionSpecifierBase() {
 
         this.closed = false;
     }
@@ -45,12 +52,12 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
     /**
      * @param pattern, without the pattern element marker ('%'). Example: "-5p" or "d{HH}".
      */
-    protected Log4jPatternElementBase(String pattern) throws Log4jPatternLayoutException {
+    protected ConversionSpecifierBase(String pattern) throws Log4jPatternLayoutException {
 
         char[] chars = pattern.toCharArray();
 
         String formatModifierLiteral = null;
-        char identifier = getIdentifier();
+        char identifier = getConversionCharacter();
         boolean add = false;
 
         for (char c : chars) {
@@ -98,15 +105,39 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
 
     }
 
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
+    // ConversionPatternComponent implementation -----------------------------------------------------------------------
 
     @Override
     public String getLiteral() {
 
         FormatModifier m = getFormatModifier();
 
-        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m.getLiteral()) + getIdentifier();
+        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + (m == null ? "" : m.getLiteral()) + getConversionCharacter();
     }
+
+    @Override
+    public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+            throws Log4jPatternLayoutException {
+
+        //
+        // process format modifier information, if available, it'll give more details about how to parse the
+        // literal
+        //
+
+        if (formatModifier != null) {
+
+            //
+            // there is a format modifier
+            //
+
+            throw new RuntimeException("NYE");
+        }
+
+
+        return parseLiteralAfterFormatModifierHandling();
+    }
+
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
     @Override
     public FormatModifier getFormatModifier() {
@@ -143,6 +174,11 @@ public abstract class Log4jPatternElementBase implements Log4jPatternElement {
     }
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    /**
+     * Handles the literal after the format modifier information has been factored in.
+     */
+    protected abstract RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

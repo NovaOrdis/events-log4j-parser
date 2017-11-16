@@ -19,14 +19,13 @@ package io.novaordis.events.log4j.pattern;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LiteralPatternElementTest extends Log4jPatternElementTest {
+public class LiteralTextTest extends ConversionPatternComponentTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -40,62 +39,46 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
 
     // Overrides -------------------------------------------------------------------------------------------------------
 
-    @Test
-    @Override
-    public void addAfterLast() throws Exception {
-
-        //
-        // noop
-        //
-    }
-
-    @Test
-    @Override
-    public void addAfterNotAccepted() throws Exception {
-
-        //
-        // noop
-        //
-    }
-
     // Tests -----------------------------------------------------------------------------------------------------------
 
     @Test
     public void add() throws Exception {
 
-        LiteralPatternElement e = getLog4jPatternElementToTest();
+        LiteralText e = getConversionPatternComponentToTest();
 
-        assertNull(e.getLiteral());
+        fail("return here");
 
-        AddResult result = e.add('b');
-        assertEquals(AddResult.ACCEPTED, result);
-
-        assertEquals("b", e.getLiteral());
-
-        AddResult result2 = e.add('l');
-        assertEquals(AddResult.ACCEPTED, result2);
-
-        assertEquals("bl", e.getLiteral());
-
-        AddResult result3 = e.add('a');
-        assertEquals(AddResult.ACCEPTED, result3);
-
-        assertEquals("bla", e.getLiteral());
-
-        AddResult result4 = e.add('h');
-        assertEquals(AddResult.ACCEPTED, result4);
-
-        assertEquals("blah", e.getLiteral());
-
-        AddResult result5 = e.add(' ');
-        assertEquals(AddResult.ACCEPTED, result5);
-
-        assertEquals("blah ", e.getLiteral());
-
-        AddResult result6 = e.add('[');
-        assertEquals(AddResult.ACCEPTED, result6);
-
-        assertEquals("blah [", e.getLiteral());
+//        assertNull(e.getLiteral());
+//
+//        AddResult result = e.add('b');
+//        assertEquals(AddResult.ACCEPTED, result);
+//
+//        assertEquals("b", e.getLiteral());
+//
+//        AddResult result2 = e.add('l');
+//        assertEquals(AddResult.ACCEPTED, result2);
+//
+//        assertEquals("bl", e.getLiteral());
+//
+//        AddResult result3 = e.add('a');
+//        assertEquals(AddResult.ACCEPTED, result3);
+//
+//        assertEquals("bla", e.getLiteral());
+//
+//        AddResult result4 = e.add('h');
+//        assertEquals(AddResult.ACCEPTED, result4);
+//
+//        assertEquals("blah", e.getLiteral());
+//
+//        AddResult result5 = e.add(' ');
+//        assertEquals(AddResult.ACCEPTED, result5);
+//
+//        assertEquals("blah ", e.getLiteral());
+//
+//        AddResult result6 = e.add('[');
+//        assertEquals(AddResult.ACCEPTED, result6);
+//
+//        assertEquals("blah [", e.getLiteral());
     }
 
     // getLiteral() ----------------------------------------------------------------------------------------------------
@@ -104,27 +87,20 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
     @Override
     public void getLiteral() throws Exception {
 
-        LiteralPatternElement e = new LiteralPatternElement();
+        LiteralText e = new LiteralText();
 
-        e.add('b');
-        e.add('l');
-        e.add('a');
-        e.add('h');
+//        e.add('b');
+//        e.add('l');
+//        e.add('a');
+//        e.add('h');
+//
+//        assertNull(e.getFormatModifier());
+//
+//        String l = e.getLiteral();
+//
+//        assertEquals("blah", l);
 
-        assertNull(e.getFormatModifier());
-
-        String l = e.getLiteral();
-
-        assertEquals("blah", l);
-    }
-
-    @Test
-    @Override
-    public void getLiteral_WithFormatModifier() throws Exception {
-
-        //
-        // noop
-        //
+        fail("return here");
     }
 
     // parse() ---------------------------------------------------------------------------------------------------------
@@ -136,9 +112,9 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
 
         int from = 31;
 
-        LiteralPatternElement pe = new LiteralPatternElement("something else");
+        LiteralText pe = new LiteralText("something else");
 
-        ParsedElement p = pe.parse(line, from, null);
+        RenderedLogEventElement p = pe.parse(line, from, null);
 
         String s = (String)p.get();
 
@@ -156,7 +132,7 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
 
         int from = 2;
 
-        LiteralPatternElement pe = new LiteralPatternElement("blih");
+        LiteralText pe = new LiteralText("blih");
 
         try {
 
@@ -176,9 +152,9 @@ public class LiteralPatternElementTest extends Log4jPatternElementTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
-    protected LiteralPatternElement getLog4jPatternElementToTest() throws Exception {
+    protected LiteralText getConversionPatternComponentToTest() throws Exception {
 
-        return new LiteralPatternElement();
+        return new LiteralText();
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

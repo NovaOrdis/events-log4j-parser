@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import org.junit.Test;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
- *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 11/5/17
+ * @since 10/30/17
  */
-public class ParsedElement {
+public class LineSeparatorTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -29,64 +38,61 @@ public class ParsedElement {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private int from;
-    private int to;
-    private String literal;
-    private Object object;
-
     // Constructors ----------------------------------------------------------------------------------------------------
-
-    public ParsedElement(Object o, String literal, int from, int to) {
-
-        this.object = o;
-        this.literal = literal;
-        this.from = from;
-        this.to = to;
-    }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the position in string at this
-     */
-    public int from() {
+    // Overrides -------------------------------------------------------------------------------------------------------
 
-        return from;
-    }
-
-    /**
-     * @return the position in string of the first character that immediately follows the element.
-     */
-    public int to() {
-
-        return to;
-    }
-
-    /**
-     * @return the string representation of the element, as it shows up in the original string.
-     */
-    public String getLiteral() {
-
-        return literal;
-    }
-
-    /**
-     * @return the parsed object, whose type depends on the Log4jPatternElement it corresponds to.
-     */
-    public Object get() {
-
-        return object;
-    }
-
+    @Test
     @Override
-    public String toString() {
+    public void addAfterLast() throws Exception {
 
-        return "(" + from + ", " + to + ") \"" + literal + "\" " + object;
+        //
+        // noop
+        //
     }
+
+    @Test
+    @Override
+    public void addAfterNotAccepted() throws Exception {
+
+        LineSeparator e = getConversionSpecifierToTest(null);
+
+        AddResult r = e.add(' ');
+        assertEquals(AddResult.NOT_ACCEPTED, r);
+
+        try {
+
+            e.add(' ');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+        }
+    }
+
+    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    @Override
+    protected LineSeparator getConversionSpecifierToTest(FormatModifier m) throws Exception {
+
+        LineSeparator cs = new LineSeparator();
+        cs.setFormatModifier(m);
+        return cs;
+    }
+
+    @Override
+    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

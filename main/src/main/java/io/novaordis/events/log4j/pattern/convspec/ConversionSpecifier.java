@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 
 /**
+ * A conversion specifier: https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Specifier.
+ *
+ * It is part of a Log4j conversion pattern: https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Pattern
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public interface Log4jPatternElement {
+public interface ConversionSpecifier extends ConversionPatternComponent {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -29,24 +38,13 @@ public interface Log4jPatternElement {
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
-     * One char identifier:
+     * A conversion specifier's conversion character.
      *
-     * 'd' - date
-     * 'p' - level
-     * 'n' - line separator
-     * 'c' - logger
-     * 't' - thread name
+     * https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Character
      *
      * May return null.
      */
-    Character getIdentifier();
-
-    /**
-     * @return the pattern element literal - the pattern element marker ('%') and the defining character, possibly
-     * followed by any extra format specification. For LiteralPatternElement, it is the sequence of characters that
-     * will be copied in the log. May return null if the element is not initialized yet.
-     */
-    String getLiteral();
+    Character getConversionCharacter();
 
     /**
      * May return null if hte element has no format modifier.
@@ -63,21 +61,9 @@ public interface Log4jPatternElement {
      * the character was not accepted.
      *
      * @exception Log4jPatternLayoutException if the character cannot be possibly part of a valid pattern element
-     * specification, or the internal state of this Log4jPatternElement instance does not allow adding.
+     * specification, or the internal state of this ConversionSpecifier instance does not allow adding.
      */
     AddResult add(char c) throws Log4jPatternLayoutException;
 
-    /**
-     * Extract and parse the string value corresponding to this pattern element, returning the parsed element value. May
-     * not return a null value, if no string representation of this element is found at the given position in the
-     * string, Log4jPatternLayoutException is thrown.
-     *
-     * @exception Log4jPatternLayoutException if no valid string representation of this element is found at the given
-     * position in the string,
-     *
-     * @param next the next pattern element that follows this one in the log4j pattern layout, or null if this is the
-     *             last pattern element in the pattern layout.
-     */
-    ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException;
 
 }

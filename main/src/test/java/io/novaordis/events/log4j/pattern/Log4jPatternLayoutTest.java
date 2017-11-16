@@ -20,6 +20,12 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.pattern.convspec.Date;
+import io.novaordis.events.log4j.pattern.convspec.Level;
+import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
+import io.novaordis.events.log4j.pattern.convspec.Logger;
+import io.novaordis.events.log4j.pattern.convspec.ThreadName;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -87,86 +93,88 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", pl.getLiteral());
 
-        assertEquals(11, pl.getPatternElementCount());
+        assertEquals(11, pl.getPatternComponentCount());
 
-        Iterator<Log4jPatternElement> i = pl.getPatternElementIterator();
+        Iterator<ConversionPatternComponent> i = pl.getPatternComponentIterator();
 
         assertTrue(i.hasNext());
 
-        DatePatternElement d = (DatePatternElement)i.next();
+        Date d = (Date)i.next();
 
         assertEquals("%d{HH:mm:ss,SSS}", d.getLiteral());
         assertEquals("HH:mm:ss,SSS", d.getSimpleDateFormat().toPattern());
-        assertEquals(DatePatternElement.IDENTIFIER, d.getIdentifier().charValue());
+        assertEquals(Date.IDENTIFIER, d.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
-        LiteralPatternElement l = (LiteralPatternElement)i.next();
+        LiteralText l = (LiteralText)i.next();
 
         assertEquals(" ", l.getLiteral());
 
         assertTrue(i.hasNext());
 
-        LevelPatternElement p = (LevelPatternElement)i.next();
+        Level p = (Level)i.next();
 
         assertEquals("%-5p", p.getLiteral());
         FormatModifier m = p.getFormatModifier();
         assertEquals("-5", m.getLiteral());
-        assertEquals(LevelPatternElement.IDENTIFIER, p.getIdentifier().charValue());
+        assertEquals(Level.IDENTIFIER, p.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
-        LiteralPatternElement l2 = (LiteralPatternElement)i.next();
+        LiteralText l2 = (LiteralText)i.next();
 
         assertEquals(" [", l2.getLiteral());
 
         assertTrue(i.hasNext());
 
-        LoggerPatternElement c = (LoggerPatternElement)i.next();
+        Logger c = (Logger)i.next();
 
         assertEquals("%c", c.getLiteral());
         assertNull(c.getFormatModifier());
-        assertEquals(LoggerPatternElement.IDENTIFIER, c.getIdentifier().charValue());
+        assertEquals(Logger.IDENTIFIER, c.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
-        LiteralPatternElement l3 = (LiteralPatternElement)i.next();
+        LiteralText l3 = (LiteralText)i.next();
 
         assertEquals("] (", l3.getLiteral());
 
         assertTrue(i.hasNext());
 
-        ThreadNamePatternElement t = (ThreadNamePatternElement)i.next();
+        ThreadName t = (ThreadName)i.next();
 
         assertEquals("%t", t.getLiteral());
         assertNull(t.getFormatModifier());
-        assertEquals(ThreadNamePatternElement.IDENTIFIER, t.getIdentifier().charValue());
+        assertEquals(ThreadName.IDENTIFIER, t.getConversionCharacter().charValue());
 
         assertTrue(i.hasNext());
 
-        LiteralPatternElement l4 = (LiteralPatternElement)i.next();
+        LiteralText l4 = (LiteralText)i.next();
 
         assertEquals(") ", l4.getLiteral());
 
         assertTrue(i.hasNext());
 
-        UnknownPatternElement u = (UnknownPatternElement)i.next();
+        fail("return here");
 
-        assertEquals("%s", u.getLiteral());
-        assertEquals('s', u.getIdentifier().charValue());
+//        UnknownPatternElement u = (UnknownPatternElement)i.next();
+//
+//        assertEquals("%s", u.getLiteral());
+//        assertEquals('s', u.getConversionCharacter().charValue());
+//
+//        assertTrue(i.hasNext());
+//
+//        UnknownPatternElement u2 = (UnknownPatternElement)i.next();
+//
+//        assertEquals("%E", u2.getLiteral());
+//        assertEquals('E', u2.getConversionCharacter().charValue());
+//
+//        assertTrue(i.hasNext());
 
-        assertTrue(i.hasNext());
-
-        UnknownPatternElement u2 = (UnknownPatternElement)i.next();
-
-        assertEquals("%E", u2.getLiteral());
-        assertEquals('E', u2.getIdentifier().charValue());
-
-        assertTrue(i.hasNext());
-
-        LineSeparatorPatternElement n = (LineSeparatorPatternElement)i.next();
+        LineSeparator n = (LineSeparator)i.next();
         assertNull(n.getFormatModifier());
-        assertEquals(LineSeparatorPatternElement.IDENTIFIER, n.getIdentifier().charValue());
+        assertEquals(LineSeparator.IDENTIFIER, n.getConversionCharacter().charValue());
 
         assertFalse(i.hasNext());
     }

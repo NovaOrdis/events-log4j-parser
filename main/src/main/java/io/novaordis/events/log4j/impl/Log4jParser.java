@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
-import io.novaordis.events.log4j.pattern.Log4jPatternElement;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.ParsedElement;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -47,7 +47,7 @@ public class Log4jParser extends ParserBase {
 
     /**
      * @return the parsed objects that correspond to the given pattern elements. The objects can be Strings,
-     * Date instances, numbers, etc. The returned list size is equal to Log4jPatternLayout.getPatternElementCount()
+     * Date instances, numbers, etc. The returned list size is equal to Log4jPatternLayout.getPatternComponentCount()
      * value. The type correspondence is presented below:
      *
      * date pattern - java.lang.Date
@@ -67,15 +67,15 @@ public class Log4jParser extends ParserBase {
     public static List<Object> matchPatterns(Long lineNumber, Log4jPatternLayout patternLayout, String line)
             throws ParsingException {
 
-        Iterator<Log4jPatternElement> i = patternLayout.getPatternElementIterator();
+        Iterator<ConversionPatternComponent> i = patternLayout.getPatternComponentIterator();
 
         if (!i.hasNext()) {
 
             return Collections.emptyList();
         }
 
-        Log4jPatternElement current = i.next();
-        Log4jPatternElement next = null;
+        ConversionPatternComponent current = i.next();
+        ConversionPatternComponent next = null;
         int from = 0;
 
         List<Object> result = new ArrayList<>();
@@ -89,7 +89,7 @@ public class Log4jParser extends ParserBase {
 
             try {
 
-                ParsedElement pe = current.parse(line, from, next);
+                RenderedLogEventElement pe = current.parse(line, from, next);
                 result.add(pe.get());
                 from = pe.to();
 

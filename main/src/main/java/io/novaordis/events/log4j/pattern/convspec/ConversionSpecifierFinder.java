@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-class Log4jPatternElementFinder {
+class ConversionSpecifierFinder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -33,19 +36,21 @@ class Log4jPatternElementFinder {
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
-     * Scans the entry pattern literal from the given position and finds the beginning (and the qualifier) of the next
-     * pattern element. Returns the position of the last character in element, to cooperate with a upper layer 'for'
-     * loop, which will increment the index.
+     * Scans the entry pattern literal from the given position and finds the beginning (and the modifier) of the next
+     * conversion specifier. Returns the position of the last character in element, to cooperate with a upper layer
+     * 'for' loop, which will increment the index.
      *
      * @param patternLiteral the entire pattern layout.
+     *
      * @param from the position to start looking from.
-     * @param holder the holder to deposit the next identified element.
+     *
+     * @param holder the holder to deposit the next identified conversion specifier instance into.
      *
      * @return the position in the pattern layout the last character was read from.
      *
      * @throws Log4jPatternLayoutException
      */
-    int lookup(String patternLiteral, int from, ElementHolder holder)  throws Log4jPatternLayoutException {
+    int lookup(String patternLiteral, int from, ConversionSpecifierHolder holder)  throws Log4jPatternLayoutException {
 
         if (from >= patternLiteral.length()) {
 
@@ -54,31 +59,31 @@ class Log4jPatternElementFinder {
 
         int i = from;
         String formatModifierLiteral = null;
-        Log4jPatternElementBase element = null;
+        ConversionSpecifierBase element = null;
 
         while(element == null) {
 
             char c = patternLiteral.charAt(i);
 
-            if (DatePatternElement.IDENTIFIER == c) {
+            if (Date.IDENTIFIER == c) {
 
-                element = new DatePatternElement();
+                element = new Date();
             }
-            else if (LevelPatternElement.IDENTIFIER == c) {
+            else if (Level.IDENTIFIER == c) {
 
-                element = new LevelPatternElement();
+                element = new Level();
             }
-            else if (LineSeparatorPatternElement.IDENTIFIER == c) {
+            else if (LineSeparator.IDENTIFIER == c) {
 
-                element = new LineSeparatorPatternElement();
+                element = new LineSeparator();
             }
-            else if (LoggerPatternElement.IDENTIFIER == c) {
+            else if (Logger.IDENTIFIER == c) {
 
-                element = new LoggerPatternElement();
+                element = new Logger();
             }
-            else if (ThreadNamePatternElement.IDENTIFIER == c) {
+            else if (ThreadName.IDENTIFIER == c) {
 
-                element = new ThreadNamePatternElement();
+                element = new ThreadName();
             }
             else if ('0' <= c && c <= '9' || c == '.' || c == '-') {
 
@@ -99,7 +104,7 @@ class Log4jPatternElementFinder {
             }
             else {
 
-                element = new UnknownPatternElement(c);
+                throw new Log4jPatternLayoutException("unknown conversion character: " + c);
             }
         }
 
@@ -109,7 +114,7 @@ class Log4jPatternElementFinder {
             element.setFormatModifier(m);
         }
 
-        holder.set(element);
+        holder.setInstance(element);
 
         return i;
     }

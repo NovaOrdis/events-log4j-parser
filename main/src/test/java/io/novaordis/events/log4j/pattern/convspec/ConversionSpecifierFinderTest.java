@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -28,7 +27,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class Log4JPatternElementFinderTest {
+public class ConversionSpecifierFinderTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -43,11 +42,11 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_InvalidFrom() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
         try {
 
-            f.lookup("blah", 4, new ElementHolder());
+            f.lookup("blah", 4, new ConversionSpecifierHolder());
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -60,11 +59,11 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_InvalidFrom2() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
         try {
 
-            f.lookup("blah", 5, new ElementHolder());
+            f.lookup("blah", 5, new ConversionSpecifierHolder());
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -77,15 +76,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_Date() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
         
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
-        int i = f.lookup("%" + DatePatternElement.IDENTIFIER, 1, holder);
+        int i = f.lookup("%" + Date.IDENTIFIER, 1, holder);
         
         assertEquals(1, i);
         
-        DatePatternElement e = (DatePatternElement)holder.get();
+        Date e = (Date)holder.getInstance();
 
         assertNotNull(e);
     }
@@ -93,15 +92,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_Level() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
-        int i = f.lookup("%" + LevelPatternElement.IDENTIFIER, 1, holder);
+        int i = f.lookup("%" + Level.IDENTIFIER, 1, holder);
 
         assertEquals(1, i);
 
-        LevelPatternElement e = (LevelPatternElement)holder.get();
+        Level e = (Level)holder.getInstance();
 
         assertNotNull(e);
     }
@@ -109,15 +108,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_LineSeparator() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
-        int i = f.lookup("%" + LineSeparatorPatternElement.IDENTIFIER, 1, holder);
+        int i = f.lookup("%" + LineSeparator.IDENTIFIER, 1, holder);
 
         assertEquals(1, i);
 
-        LineSeparatorPatternElement e = (LineSeparatorPatternElement)holder.get();
+        LineSeparator e = (LineSeparator)holder.getInstance();
 
         assertNotNull(e);
     }
@@ -125,15 +124,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_Logger() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
-        int i = f.lookup("%" + LoggerPatternElement.IDENTIFIER, 1, holder);
+        int i = f.lookup("%" + Logger.IDENTIFIER, 1, holder);
 
         assertEquals(1, i);
 
-        LoggerPatternElement e = (LoggerPatternElement)holder.get();
+        Logger e = (Logger)holder.getInstance();
 
         assertNotNull(e);
     }
@@ -141,15 +140,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_ThreadName() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
-        int i = f.lookup("%" + ThreadNamePatternElement.IDENTIFIER, 1, holder);
+        int i = f.lookup("%" + ThreadName.IDENTIFIER, 1, holder);
 
         assertEquals(1, i);
 
-        ThreadNamePatternElement e = (ThreadNamePatternElement)holder.get();
+        ThreadName e = (ThreadName)holder.getInstance();
 
         assertNotNull(e);
     }
@@ -157,15 +156,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_LeftPad() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
         int i = f.lookup("%10p   ", 1, holder);
 
         assertEquals(3, i);
 
-        LevelPatternElement e = (LevelPatternElement)holder.get();
+        Level e = (Level)holder.getInstance();
 
         assertNotNull(e);
 
@@ -175,15 +174,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_RightPad() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
         int i = f.lookup("%-5p   ", 1, holder);
 
         assertEquals(3, i);
 
-        LevelPatternElement e = (LevelPatternElement)holder.get();
+        Level e = (Level)holder.getInstance();
 
         assertNotNull(e);
 
@@ -197,15 +196,15 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_FormatModifierLiteral_Truncate() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
         int i = f.lookup("%.30p   ", 1, holder);
 
         assertEquals(4, i);
 
-        LevelPatternElement e = (LevelPatternElement)holder.get();
+        Level e = (Level)holder.getInstance();
 
         assertNotNull(e);
 
@@ -215,21 +214,23 @@ public class Log4JPatternElementFinderTest {
     @Test
     public void lookup_Unknown() throws Exception {
 
-        Log4jPatternElementFinder f = new Log4jPatternElementFinder();
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
-        ElementHolder holder = new ElementHolder();
+        ConversionSpecifierHolder holder = new ConversionSpecifierHolder();
 
         int i = f.lookup("%s   ", 1, holder);
 
         assertEquals(1, i);
 
-        UnknownPatternElement e = (UnknownPatternElement)holder.get();
+        fail("return null");
 
-        assertNotNull(e);
-
-        assertNull(e.getFormatModifier());
-
-        assertEquals('s', e.getIdentifier().charValue());
+//        UnknownPatternElement e = (UnknownPatternElement)holder.getInstance();
+//
+//        assertNotNull(e);
+//
+//        assertNull(e.getFormatModifier());
+//
+//        assertEquals('s', e.getConversionCharacter().charValue());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

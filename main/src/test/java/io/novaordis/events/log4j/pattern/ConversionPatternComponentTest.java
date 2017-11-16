@@ -18,15 +18,13 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 11/15/17
  */
-public class ThreadNamePatternElementTest extends Log4jPatternElementTest {
+public abstract class ConversionPatternComponentTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -38,50 +36,29 @@ public class ThreadNamePatternElementTest extends Log4jPatternElementTest {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    // Overrides -------------------------------------------------------------------------------------------------------
-
-    @Test
-    @Override
-    public void addAfterLast() throws Exception {
-
-        //
-        // noop
-        //
-    }
-
-    @Test
-    @Override
-    public void addAfterNotAccepted() throws Exception {
-
-        ThreadNamePatternElement e = getLog4jPatternElementToTest();
-
-        AddResult r = e.add(' ');
-        assertEquals(AddResult.NOT_ACCEPTED, r);
-
-        try {
-
-            e.add(' ');
-
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException ex) {
-
-            String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
-        }
-    }
-
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    // getLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void getLiteral() throws Exception {
+
+        fail("return here");
+    }
+
+    // parse() ---------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void parse() throws Exception {
+
+        fail("return here");
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
-    @Override
-    protected ThreadNamePatternElement getLog4jPatternElementToTest() throws Exception {
-
-        return new ThreadNamePatternElement();
-    }
+    protected abstract ConversionPatternComponent getConversionPatternComponentToTest() throws Exception;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

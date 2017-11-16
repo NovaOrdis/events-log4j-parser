@@ -108,7 +108,7 @@ public class Log4jParserTest {
 
         Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
 
-        int elementCount = patternLayout.getPatternElementCount();
+        int elementCount = patternLayout.getPatternComponentCount();
 
         assertEquals(11, elementCount);
 

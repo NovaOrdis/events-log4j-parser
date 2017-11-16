@@ -14,45 +14,58 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 /**
- * Models unrecognized pattern elements.
+ * The level of the logging event.
+ *
+ * p
+ *
+ * The type of the corresponding parsed object instance is io.novaordis.events.log4j.impl.Log4jLevel
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class UnknownPatternElement extends Log4jPatternElementBase {
+public class Level extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char IDENTIFIER = 'p';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private char identifier;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    protected UnknownPatternElement(char identifier) {
+    protected Level() {
+    }
 
-        this.identifier = identifier;
+    /**
+     * @param pattern, without the pattern element marker ('%'). Example: "-5p"
+     */
+    protected Level(String pattern) throws Log4jPatternLayoutException {
+
+        super(pattern);
+    }
+
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
+
+    @Override
+    public Character getConversionCharacter() {
+
+        return IDENTIFIER;
+    }
+
+    @Override
+    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
-
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
-
-    @Override
-    public Character getIdentifier() {
-
-        return identifier;
-    }
-
-    @Override
-    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
-    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

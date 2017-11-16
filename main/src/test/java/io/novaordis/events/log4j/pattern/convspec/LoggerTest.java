@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +30,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LoggerPatternElementTest extends Log4jPatternElementTest {
+public class LoggerTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -53,7 +57,7 @@ public class LoggerPatternElementTest extends Log4jPatternElementTest {
     @Override
     public void addAfterNotAccepted() throws Exception {
 
-        LoggerPatternElement e = getLog4jPatternElementToTest();
+        Logger e = getConversionSpecifierToTest(null);
 
         AddResult r = e.add(' ');
         assertEquals(AddResult.NOT_ACCEPTED, r);
@@ -78,9 +82,16 @@ public class LoggerPatternElementTest extends Log4jPatternElementTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
-    protected LoggerPatternElement getLog4jPatternElementToTest() throws Exception {
+    protected Logger getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        return new LoggerPatternElement();
+        Logger cs = new Logger();
+        cs.setFormatModifier(m);
+        return cs;
+    }
+
+    @Override
+    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

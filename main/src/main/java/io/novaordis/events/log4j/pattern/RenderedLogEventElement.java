@@ -17,60 +17,73 @@
 package io.novaordis.events.log4j.pattern;
 
 /**
- * The level of the logging event.
- *
- * p
- *
- * The type of the corresponding parsed object instance is io.novaordis.events.log4j.impl.Log4jLevel
+ * The string value - as it shows up in the log - of a converted individual log4j log event element.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 11/5/17
  */
-public class LevelPatternElement extends Log4jPatternElementBase {
+public class RenderedLogEventElement {
 
     // Constants -------------------------------------------------------------------------------------------------------
-
-    public static final char IDENTIFIER = 'p';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    private int from;
+    private int to;
+    private String literal;
+    private Object object;
+
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    protected LevelPatternElement() {
-    }
+    public RenderedLogEventElement(Object o, String literal, int from, int to) {
 
-    /**
-     * @param pattern, without the pattern element marker ('%'). Example: "-5p"
-     */
-    protected LevelPatternElement(String pattern) throws Log4jPatternLayoutException {
-
-        super(pattern);
-    }
-
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
-
-    @Override
-    public Character getIdentifier() {
-
-        return IDENTIFIER;
-    }
-
-    @Override
-    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
-
-        FormatModifier m = getFormatModifier();
-
-        if (m != null) {
-
-
-        }
-
-        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
+        this.object = o;
+        this.literal = literal;
+        this.from = from;
+        this.to = to;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return the position in string at this
+     */
+    public int from() {
+
+        return from;
+    }
+
+    /**
+     * @return the position in string of the first character that immediately follows the element.
+     */
+    public int to() {
+
+        return to;
+    }
+
+    /**
+     * @return the string representation of the element, as it shows up in the original string.
+     */
+    public String getLiteral() {
+
+        return literal;
+    }
+
+    /**
+     * @return the parsed object, whose type depends on the ConversionSpecifier it corresponds to.
+     */
+    public Object get() {
+
+        return object;
+    }
+
+    @Override
+    public String toString() {
+
+        return "(" + from + ", " + to + ") \"" + literal + "\" " + object;
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

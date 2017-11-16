@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 /**
  * Outputs the date of the logging event.
@@ -30,7 +34,7 @@ import java.util.Date;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class DatePatternElement extends Log4jPatternElementBase {
+public class Date extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -73,9 +77,9 @@ public class DatePatternElement extends Log4jPatternElementBase {
     // Constructors ----------------------------------------------------------------------------------------------------
 
     /**
-     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
+     * Instances of this class can only be created by the ConversionSpecifierFinder or within the package.
      */
-    protected DatePatternElement() {
+    protected Date() {
 
         this.state = NEW;
     }
@@ -83,15 +87,15 @@ public class DatePatternElement extends Log4jPatternElementBase {
     /**
      * @param pattern, without the pattern element marker ('%'). Example: "d{HH:mm:ss,SSS}"
      */
-    protected DatePatternElement(String pattern) throws Log4jPatternLayoutException {
+    protected Date(String pattern) throws Log4jPatternLayoutException {
 
         super(pattern);
     }
 
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
     @Override
-    public Character getIdentifier() {
+    public Character getConversionCharacter() {
 
         return IDENTIFIER;
     }
@@ -160,13 +164,14 @@ public class DatePatternElement extends Log4jPatternElementBase {
     }
 
     @Override
-    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
+    public RenderedLogEventElement parse(String s, int from, ConversionPatternComponent next)
+            throws Log4jPatternLayoutException {
 
         int length = dateFormat.toPattern().length();
 
         String s2 = s.substring(from, from + length);
 
-        Date d;
+        java.util.Date d;
 
         try {
 
@@ -177,7 +182,12 @@ public class DatePatternElement extends Log4jPatternElementBase {
             throw new Log4jPatternLayoutException("date \"" + s2 + "\" does not match pattern " + getLiteral());
         }
 
-        return new ParsedElement(d, s2, from, from + length);
+        return new RenderedLogEventElement(d, s2, from, from + length);
+    }
+
+    @Override
+    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+package io.novaordis.events.log4j.pattern.convspec;
 
 /**
+ * Utility class that allows the factory to return an extracted conversion specifier instance in other way than through
+ * a result.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 10/31/17
  */
-public class UnknownPatternElementTest extends Log4jPatternElementTest {
+class ConversionSpecifierHolder {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -34,54 +31,46 @@ public class UnknownPatternElementTest extends Log4jPatternElementTest {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    private ConversionSpecifier cs;
+
     // Constructors ----------------------------------------------------------------------------------------------------
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    // Overrides -------------------------------------------------------------------------------------------------------
+    /**
+     * May return null.
+     */
+    public ConversionSpecifier getInstance() {
 
-    @Test
-    @Override
-    public void addAfterLast() throws Exception {
-
-        //
-        // noop
-        //
+        return cs;
     }
 
-    @Test
-    @Override
-    public void addAfterNotAccepted() throws Exception {
+    /**
+     * May return null.
+     */
+    public ConversionSpecifier removeInstance() {
 
-        UnknownPatternElement e = getLog4jPatternElementToTest();
+        ConversionSpecifier result = cs;
 
-        AddResult r = e.add(' ');
-        assertEquals(AddResult.NOT_ACCEPTED, r);
+        cs = null;
 
-        try {
-
-            e.add(' ');
-
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException ex) {
-
-            String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
-        }
+        return result;
     }
 
-    // Tests -----------------------------------------------------------------------------------------------------------
+    public void setInstance(ConversionSpecifier element) {
+
+        this.cs = element;
+    }
+
+    @Override
+    public String toString() {
+
+        return "o->" + cs;
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    @Override
-    protected UnknownPatternElement getLog4jPatternElementToTest() throws Exception {
-
-        return new UnknownPatternElement('x');
-    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
+
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 /**
  * The name of the logger that publishes the logging event.
  *
- * n
+ * c{precision}
  *
- * The type of the corresponding parsed object instance is a String containing platform-specific line separator.
+ * The type of the corresponding parsed object instance is a String containing the logger value.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LineSeparatorPatternElement extends Log4jPatternElementBase {
+public class Logger extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char IDENTIFIER = 'n';
+    public static final char IDENTIFIER = 'c';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -38,18 +41,17 @@ public class LineSeparatorPatternElement extends Log4jPatternElementBase {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    // Log4jPatternElement implementation ------------------------------------------------------------------------------
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
     @Override
-    public Character getIdentifier() {
+    public Character getConversionCharacter() {
 
         return IDENTIFIER;
     }
 
     @Override
-    public ParsedElement parse(String s, int from, Log4jPatternElement next) throws Log4jPatternLayoutException {
-
-        throw new RuntimeException("parse() NOT YET IMPLEMENTED");
+    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

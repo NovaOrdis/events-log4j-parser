@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +33,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LevelPatternElementTest extends Log4jPatternElementTest {
+public class LevelTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -56,7 +60,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Override
     public void addAfterNotAccepted() throws Exception {
 
-        LevelPatternElement e = getLog4jPatternElementToTest();
+        Level e = getConversionSpecifierToTest(null);
 
         AddResult r = e.add(' ');
         assertEquals(AddResult.NOT_ACCEPTED, r);
@@ -81,9 +85,9 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     public void constructor() throws Exception {
 
-        LevelPatternElement e = new LevelPatternElement("p");
+        Level e = new Level("p");
 
-        assertEquals(LevelPatternElement.IDENTIFIER, e.getIdentifier().charValue());
+        assertEquals(Level.IDENTIFIER, e.getConversionCharacter().charValue());
         assertNull(e.getFormatModifier());
         assertEquals("%p", e.getLiteral());
     }
@@ -91,9 +95,9 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     public void constructor_WithFormatModifier() throws Exception {
 
-        LevelPatternElement e = new LevelPatternElement("-5p");
+        Level e = new Level("-5p");
 
-        assertEquals(LevelPatternElement.IDENTIFIER, e.getIdentifier().charValue());
+        assertEquals(Level.IDENTIFIER, e.getConversionCharacter().charValue());
         FormatModifier m = e.getFormatModifier();
         assertEquals("-5", m.getLiteral());
         assertEquals("%-5p", e.getLiteral());
@@ -104,7 +108,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
 
         try {
 
-            new LevelPatternElement("c");
+            new Level("c");
 
             fail("should have thrown exception");
         }
@@ -112,7 +116,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
 
             String msg = e.getMessage();
 
-            assertTrue(msg.contains("identifier '" + LevelPatternElement.IDENTIFIER + "' not encountered"));
+            assertTrue(msg.contains("identifier '" + Level.IDENTIFIER + "' not encountered"));
         }
     }
 
@@ -121,7 +125,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     public void add() throws Exception {
 
-        LevelPatternElement e = getLog4jPatternElementToTest();
+        Level e = getConversionSpecifierToTest(null);
 
         AddResult r = e.add(' ');
         assertEquals(AddResult.NOT_ACCEPTED, r);
@@ -142,7 +146,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     public void getLiteral() throws Exception {
 
-        LevelPatternElement e = getLog4jPatternElementToTest();
+        Level e = getConversionSpecifierToTest(null);
 
         assertEquals("%p", e.getLiteral());
     }
@@ -150,7 +154,7 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     @Test
     public void getLiteral_FormatModifier() throws Exception {
 
-        LevelPatternElement e = getLog4jPatternElementToTest();
+        Level e = getConversionSpecifierToTest(null);
 
         e.setFormatModifier(new FormatModifier("-5"));
 
@@ -166,9 +170,9 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
 
         int from = 0;
 
-        LevelPatternElement pe = new LevelPatternElement("-5p");
+        Level pe = new Level("-5p");
 
-        ParsedElement p = pe.parse(line, from, null);
+        RenderedLogEventElement p = pe.parse(line, from, null);
 
         Log4jLevel l = (Log4jLevel)p.get();
 
@@ -190,9 +194,16 @@ public class LevelPatternElementTest extends Log4jPatternElementTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
-    protected LevelPatternElement getLog4jPatternElementToTest() throws Exception {
+    protected Level getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        return new LevelPatternElement();
+        Level cs = new Level();
+        cs.setFormatModifier(m);
+        return cs;
+    }
+
+    @Override
+    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

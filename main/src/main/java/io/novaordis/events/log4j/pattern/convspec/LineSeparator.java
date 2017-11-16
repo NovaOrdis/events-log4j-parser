@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 /**
+ * The name of the logger that publishes the logging event.
+ *
+ * n
+ *
+ * The type of the corresponding parsed object instance is a String containing platform-specific line separator.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LineSeparatorPatternElementTest extends Log4jPatternElementTest {
+public class LineSeparator extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char IDENTIFIER = 'n';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -36,52 +41,24 @@ public class LineSeparatorPatternElementTest extends Log4jPatternElementTest {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
+
+    @Override
+    public Character getConversionCharacter() {
+
+        return IDENTIFIER;
+    }
+
+    @Override
+    protected RenderedLogEventElement parseLiteralAfterFormatModifierHandling() throws Log4jPatternLayoutException {
+        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
-
-    // Overrides -------------------------------------------------------------------------------------------------------
-
-    @Test
-    @Override
-    public void addAfterLast() throws Exception {
-
-        //
-        // noop
-        //
-    }
-
-    @Test
-    @Override
-    public void addAfterNotAccepted() throws Exception {
-
-        LineSeparatorPatternElement e = getLog4jPatternElementToTest();
-
-        AddResult r = e.add(' ');
-        assertEquals(AddResult.NOT_ACCEPTED, r);
-
-        try {
-
-            e.add(' ');
-
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException ex) {
-
-            String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
-        }
-    }
-
-    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    @Override
-    protected LineSeparatorPatternElement getLog4jPatternElementToTest() throws Exception {
-
-        return new LineSeparatorPatternElement();
-    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

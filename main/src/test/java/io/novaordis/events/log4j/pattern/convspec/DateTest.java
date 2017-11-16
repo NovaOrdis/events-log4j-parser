@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.LiteralText;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEventElement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +35,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class DatePatternElementTest extends Log4jPatternElementTest {
+public class DateTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -47,9 +53,9 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Override
     public void addAfterLast() throws Exception {
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
-        assertEquals(AddResult.ACCEPTED, d.add('{'));
+        Assert.assertEquals(AddResult.ACCEPTED, d.add('{'));
         assertEquals(AddResult.ACCEPTED, d.add('H'));
         assertEquals(AddResult.ACCEPTED, d.add('H'));
         assertEquals(AddResult.LAST, d.add('}'));
@@ -72,7 +78,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Override
     public void addAfterNotAccepted() throws Exception {
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
         assertEquals(AddResult.NOT_ACCEPTED, d.add(' '));
 
         try {
@@ -98,7 +104,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         try {
 
-            new DatePatternElement("e{HH}");
+            new Date("e{HH}");
 
             fail("should have thrown exception");
         }
@@ -114,7 +120,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Test
     public void add_SimpleDateFormat() throws Exception {
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         String literal = "{HH:mm:ss,SSS}";
 
@@ -138,7 +144,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Test
     public void add_InvalidFormat() throws Exception {
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         String literal = "{blah}";
 
@@ -166,13 +172,13 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Test
     public void add_default() throws Exception {
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         assertEquals(AddResult.NOT_ACCEPTED, d.add('a'));
 
         assertEquals("%d", d.getLiteral());
 
-        assertEquals(DatePatternElement.DEFAULT_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.DEFAULT_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -180,7 +186,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{DEFAULT}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -191,7 +197,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.DEFAULT_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.DEFAULT_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -199,7 +205,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{ISO8601}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -210,14 +216,14 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.ISO8601_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.ISO8601_PATTERN, d.getSimpleDateFormat().toPattern());
     }
     @Test
     public void add_predefined_ISO8601_BASIC() throws Exception {
 
         String s = "{ISO8601_BASIC}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -228,7 +234,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.ISO8601_BASIC_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.ISO8601_BASIC_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -236,7 +242,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{ABSOLUTE}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -247,7 +253,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.ABSOLUTE_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.ABSOLUTE_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -255,7 +261,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{DATE}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -266,7 +272,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.DATE_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.DATE_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -274,7 +280,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{COMPACT}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -285,7 +291,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
         assertEquals(AddResult.LAST, d.add(s.charAt(i)));
 
         assertEquals("%d" + s, d.getLiteral());
-        assertEquals(DatePatternElement.COMPACT_PATTERN, d.getSimpleDateFormat().toPattern());
+        assertEquals(Date.COMPACT_PATTERN, d.getSimpleDateFormat().toPattern());
     }
 
     @Test
@@ -293,7 +299,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{UNIX}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -325,7 +331,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         String s = "{UNIX_MILLIS}";
 
-        DatePatternElement d = new DatePatternElement();
+        Date d = new Date();
 
         int i = 0;
         for(; i < s.length() - 1; i ++) {
@@ -357,7 +363,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Test
     public void getLiteral() throws Exception {
 
-        DatePatternElement e = getLog4jPatternElementToTest();
+        Date e = getConversionSpecifierToTest(null);
 
         assertEquals("%d", e.getLiteral());
     }
@@ -365,7 +371,7 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     @Test
     public void getLiteral_FormatModifier() throws Exception {
 
-        DatePatternElement e = getLog4jPatternElementToTest();
+        Date e = getConversionSpecifierToTest(null);
 
         e.setFormatModifier(new FormatModifier("-5"));
 
@@ -381,13 +387,13 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
 
         int from = 31;
 
-        LiteralPatternElement next = new LiteralPatternElement(" ");
+        LiteralText next = new LiteralText(" ");
 
-        DatePatternElement pe = new DatePatternElement("d{HH:mm:ss,SSS}");
+        Date pe = new Date("d{HH:mm:ss,SSS}");
 
-        ParsedElement p = pe.parse(line, from, next);
+        RenderedLogEventElement p = pe.parse(line, from, next);
 
-        Date d = (Date)p.get();
+        java.util.Date d = (java.util.Date)p.get();
 
         assertEquals("09:01:55,011", new SimpleDateFormat("HH:mm:ss,SSS").format(d));
 
@@ -401,9 +407,16 @@ public class DatePatternElementTest extends Log4jPatternElementTest {
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
-    protected DatePatternElement getLog4jPatternElementToTest() throws Exception {
+    protected Date getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        return new DatePatternElement();
+        Date cs = new Date();
+        cs.setFormatModifier(m);
+        return cs;
+    }
+
+    @Override
+    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

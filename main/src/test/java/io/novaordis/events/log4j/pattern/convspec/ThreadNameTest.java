@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.pattern.AddResult;
+import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public abstract class Log4jPatternElementTest {
+public class ThreadNameTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -37,68 +42,57 @@ public abstract class Log4jPatternElementTest {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
+    // Overrides -------------------------------------------------------------------------------------------------------
+
+    @Test
+    @Override
+    public void addAfterLast() throws Exception {
+
+        //
+        // noop
+        //
+    }
+
+    @Test
+    @Override
+    public void addAfterNotAccepted() throws Exception {
+
+        ThreadName e = getConversionSpecifierToTest(null);
+
+        AddResult r = e.add(' ');
+        assertEquals(AddResult.NOT_ACCEPTED, r);
+
+        try {
+
+            e.add(' ');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+        }
+    }
+
     // Tests -----------------------------------------------------------------------------------------------------------
-
-    /**
-     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
-     * AddResult.LAST throws Log4jPatternLayoutException.
-     */
-    @Test
-    public abstract void addAfterLast() throws Exception;
-
-    /**
-     * Test that must be provided by subclasses and must insure that add() invoked after an add() that returned
-     * AddResult.NOT_ACCEPTED throws Log4jPatternLayoutException.
-     */
-    @Test
-    public abstract void addAfterNotAccepted() throws Exception;
-
-    @Test
-    public void getFormatModifierLiteral() throws Exception {
-
-        //
-        // by default, the elements have no format modifier literal
-        //
-
-        Log4jPatternElement e = getLog4jPatternElementToTest();
-
-        FormatModifier m = e.getFormatModifier();
-
-        assertNull(m);
-    }
-
-    // getLiteral() ----------------------------------------------------------------------------------------------------
-
-    @Test
-    public void getLiteral() throws Exception {
-
-        Log4jPatternElement e = getLog4jPatternElementToTest();
-        assertNull(e.getFormatModifier());
-
-        String expected = "%" + e.getIdentifier();
-        String l = e.getLiteral();
-
-        assertEquals(expected, l);
-    }
-
-    @Test
-    public void getLiteral_WithFormatModifier() throws Exception {
-
-        Log4jPatternElement e = getLog4jPatternElementToTest();
-
-        ((Log4jPatternElementBase)e).setFormatModifier(new FormatModifier("-5"));
-
-        String expected = "%-5" + e.getIdentifier();
-        String l = e.getLiteral();
-
-        assertEquals(expected, l);
-    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
-    protected abstract Log4jPatternElement getLog4jPatternElementToTest() throws Exception;
+    @Override
+    protected ThreadName getConversionSpecifierToTest(FormatModifier m) throws Exception {
+
+        ThreadName cs = new ThreadName();
+        cs.setFormatModifier(m);
+        return cs;
+    }
+
+    @Override
+    protected String renderWithConversionSpecifierToTest(FormatModifier m) throws Exception {
+        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 
