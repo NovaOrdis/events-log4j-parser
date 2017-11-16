@@ -74,7 +74,7 @@ public class LevelTest extends ConversionSpecifierTest {
         catch(Log4jPatternLayoutException ex) {
 
             String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+            assertTrue(msg.contains("attempt to add more characters to a closed conversion pattern component"));
         }
     }
 
@@ -204,11 +204,6 @@ public class LevelTest extends ConversionSpecifierTest {
         Level cs = new Level();
         cs.setFormatModifier(m);
         return cs;
-    }
-
-    @Override
-    protected String getMatchingLogContent(FormatModifier m) throws Exception {
-        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

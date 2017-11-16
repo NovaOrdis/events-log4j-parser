@@ -19,6 +19,8 @@ package io.novaordis.events.log4j.pattern.convspec;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponentHolder;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyException;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyMessage;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -61,31 +63,43 @@ public class ConversionSpecifierFinder {
 
         int i = from;
         String formatModifierLiteral = null;
-        ConversionSpecifierBase component = null;
+        ConversionSpecifierBase conversionSpecifier = null;
 
-        while(component == null) {
+        while(conversionSpecifier == null) {
 
             char c = patternLiteral.charAt(i);
 
             if (Date.CONVERSION_CHARACTER == c) {
 
-                component = new Date();
+                conversionSpecifier = new Date();
             }
             else if (Level.CONVERSION_CHARACTER == c) {
 
-                component = new Level();
+                conversionSpecifier = new Level();
             }
             else if (LineSeparator.CONVERSION_CHARACTER == c) {
 
-                component = new LineSeparator();
+                conversionSpecifier = new LineSeparator();
             }
             else if (Logger.CONVERSION_CHARACTER == c) {
 
-                component = new Logger();
+                conversionSpecifier = new Logger();
             }
             else if (ThreadName.CONVERSION_CHARACTER == c) {
 
-                component = new ThreadName();
+                conversionSpecifier = new ThreadName();
+            }
+            else if (Message.CONVERSION_CHARACTER == c) {
+
+                conversionSpecifier = new Message();
+            }
+            else if (WildFlyMessage.CONVERSION_CHARACTER == c) {
+
+                conversionSpecifier = new WildFlyMessage();
+            }
+            else if (WildFlyException.CONVERSION_CHARACTER == c) {
+
+                conversionSpecifier = new WildFlyException();
             }
             else if ('0' <= c && c <= '9' || c == '.' || c == '-') {
 
@@ -106,17 +120,17 @@ public class ConversionSpecifierFinder {
             }
             else {
 
-                throw new Log4jPatternLayoutException("unknown conversion character: " + c);
+                throw new Log4jPatternLayoutException("unknown conversion character: '" + c + "'");
             }
         }
 
         if (formatModifierLiteral != null) {
 
             FormatModifier m = new FormatModifier(formatModifierLiteral);
-            component.setFormatModifier(m);
+            conversionSpecifier.setFormatModifier(m);
         }
 
-        holder.setInstance(component);
+        holder.setInstance(conversionSpecifier);
 
         return i;
     }

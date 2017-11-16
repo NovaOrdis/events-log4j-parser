@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
+package io.novaordis.events.log4j.pattern.convspec.wildfly;
 
 import org.junit.Test;
 
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierTest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -30,7 +32,7 @@ import static org.junit.Assert.fail;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LineSeparatorTest extends ConversionSpecifierTest {
+public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -57,14 +59,14 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
     @Override
     public void addAfterNotAccepted() throws Exception {
 
-        LineSeparator e = getConversionSpecifierToTest(null);
+        WildFlyException s = getConversionSpecifierToTest(null);
 
-        AddResult r = e.add(' ');
+        AddResult r = s.add(' ');
         assertEquals(AddResult.NOT_ACCEPTED, r);
 
         try {
 
-            e.add(' ');
+            s.add(' ');
 
             fail("should have thrown exception");
         }
@@ -77,19 +79,97 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
+    // constructors ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void constructor() throws Exception {
+
+        WildFlyException s = new WildFlyException("E");
+
+        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertNull(s.getFormatModifier());
+        assertEquals("%E", s.getLiteral());
+    }
+
+    @Test
+    public void constructor_WithFormatModifier() throws Exception {
+
+        WildFlyException s = new WildFlyException("-5E");
+
+        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        FormatModifier m = s.getFormatModifier();
+        assertEquals("-5", m.getLiteral());
+        assertEquals("%-5E", s.getLiteral());
+    }
+
+    @Test
+    public void constructor_WrongIdentifier() throws Exception {
+
+        try {
+
+            new WildFlyException("c");
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("expected identifier '" + WildFlyException.CONVERSION_CHARACTER + "' not found"));
+        }
+    }
+
+    // getLiteral() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void getLiteral_TypeSpecific() throws Exception {
+
+        WildFlyException s = getConversionSpecifierToTest(null);
+
+        assertEquals("%E", s.getLiteral());
+    }
+
+    @Test
+    public void getLiteral_TypeSpecific_FormatModifier() throws Exception {
+
+        FormatModifier m = new FormatModifier("-5");
+        WildFlyException s = getConversionSpecifierToTest(m);
+
+        assertEquals("%-5E", s.getLiteral());
+    }
+
+    // parseLogContent() -----------------------------------------------------------------------------------------------
+
+    @Test
+    public void parseLogContent_TypeSpecific() throws Exception {
+
+        fail("return here");
+    }
+
+    @Test
+    public void parseLogContent_PatternMismatch() throws Exception {
+
+        //
+        // we cannot really mismatch a message, as anything is valid as a message - noop
+        //
+
+        fail("return here");
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        throw new RuntimeException("DETERMINE WHAT IS A MATCHING LOG CONTENT FOR %E");
     }
 
     @Override
-    protected LineSeparator getConversionSpecifierToTest(FormatModifier m) throws Exception {
+    protected WildFlyException getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        LineSeparator cs = new LineSeparator();
+        WildFlyException cs = new WildFlyException();
         cs.setFormatModifier(m);
         return cs;
     }

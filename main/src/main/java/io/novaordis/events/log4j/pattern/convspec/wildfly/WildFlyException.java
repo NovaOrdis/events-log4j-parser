@@ -14,93 +14,58 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern;
+package io.novaordis.events.log4j.pattern.convspec.wildfly;
+
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
 
 /**
- * The string value - as it shows up in the log - of a converted individual log4j log event element.
+ * A WildFly log4j pattern layout extension that renders the log event exception.
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 11/5/17
+ * @since 10/30/17
  */
-public class RenderedLogEvent {
+public class WildFlyException extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char CONVERSION_CHARACTER = 'E';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
-    private int from;
-    private int to;
-    private String literal;
-    private Object object;
-
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public RenderedLogEvent(Object o, String literal, int from, int to) {
-
-        this.object = o;
-        this.literal = literal;
-        this.from = from;
-        this.to = to;
-    }
-
-    // Public ----------------------------------------------------------------------------------------------------------
-
-    /**
-     * @return the position in string at this
-     */
-    public int from() {
-
-        return from;
-    }
-
-    public void setFrom(int i) {
-
-        this.from = i;
+    public WildFlyException() {
     }
 
     /**
-     * @return the position in string of the first character that immediately follows the element. It may go beyond the
-     * end of the string.
+     * @param pattern, without the pattern element marker ('%'). Example: "E"
      */
-    public int to() {
+    protected WildFlyException(String pattern) throws Log4jPatternLayoutException {
 
-        return to;
+        super(pattern);
     }
 
-    public void setTo(int i) {
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
-        this.to = i;
-    }
+    @Override
+    public Character getConversionCharacter() {
 
-//    public void applyOffset(int offset) {
-//
-//        from = from + offset;
-//        to = to + offset;
-//    }
-
-    /**
-     * @return the string representation of the element, as it shows up in the original string.
-     */
-    public String getLiteral() {
-
-        return literal;
-    }
-
-    /**
-     * @return the parsed object, whose type depends on the ConversionSpecifier it corresponds to.
-     */
-    public Object get() {
-
-        return object;
+        return CONVERSION_CHARACTER;
     }
 
     @Override
-    public String toString() {
+    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
+            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
 
-        return "(" + from + ", " + to + ") \"" + literal + "\" " + object;
+        throw new RuntimeException("NOT YET IMPLEMENTED");
     }
+
+    // Public ----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 

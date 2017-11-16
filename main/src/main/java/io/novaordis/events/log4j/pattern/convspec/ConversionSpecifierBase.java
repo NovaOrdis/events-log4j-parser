@@ -21,6 +21,7 @@ import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
@@ -112,7 +113,7 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
         FormatModifier m = getFormatModifier();
 
-        return "" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
+        return "" + Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER +
                 (m == null ? "" : m.getLiteral()) + getConversionCharacter();
     }
 
@@ -125,17 +126,31 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
         // literal
         //
 
+        RenderedLogEvent re;
+
         if (formatModifier != null) {
 
             //
-            // there is a format modifier
+            // a format modifier was applied to the rendering of the log event via this conversion specifier, so
+            // before an attempt to extract the original log event from the log content, apply the inverse of the
+            // format modifier rendering transformation (if possible)
             //
 
-            throw new RuntimeException("NYE");
+            ProcessedString s = formatModifier.unapply(logContent, from);
+            re = parseLiteralAfterFormatModifierHandling(s.getProcessedString(), 0, next);
+
+            //
+            // apply the offset to "from" and "to"
+            //
+            re.setFrom(from);
+            re.setTo(s.to());
+        }
+        else {
+
+            re = parseLiteralAfterFormatModifierHandling(logContent, from, next);
         }
 
-
-        return parseLiteralAfterFormatModifierHandling(logContent, from, next);
+        return re;
     }
 
     // ConversionSpecifier implementation ------------------------------------------------------------------------------
@@ -151,7 +166,8 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
         if (closed) {
 
-            throw new Log4jPatternLayoutException("attempt to add more characters to a closed element");
+            throw new Log4jPatternLayoutException(
+                    "attempt to add more characters to a closed conversion pattern component");
         }
 
         closed = true;

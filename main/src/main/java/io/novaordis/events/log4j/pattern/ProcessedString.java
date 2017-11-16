@@ -17,12 +17,10 @@
 package io.novaordis.events.log4j.pattern;
 
 /**
- * The string value - as it shows up in the log - of a converted individual log4j log event element.
- *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 11/5/17
+ * @since 11/15/17
  */
-public class RenderedLogEvent {
+public class ProcessedString {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -30,39 +28,36 @@ public class RenderedLogEvent {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    // original "from"
     private int from;
+
+    // original "to"
     private int to;
-    private String literal;
-    private Object object;
+
+    //
+    // post-processing value
+    //
+    private String processed;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public RenderedLogEvent(Object o, String literal, int from, int to) {
+    public ProcessedString(int from) {
 
-        this.object = o;
-        this.literal = literal;
         this.from = from;
-        this.to = to;
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
-     * @return the position in string at this
+     * The original "from", before processing.
      */
     public int from() {
 
         return from;
     }
 
-    public void setFrom(int i) {
-
-        this.from = i;
-    }
-
     /**
-     * @return the position in string of the first character that immediately follows the element. It may go beyond the
-     * end of the string.
+     * The original "to", before processing.
      */
     public int to() {
 
@@ -74,32 +69,20 @@ public class RenderedLogEvent {
         this.to = i;
     }
 
-//    public void applyOffset(int offset) {
-//
-//        from = from + offset;
-//        to = to + offset;
-//    }
+    public String getProcessedString() {
 
-    /**
-     * @return the string representation of the element, as it shows up in the original string.
-     */
-    public String getLiteral() {
-
-        return literal;
+        return processed;
     }
 
-    /**
-     * @return the parsed object, whose type depends on the ConversionSpecifier it corresponds to.
-     */
-    public Object get() {
+    public void setProcessedString(String s) {
 
-        return object;
+        this.processed = s;
     }
 
     @Override
     public String toString() {
 
-        return "(" + from + ", " + to + ") \"" + literal + "\" " + object;
+        return "" + from + ":" + to + " " + processed;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

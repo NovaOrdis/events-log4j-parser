@@ -34,7 +34,7 @@ public class Log4jPatternLayout {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
-    public static final char PATTERN_ELEMENT_MARKER = '%';
+    public static final char CONVERSION_SPECIFIER_MARKER = '%';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ public class Log4jPatternLayout {
 
             char c = patternLiteral.charAt(i);
 
-            if (c == PATTERN_ELEMENT_MARKER) {
+            if (c == CONVERSION_SPECIFIER_MARKER) {
 
                 if (current.getInstance() != null) {
 
@@ -120,7 +120,7 @@ public class Log4jPatternLayout {
 
                 if (i == patternLiteral.length() - 1) {
 
-                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER +
+                    throw new Log4jPatternLayoutException("'" + Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER +
                             "' not followed by any pattern element");
                 }
 

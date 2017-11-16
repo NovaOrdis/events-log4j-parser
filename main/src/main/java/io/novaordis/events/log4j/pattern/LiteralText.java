@@ -30,32 +30,33 @@ public class LiteralText implements ConversionPatternComponent {
 
     private String literal;
 
+    private boolean closed;
+
     // Constructors ----------------------------------------------------------------------------------------------------
 
     /**
      * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
      */
     protected LiteralText() {
+
+        this.closed = false;
     }
 
-    /**
-     * Instances of this class can only be created by the Log4jPatternElementFinder or within the package.
-     */
     public LiteralText(String literal) {
 
-        throw new RuntimeException("NYE");
+        this();
 
-//        for(char c: literal.toCharArray()) {
-//
-//            try {
-//
-//                add(c);
-//            }
-//            catch(Log4jPatternLayoutException e) {
-//
-//                throw new IllegalStateException(e);
-//            }
-//        }
+        for(char c: literal.toCharArray()) {
+
+            try {
+
+                add(c);
+            }
+            catch(Log4jPatternLayoutException e) {
+
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     // ConversionPatternComponent implementation -----------------------------------------------------------------------
@@ -69,11 +70,24 @@ public class LiteralText implements ConversionPatternComponent {
     @Override
     public AddResult add(char c) throws Log4jPatternLayoutException {
 
+        if (closed) {
+
+            throw new Log4jPatternLayoutException(
+                    "attempt to add more characters to a closed conversion pattern component");
+        }
+
         if (literal == null) {
 
             literal = new String(new char[] {c});
         }
         else {
+
+            if (Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER == c) {
+
+                closed = true;
+
+                return AddResult.NOT_ACCEPTED;
+            }
 
             literal += c;
         }

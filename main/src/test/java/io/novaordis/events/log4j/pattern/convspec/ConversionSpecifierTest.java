@@ -26,7 +26,6 @@ import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -113,9 +112,9 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         assertEquals(expected, l);
     }
-    
+
     // parseLogContent() -----------------------------------------------------------------------------------------------
-    
+
     @Test
     public void parseLogContent_NoFormatModifier() throws Exception {
 
@@ -141,7 +140,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     @Test
     public void parseLogContent_WithFormatModifier() throws Exception {
 
-        String ms = "20";
+        String ms = "5.6";
 
         FormatModifier m = new FormatModifier(ms);
 
@@ -162,49 +161,45 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     @Test
     public void parseLogContent_WithFormatModifier2() throws Exception {
 
-        String ms = "-20";
+        String ms = "100";
 
-        fail("return here");
+        FormatModifier m = new FormatModifier(ms);
+
+        String rendering = getMatchingLogContent(m);
+        String trimmedRendering = rendering.trim();
+
+        String s = ">" + rendering;
+
+        ConversionSpecifier cs = getConversionSpecifierToTest(m);
+
+        RenderedLogEvent e = cs.parseLogContent(s, 1, null);
+
+        assertEquals(trimmedRendering, e.getLiteral());
+        assertNotNull(e.get());
+        assertEquals(1, e.from());
+        assertEquals(1 + rendering.length(), e.to());
     }
 
     @Test
     public void parseLogContent_WithFormatModifier3() throws Exception {
 
-        String ms = ".30";
+        String ms = "-100";
 
-        fail("return here");
-    }
+        FormatModifier m = new FormatModifier(ms);
 
-    @Test
-    public void parseLogContent_WithFormatModifier4() throws Exception {
+        String rendering = getMatchingLogContent(m);
+        String trimmedRendering = rendering.trim();
 
-        String ms = "   .30";
+        String s = ">" + rendering;
 
-        fail("return here");
-    }
+        ConversionSpecifier cs = getConversionSpecifierToTest(m);
 
-    @Test
-    public void parseLogContent_WithFormatModifier5() throws Exception {
+        RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        String ms = "20.30";
-
-        fail("return here");
-    }
-
-    @Test
-    public void parseLogContent_WithFormatModifier6() throws Exception {
-
-        String ms = "-20.30";
-
-        fail("return here");
-    }
-
-    @Test
-    public void parseLogContent_WithFormatModifier7() throws Exception {
-
-        String ms = "-20.-30";
-
-        fail("return here");
+        assertEquals(trimmedRendering, e.getLiteral());
+        assertNotNull(e.get());
+        assertEquals(1, e.from());
+        assertEquals(1 + rendering.length(), e.to());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -219,13 +214,23 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
     protected abstract ConversionSpecifier getConversionSpecifierToTest(FormatModifier m) throws Exception;
 
+    // Private ---------------------------------------------------------------------------------------------------------
+
     /**
-     * @param m may be null, which means no format modifier. If m is not null, render the log content using the given
+     * @param m may be null, which means no format modifier. If m is not null, apply the log content using the given
      *          format modifier.
      */
-    protected abstract String getMatchingLogContent(FormatModifier m) throws Exception;
+    private String getMatchingLogContent(FormatModifier m) throws Exception {
 
-    // Private ---------------------------------------------------------------------------------------------------------
+        String c = getMatchingLogContent();
+
+        if (m == null) {
+
+            return c;
+        }
+
+        return m.apply(c);
+    }
 
     // Inner classes ---------------------------------------------------------------------------------------------------
 

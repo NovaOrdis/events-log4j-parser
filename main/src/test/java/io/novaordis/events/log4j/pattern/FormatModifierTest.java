@@ -59,7 +59,7 @@ public class FormatModifierTest {
     }
 
     @Test
-    public void constructor_and_render_Literal() throws Exception {
+    public void constructor_and_apply_Literal() throws Exception {
 
         String s = "5";
 
@@ -73,15 +73,15 @@ public class FormatModifierTest {
         assertTrue(m.isTruncateFromFront());
 
 
-        assertEquals("     ", m.render(""));
-        assertEquals("    a", m.render("a"));
-        assertEquals("   aa", m.render("aa"));
-        assertEquals("aaaaa", m.render("aaaaa"));
-        assertEquals("aaaaaa", m.render("aaaaaa"));
+        assertEquals("     ", m.apply(""));
+        assertEquals("    a", m.apply("a"));
+        assertEquals("   aa", m.apply("aa"));
+        assertEquals("aaaaa", m.apply("aaaaa"));
+        assertEquals("aaaaaa", m.apply("aaaaaa"));
     }
 
     @Test
-    public void constructor_and_render_Literal2() throws Exception {
+    public void constructor_and_apply_Literal2() throws Exception {
 
         String s = "-5";
 
@@ -94,15 +94,15 @@ public class FormatModifierTest {
         assertNull(m.getMaximumFieldWidth());
         assertTrue(m.isTruncateFromFront());
 
-        assertEquals("     ", m.render(""));
-        assertEquals("a    ", m.render("a"));
-        assertEquals("aa   ", m.render("aa"));
-        assertEquals("aaaaa", m.render("aaaaa"));
-        assertEquals("aaaaaa", m.render("aaaaaa"));
+        assertEquals("     ", m.apply(""));
+        assertEquals("a    ", m.apply("a"));
+        assertEquals("aa   ", m.apply("aa"));
+        assertEquals("aaaaa", m.apply("aaaaa"));
+        assertEquals("aaaaaa", m.apply("aaaaaa"));
     }
 
     @Test
-    public void constructor_and_render_Literal3() throws Exception {
+    public void constructor_and_apply_Literal3() throws Exception {
 
         String s = ".3";
 
@@ -115,15 +115,15 @@ public class FormatModifierTest {
         assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
 
-        assertEquals("", m.render(""));
-        assertEquals("A", m.render("A"));
-        assertEquals("AB", m.render("AB"));
-        assertEquals("ABC", m.render("ABC"));
-        assertEquals("BCD", m.render("ABCD"));
+        assertEquals("", m.apply(""));
+        assertEquals("A", m.apply("A"));
+        assertEquals("AB", m.apply("AB"));
+        assertEquals("ABC", m.apply("ABC"));
+        assertEquals("BCD", m.apply("ABCD"));
     }
 
     @Test
-    public void constructor_and_render_Literal3_1() throws Exception {
+    public void constructor_and_apply_Literal3_1() throws Exception {
 
         // empty space is acceptable
         String s = "   .30";
@@ -139,7 +139,7 @@ public class FormatModifierTest {
     }
 
     @Test
-    public void constructor_and_render_Literal4() throws Exception {
+    public void constructor_and_apply_Literal4() throws Exception {
 
         String s = "2.3";
 
@@ -152,15 +152,15 @@ public class FormatModifierTest {
         assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
 
-        assertEquals("  ", m.render(""));
-        assertEquals(" A", m.render("A"));
-        assertEquals("AB", m.render("AB"));
-        assertEquals("ABC", m.render("ABC"));
-        assertEquals("BCD", m.render("ABCD"));
+        assertEquals("  ", m.apply(""));
+        assertEquals(" A", m.apply("A"));
+        assertEquals("AB", m.apply("AB"));
+        assertEquals("ABC", m.apply("ABC"));
+        assertEquals("BCD", m.apply("ABCD"));
     }
 
     @Test
-    public void constructor_and_render_Literal5() throws Exception {
+    public void constructor_and_apply_Literal5() throws Exception {
 
         String s = "-2.3";
 
@@ -173,15 +173,15 @@ public class FormatModifierTest {
         assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertTrue(m.isTruncateFromFront());
 
-        assertEquals("  ", m.render(""));
-        assertEquals("A ", m.render("A"));
-        assertEquals("AB", m.render("AB"));
-        assertEquals("ABC", m.render("ABC"));
-        assertEquals("BCD", m.render("ABCD"));
+        assertEquals("  ", m.apply(""));
+        assertEquals("A ", m.apply("A"));
+        assertEquals("AB", m.apply("AB"));
+        assertEquals("ABC", m.apply("ABC"));
+        assertEquals("BCD", m.apply("ABCD"));
     }
 
     @Test
-    public void constructor_and_render_Literal6() throws Exception {
+    public void constructor_and_apply_Literal6() throws Exception {
 
         String s = "-2.-3";
 
@@ -194,15 +194,15 @@ public class FormatModifierTest {
         assertEquals(3, m.getMaximumFieldWidth().intValue());
         assertFalse(m.isTruncateFromFront());
 
-        assertEquals("  ", m.render(""));
-        assertEquals("A ", m.render("A"));
-        assertEquals("AB", m.render("AB"));
-        assertEquals("ABC", m.render("ABC"));
-        assertEquals("ABC", m.render("ABCD"));
+        assertEquals("  ", m.apply(""));
+        assertEquals("A ", m.apply("A"));
+        assertEquals("AB", m.apply("AB"));
+        assertEquals("ABC", m.apply("ABC"));
+        assertEquals("ABC", m.apply("ABCD"));
     }
 
     @Test
-    public void constructor_and_render_Literal7() throws Exception {
+    public void constructor_and_apply_Literal7() throws Exception {
 
         String s = "-blah";
 
@@ -221,13 +221,13 @@ public class FormatModifierTest {
     }
 
     @Test
-    public void render_Null() throws Exception {
+    public void apply_Null() throws Exception {
 
         FormatModifier m = new FormatModifier("1");
 
         try {
 
-            m.render(null);
+            m.apply(null);
 
             fail("should have thrown exception");
         }
@@ -238,10 +238,114 @@ public class FormatModifierTest {
         }
     }
 
-    // render() --------------------------------------------------------------------------------------------------------
-    
+    // unapply() -------------------------------------------------------------------------------------------------------
+
     @Test
-    public void render() throws Exception {}
+    public void unapply_ArgumentShorterThanMinimumFieldWidth() throws Exception {
+
+        FormatModifier m = new FormatModifier("3");
+
+        String s = "AB";
+
+        try {
+
+            m.unapply(s, 0);
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("string argument shorter than minimum field width"));
+        }
+    }
+
+    @Test
+    public void unapply_FillRight() throws Exception {
+
+        FormatModifier m = new FormatModifier("3");
+
+        String s = m.apply("A");
+        assertEquals("  A", s);
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("A", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Fill_Left() throws Exception {
+
+        FormatModifier m = new FormatModifier("-3");
+
+        String s = m.apply("A");
+        assertEquals("A  ", s);
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("A", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Truncate_FromFront() throws Exception {
+
+        FormatModifier m = new FormatModifier(".3");
+
+        String s = m.apply("ABCD");
+        assertEquals("BCD", s);
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("BCD", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Truncate_FromFront_StringLongerThanMax() throws Exception {
+
+        FormatModifier m = new FormatModifier(".3");
+
+        String s = "ABCD";
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("ABC", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Truncate_FromBack() throws Exception {
+
+        FormatModifier m = new FormatModifier(".-3");
+
+        String s = m.apply("ABCD");
+        assertEquals("ABC", s);
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("ABC", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Truncate_FromBack_StringLongerThanMax() throws Exception {
+
+        FormatModifier m = new FormatModifier(".-3");
+
+        String s = "ABCD";
+
+        ProcessedString ps = m.unapply(s, 0);
+        String s2 = ps.getProcessedString();
+        assertEquals("ABC", s2);
+        assertEquals(0, ps.from());
+        assertEquals(3, ps.to());
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 

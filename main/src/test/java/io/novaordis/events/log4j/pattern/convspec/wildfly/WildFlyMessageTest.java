@@ -74,7 +74,7 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
         catch(Log4jPatternLayoutException ex) {
 
             String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+            assertTrue(msg.contains("attempt to add more characters to a closed conversion pattern component"));
         }
     }
 
@@ -172,12 +172,10 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
 
     // Protected -------------------------------------------------------------------------------------------------------
 
-    private String matchingLogContent = "this is a synthetic message";
-
     @Override
     protected String getMatchingLogContent() throws Exception {
 
-        return matchingLogContent;
+        return "this is a synthetic message";
     }
 
     @Override
@@ -186,17 +184,6 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
         WildFlyMessage cs = new WildFlyMessage();
         cs.setFormatModifier(m);
         return cs;
-    }
-
-    @Override
-    protected String getMatchingLogContent(FormatModifier m) throws Exception {
-
-        if (m == null) {
-
-            return matchingLogContent;
-        }
-
-        return m.render(matchingLogContent);
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

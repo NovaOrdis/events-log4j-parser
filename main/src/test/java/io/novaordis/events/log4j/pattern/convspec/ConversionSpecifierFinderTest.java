@@ -19,6 +19,9 @@ package io.novaordis.events.log4j.pattern.convspec;
 import org.junit.Test;
 
 import io.novaordis.events.log4j.pattern.ConversionPatternComponentHolder;
+import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyException;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -86,9 +89,9 @@ public class ConversionSpecifierFinderTest {
         
         assertEquals(1, i);
         
-        Date e = (Date)holder.getInstance();
+        Date cs = (Date)holder.getInstance();
 
-        assertNotNull(e);
+        assertNotNull(cs);
     }
 
     @Test
@@ -102,9 +105,9 @@ public class ConversionSpecifierFinderTest {
 
         assertEquals(1, i);
 
-        Level e = (Level)holder.getInstance();
+        Level cs = (Level)holder.getInstance();
 
-        assertNotNull(e);
+        assertNotNull(cs);
     }
 
     @Test
@@ -118,9 +121,9 @@ public class ConversionSpecifierFinderTest {
 
         assertEquals(1, i);
 
-        LineSeparator e = (LineSeparator)holder.getInstance();
+        LineSeparator cs = (LineSeparator)holder.getInstance();
 
-        assertNotNull(e);
+        assertNotNull(cs);
     }
 
     @Test
@@ -134,9 +137,9 @@ public class ConversionSpecifierFinderTest {
 
         assertEquals(1, i);
 
-        Logger e = (Logger)holder.getInstance();
+        Logger cs = (Logger)holder.getInstance();
 
-        assertNotNull(e);
+        assertNotNull(cs);
     }
 
     @Test
@@ -150,9 +153,57 @@ public class ConversionSpecifierFinderTest {
 
         assertEquals(1, i);
 
-        ThreadName e = (ThreadName)holder.getInstance();
+        ThreadName cs = (ThreadName)holder.getInstance();
 
-        assertNotNull(e);
+        assertNotNull(cs);
+    }
+
+    @Test
+    public void lookup_Message() throws Exception {
+
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
+
+        int i = f.lookup("%" + Message.CONVERSION_CHARACTER, 1, holder);
+
+        assertEquals(1, i);
+
+        Message cs = (Message)holder.getInstance();
+
+        assertNotNull(cs);
+    }
+
+    @Test
+    public void lookup_WildFlyMessage() throws Exception {
+
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
+
+        int i = f.lookup("%" + WildFlyMessage.CONVERSION_CHARACTER, 1, holder);
+
+        assertEquals(1, i);
+
+        WildFlyMessage cs = (WildFlyMessage)holder.getInstance();
+
+        assertNotNull(cs);
+    }
+
+    @Test
+    public void lookup_WildFlyException() throws Exception {
+
+        ConversionSpecifierFinder f = new ConversionSpecifierFinder();
+
+        ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
+
+        int i = f.lookup("%" + WildFlyException.CONVERSION_CHARACTER, 1, holder);
+
+        assertEquals(1, i);
+
+        WildFlyException cs = (WildFlyException)holder.getInstance();
+
+        assertNotNull(cs);
     }
 
     @Test
@@ -214,25 +265,25 @@ public class ConversionSpecifierFinderTest {
     }
 
     @Test
-    public void lookup_Unknown() throws Exception {
+    public void lookup_UnknownConversionCharacter() throws Exception {
 
         ConversionSpecifierFinder f = new ConversionSpecifierFinder();
 
         ConversionPatternComponentHolder holder = new ConversionPatternComponentHolder();
 
-        int i = f.lookup("%s   ", 1, holder);
+        try {
 
-        assertEquals(1, i);
+            f.lookup("%y   ", 1, holder);
 
-        fail("return null");
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
 
-//        UnknownPatternElement e = (UnknownPatternElement)holder.getInstance();
-//
-//        assertNotNull(e);
-//
-//        assertNull(e.getFormatModifier());
-//
-//        assertEquals('s', e.getConversionCharacter().charValue());
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("unknown conversion character:"));
+            assertTrue(msg.contains("'y'"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

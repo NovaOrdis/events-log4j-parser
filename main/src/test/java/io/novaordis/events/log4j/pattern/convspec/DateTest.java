@@ -419,11 +419,6 @@ public class DateTest extends ConversionSpecifierTest {
         return cs;
     }
 
-    @Override
-    protected String getMatchingLogContent(FormatModifier m) throws Exception {
-        throw new RuntimeException("renderWithConversionSpecifierToTest() NOT YET IMPLEMENTED");
-    }
-
     // Private ---------------------------------------------------------------------------------------------------------
 
     // Inner classes ---------------------------------------------------------------------------------------------------

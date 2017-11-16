@@ -82,7 +82,7 @@ public class Log4jPatternLayoutTest {
             String msg = e.getMessage();
 
             assertTrue(msg.contains(
-                    "'" + Log4jPatternLayout.PATTERN_ELEMENT_MARKER + "' not followed by any pattern element"));
+                    "'" + Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER + "' not followed by any pattern element"));
         }
     }
 

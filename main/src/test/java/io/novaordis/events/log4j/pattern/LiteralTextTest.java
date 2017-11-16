@@ -19,6 +19,8 @@ package io.novaordis.events.log4j.pattern;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -42,43 +44,74 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
     // Tests -----------------------------------------------------------------------------------------------------------
 
     @Test
+    public void defaultLiteral() throws Exception {
+
+        LiteralText lt = getConversionPatternComponentToTest();
+
+        String s = getMatchingLogContent();
+        assertEquals(s, lt.getLiteral());
+    }
+
+    @Test
     public void add() throws Exception {
 
-        LiteralText e = getConversionPatternComponentToTest();
+        LiteralText lt = new LiteralText();
 
-        fail("return here");
+        assertNull(lt.getLiteral());
 
-//        assertNull(e.getLiteral());
-//
-//        AddResult result = e.add('b');
-//        assertEquals(AddResult.ACCEPTED, result);
-//
-//        assertEquals("b", e.getLiteral());
-//
-//        AddResult result2 = e.add('l');
-//        assertEquals(AddResult.ACCEPTED, result2);
-//
-//        assertEquals("bl", e.getLiteral());
-//
-//        AddResult result3 = e.add('a');
-//        assertEquals(AddResult.ACCEPTED, result3);
-//
-//        assertEquals("bla", e.getLiteral());
-//
-//        AddResult result4 = e.add('h');
-//        assertEquals(AddResult.ACCEPTED, result4);
-//
-//        assertEquals("blah", e.getLiteral());
-//
-//        AddResult result5 = e.add(' ');
-//        assertEquals(AddResult.ACCEPTED, result5);
-//
-//        assertEquals("blah ", e.getLiteral());
-//
-//        AddResult result6 = e.add('[');
-//        assertEquals(AddResult.ACCEPTED, result6);
-//
-//        assertEquals("blah [", e.getLiteral());
+        AddResult result = lt.add('b');
+        assertEquals(AddResult.ACCEPTED, result);
+
+        assertEquals("b", lt.getLiteral());
+
+        AddResult result2 = lt.add('l');
+        assertEquals(AddResult.ACCEPTED, result2);
+
+        assertEquals("bl", lt.getLiteral());
+
+        AddResult result3 = lt.add('a');
+        assertEquals(AddResult.ACCEPTED, result3);
+
+        assertEquals("bla", lt.getLiteral());
+
+        AddResult result4 = lt.add('h');
+        assertEquals(AddResult.ACCEPTED, result4);
+
+        assertEquals("blah", lt.getLiteral());
+
+        AddResult result5 = lt.add(' ');
+        assertEquals(AddResult.ACCEPTED, result5);
+
+        assertEquals("blah ", lt.getLiteral());
+
+        AddResult result6 = lt.add('[');
+        assertEquals(AddResult.ACCEPTED, result6);
+
+        assertEquals("blah [", lt.getLiteral());
+    }
+
+    @Test
+    public void add_ConversionSpecifierMarker() throws Exception {
+
+        LiteralText lt = getConversionPatternComponentToTest();
+
+        AddResult result = lt.add(' ');
+        assertEquals(AddResult.ACCEPTED, result);
+
+        AddResult result2 = lt.add(Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER);
+        assertEquals(AddResult.NOT_ACCEPTED, result2);
+
+        try {
+
+            lt.add('x');
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("attempt to add more characters to a closed conversion pattern component"));
+        }
     }
 
     // getLiteral() ----------------------------------------------------------------------------------------------------
@@ -89,18 +122,14 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         LiteralText e = new LiteralText();
 
-//        e.add('b');
-//        e.add('l');
-//        e.add('a');
-//        e.add('h');
-//
-//        assertNull(e.getFormatModifier());
-//
-//        String l = e.getLiteral();
-//
-//        assertEquals("blah", l);
+        e.add('b');
+        e.add('l');
+        e.add('a');
+        e.add('h');
 
-        fail("return here");
+        String l = e.getLiteral();
+
+        assertEquals("blah", l);
     }
 
     // parse() ---------------------------------------------------------------------------------------------------------

@@ -16,23 +16,23 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
-import org.junit.Test;
-
-import io.novaordis.events.log4j.pattern.AddResult;
-import io.novaordis.events.log4j.pattern.FormatModifier;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
+ * A log4j pattern layout extension that renders the log event message.
+ *
+ * The type of the corresponding parsed object instance is a String.
+ *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LineSeparatorTest extends ConversionSpecifierTest {
+public class Message extends ConversionSpecifierBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    public static final char CONVERSION_CHARACTER = 'm';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -40,59 +40,52 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
+    public Message() {
+    }
+
+    /**
+     * @param pattern, without the pattern element marker ('%'). Example: "-5m"
+     */
+    protected Message(String pattern) throws Log4jPatternLayoutException {
+
+        super(pattern);
+    }
+
+    // ConversionSpecifier implementation ------------------------------------------------------------------------------
+
+    @Override
+    public Character getConversionCharacter() {
+
+        return CONVERSION_CHARACTER;
+    }
+
+    @Override
+    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
+            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
+
+        if (next != null) {
+
+            //
+            // if there's another conversion pattern component, we may use it to gather more information about
+            // how long the message may be, otherwise we assume it's to the end of the line
+            //
+
+            throw new RuntimeException("Message DOES NOT KNOW HOW TO HANDLE A next COMPONENT");
+        }
+
+        //
+        // we assume the message extends to the end of the line
+        //
+
+        String message = logContent.substring(from);
+        return new RenderedLogEvent(message, message, from, logContent.length());
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
-
-    // Overrides -------------------------------------------------------------------------------------------------------
-
-    @Test
-    @Override
-    public void addAfterLast() throws Exception {
-
-        //
-        // noop
-        //
-    }
-
-    @Test
-    @Override
-    public void addAfterNotAccepted() throws Exception {
-
-        LineSeparator e = getConversionSpecifierToTest(null);
-
-        AddResult r = e.add(' ');
-        assertEquals(AddResult.NOT_ACCEPTED, r);
-
-        try {
-
-            e.add(' ');
-
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException ex) {
-
-            String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed conversion pattern component"));
-        }
-    }
-
-    // Tests -----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
-
-    @Override
-    protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
-    }
-
-    @Override
-    protected LineSeparator getConversionSpecifierToTest(FormatModifier m) throws Exception {
-
-        LineSeparator cs = new LineSeparator();
-        cs.setFormatModifier(m);
-        return cs;
-    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

@@ -67,6 +67,8 @@ public class Level extends ConversionSpecifierBase {
         throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
     }
 
+    // ConversionSpecifierBase overrides -------------------------------------------------------------------------------
+
     // Public ----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------

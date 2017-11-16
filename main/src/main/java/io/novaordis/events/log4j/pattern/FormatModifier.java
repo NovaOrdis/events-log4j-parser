@@ -121,10 +121,10 @@ public class FormatModifier {
     }
 
     /**
-     * Render the string representation of the given object according to the format modifier. Null will throw an
+     * Apply the format modifier to the  string representation of the given object. Null will throw an
      * IllegalArgumentException.
      */
-    public String render(Object o) {
+    public String apply(Object o) {
 
         if (o == null) {
 
@@ -165,6 +165,90 @@ public class FormatModifier {
 
 
         return s;
+    }
+
+    /**
+     * The inverse transformation to apply(). Of course, is not always possible to generate the original string.
+     */
+    public ProcessedString unapply(String s, int from) {
+
+        ProcessedString result = new ProcessedString(from);
+
+        result.setTo(s.length());
+
+        String arg = s.substring(from);
+
+        if (minimumFieldWidth != null) {
+
+            if (arg.length() < minimumFieldWidth) {
+
+                //
+                // this is an illegal state
+                //
+
+                throw new IllegalArgumentException("string argument shorter than minimum field width");
+            }
+
+            if (rightJustified) {
+
+                //
+                // drop spaces from the left of the string
+                //
+
+                int i = 0;
+
+                while(i < arg.length()) {
+
+                    if (arg.charAt(i) != ' ') {
+
+                        break;
+                    }
+
+                    i ++;
+                }
+
+                arg = arg.substring(i);
+            }
+            else {
+
+                //
+                // drop spaces from the right of the string
+                //
+
+                int i = arg.length() - 1;
+
+                while(i >= 0) {
+
+                    if (arg.charAt(i) != ' ') {
+
+                        break;
+                    }
+
+                    i --;
+                }
+
+                arg = arg.substring(0, i + 1);
+            }
+        }
+
+        //
+        // we cannot re-adjust dropped characters but we can return only the characters that were in the original
+        // string
+        //
+
+        if (maximumFieldWidth != null) {
+
+            if (arg.length() > maximumFieldWidth) {
+
+                arg = arg.substring(0, maximumFieldWidth);
+
+                result.setTo(from + maximumFieldWidth);
+            }
+        }
+
+        result.setProcessedString(arg);
+
+        return result;
     }
 
     @Override
