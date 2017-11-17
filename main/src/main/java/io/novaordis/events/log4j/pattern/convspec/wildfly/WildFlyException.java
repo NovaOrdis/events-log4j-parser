@@ -16,8 +16,14 @@
 
 package io.novaordis.events.log4j.pattern.convspec.wildfly;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
 
@@ -32,6 +38,9 @@ public class WildFlyException extends ConversionSpecifierBase {
     // Constants -------------------------------------------------------------------------------------------------------
 
     public static final char CONVERSION_CHARACTER = 'E';
+
+    private static final Pattern EXCEPTION_RENDERING_PATTERN = Pattern.compile(
+            ".*(: )[a-zA-Z][a-zA-Z_0-9]*(\\.[a-zA-Z][a-zA-Z_0-9]*)*: .+");
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -59,10 +68,55 @@ public class WildFlyException extends ConversionSpecifierBase {
     }
 
     @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
+    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException {
 
-        throw new RuntimeException("NOT YET IMPLEMENTED");
+        //
+        // TODO: this should contain pattern matching to insure that the string fragment is indeed an exception
+        // rendering; for the time being, because %E is usually at the end of the conversion specifier string, so
+        // it is validated by findNext()
+        //
+
+        return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
+    }
+
+    /**
+     * TODO: Not thread safe.
+     */
+    @Override
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        Matcher m = EXCEPTION_RENDERING_PATTERN.matcher(logContent.substring(from));
+
+        if (!m.matches()) {
+
+            return null;
+        }
+
+        return m.start(1);
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        if (value == null) {
+
+            //
+            // noop
+            //
+
+            return;
+        }
+
+        if (!(value instanceof String)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected String");
+        }
+
+        ((Log4jEventImpl)e).appendToException((String) value);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

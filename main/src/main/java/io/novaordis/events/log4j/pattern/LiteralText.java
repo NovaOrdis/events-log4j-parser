@@ -16,6 +16,8 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -112,7 +114,30 @@ public class LiteralText implements ConversionPatternComponent {
                             "\" does not match the parsed string literal \"" + s2 + "\"");
         }
 
-        return new RenderedLogEvent(literal, literal, from, to);
+        return new RenderedLogEvent(literal, from, to);
+    }
+
+    @Override
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        int i = logContent.indexOf(getLiteral(), from);
+
+        if (i == -1) {
+
+            return null;
+        }
+
+        return i;
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        //
+        // noop, we are not injecting anything
+        //
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

@@ -21,8 +21,11 @@ import org.junit.Test;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -75,7 +78,117 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
         }
     }
 
+    //
+    // FormatModifier and LineSeparator are NOT used together
+    //
+
+    @Test
+    @Override
+    public void getFormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void getFormatModifier_2() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void getLiteral_ConversionSpecifier_WithFormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier_2() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier_3() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_NextConversionPatternComponentIsException() throws Exception {
+
+        //
+        // noop - "%n%E" does not make sense
+        //
+    }
+
     // Tests -----------------------------------------------------------------------------------------------------------
+
+    // findNext() ------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void findNext() throws Exception {
+
+        LineSeparator ls = new LineSeparator();
+
+        Integer i = ls.findNext("something", 0);
+
+        assertEquals("something".length(), i.intValue());
+
+        Integer i2 = ls.findNext("something", 1);
+
+        assertEquals("something".length(), i2.intValue());
+
+        Integer i3 = ls.findNext("something", "something".length() - 1);
+
+        assertEquals("something".length(), i3.intValue());
+
+        Integer i4 = ls.findNext("something", "something".length());
+
+        assertNull(i4);
+    }
+
+    // parseLiteralAfterFormatModifierWasUnapplied() -------------------------------------------------------------------
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_InvalidBoundaries() throws Exception {
+
+        LineSeparator ls = new LineSeparator();
+
+        try {
+
+            ls.parseLiteralAfterFormatModifierWasUnapplied(new ProcessedString(1, "something", 2));
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("invalid boundaries"));
+        }
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied() throws Exception {
+
+        LineSeparator ls = new LineSeparator();
+
+        RenderedLogEvent e = ls.parseLiteralAfterFormatModifierWasUnapplied(new ProcessedString(10, "something", 10));
+
+        assertEquals(10, e.from());
+        assertEquals(10, e.to());
+    }
 
     // Package protected -----------------------------------------------------------------------------------------------
 
@@ -83,7 +196,8 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        return "";
     }
 
     @Override

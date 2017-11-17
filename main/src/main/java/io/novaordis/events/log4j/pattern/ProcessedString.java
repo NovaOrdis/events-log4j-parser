@@ -46,6 +46,20 @@ public class ProcessedString {
         this.from = from;
     }
 
+    public ProcessedString(int from, String processedString) {
+
+        this.from = from;
+        this.processed = processedString;
+        this.to = from + processed.length();
+    }
+
+    public ProcessedString(int from, String processedString, int to) {
+
+        this.from = from;
+        this.processed = processedString;
+        this.to = to;
+    }
+
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**

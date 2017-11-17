@@ -152,12 +152,14 @@ public interface Log4jEvent extends TimedEvent {
 
     // Public ----------------------------------------------------------------------------------------------------------
 
-    Log4jLevel getLogLevel();
+    Log4jLevel getLevel();
 
-    String getLogCategory();
+    String getLogger();
 
     String getThreadName();
 
     String getMessage();
+
+    String getExceptionRendering();
 
 }

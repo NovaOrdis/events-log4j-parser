@@ -18,8 +18,14 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -65,10 +71,151 @@ public abstract class ConversionPatternComponentTest {
 
         RenderedLogEvent rendering = c.parseLogContent(matchingLogContent, 0, null);
 
-        assertEquals(matchingLogContent, rendering.getLiteral());
         assertNotNull(rendering.get());
         assertEquals(0, rendering.from());
         assertEquals(matchingLogContent.length(), rendering.to());
+    }
+
+    /**
+     * This will be overridden by WildFlyExceptionTest with a noop, because we don't support the case of two
+     * successive "%E%E"
+     */
+    @Test
+    public void parseLogContent_NextConversionPatternComponentIsException() throws Exception {
+
+        //
+        // Exception (%E) is particular in that:
+        //
+        // 1. It may or may not result in an exception in the log.
+        // 2. The exception may be multi-lines.
+        //
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        String matchingLogContent = getMatchingLogContent();
+
+        WildFlyException exceptionComponent = new WildFlyException();
+
+        RenderedLogEvent rendering = c.parseLogContent(matchingLogContent, 0, exceptionComponent);
+
+        assertNotNull(rendering.get());
+        assertEquals(0, rendering.from());
+        assertEquals(matchingLogContent.length(), rendering.to());
+    }
+
+    // findNext() ------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void findNext_NullLogContent() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        try {
+
+            c.findNext(null, 0);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("null log content"));
+        }
+    }
+
+    @Test
+    public void findNext_OverBounds() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        try {
+
+            c.findNext("something", -1);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("invalid 'from' index: "));
+            assertTrue(msg.contains("-1"));
+        }
+    }
+
+    @Test
+    public void findNext_OnTheEdge() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        String line = "something";
+        int from = "something".length();
+
+        Integer i = c.findNext(line, from);
+        assertNull(i);
+    }
+
+    @Test
+    public void findNext_OverBounds2() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        try {
+
+            c.findNext("something", "something".length() + 1);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("invalid 'from' index: "));
+            assertTrue(msg.contains("" + ("something".length() + 1)));
+        }
+    }
+
+    @Test
+    public void findNext_OverBounds3() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        try {
+
+            c.findNext("something", 1000);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+
+            assertTrue(msg.contains("invalid 'from' index: "));
+            assertTrue(msg.contains("1000"));
+        }
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent_NullValue() throws Exception {
+
+        ConversionPatternComponent c = getConversionPatternComponentToTest();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        int propertyCount = e.getProperties().size();
+
+        c.injectIntoLog4jEvent(e, null);
+
+        int propertyCount2 = e.getProperties().size();
+
+        //
+        // no properties are injected and the method does not throw exception
+        //
+
+        assertEquals(propertyCount, propertyCount2);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

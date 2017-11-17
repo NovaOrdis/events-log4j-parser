@@ -16,8 +16,10 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
@@ -51,9 +53,43 @@ public class LineSeparator extends ConversionSpecifierBase {
     }
 
     @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException {
+
+        //
+        // we should be at the end of the line, anything else is an erro
+        //
+
+        int from = ps.from();
+        int to = ps.to();
+
+        if (from != to) {
+
+            throw new Log4jPatternLayoutException("invalid boundaries");
+        }
+
+        return new RenderedLogEvent("", from, to);
+    }
+
+    @Override
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        if (from == logContent.length()) {
+
+            return null;
+        }
+
+        return logContent.length();
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        //
+        // we don't inject anything for a line separator
+        //
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

@@ -18,11 +18,15 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
+import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -77,13 +81,68 @@ public class LoggerTest extends ConversionSpecifierTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
+    // parseLiteralAfterFormatModifierWasUnapplied() -------------------------------------------------------------------
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied() throws Exception {
+
+        Logger l = new Logger();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "io.novaordis.something.SomethingElse");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(2 + "io.novaordis.something.SomethingElse".length(), e.to());
+        assertEquals("io.novaordis.something.SomethingElse", e.get());
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent() throws Exception {
+
+        Logger cs = new Logger();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        cs.injectIntoLog4jEvent(e, "a.b.C");
+
+        assertEquals("a.b.C", e.getLogger());
+    }
+
+    @Test
+    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+
+        Logger cs = new Logger();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        try {
+
+            cs.injectIntoLog4jEvent(e, new Integer(3));
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("invalid value type"));
+            assertTrue(msg.contains("Integer"));
+            assertTrue(msg.contains("expected String"));
+        }
+    }
+
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
 
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        return "io.novaordis.something.SomethingElse";
     }
 
     @Override

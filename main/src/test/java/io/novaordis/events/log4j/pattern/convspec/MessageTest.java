@@ -18,11 +18,11 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
-import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -116,7 +116,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
             String msg = e.getMessage();
 
-            assertTrue(msg.contains("expected identifier '" + Message.CONVERSION_CHARACTER + "' not found"));
+            assertTrue(msg.contains("missing expected conversion character '" + Message.CONVERSION_CHARACTER + "'"));
         }
     }
 
@@ -148,7 +148,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
         int from = 0;
 
-        WildFlyMessage pe = new WildFlyMessage();
+        Message pe = new Message();
 
         RenderedLogEvent p = pe.parseLogContent(line, from, null);
 
@@ -156,7 +156,6 @@ public class MessageTest extends ConversionSpecifierTest {
 
         assertEquals(0, p.from());
         assertEquals(20, p.to());
-        assertEquals("this is some message", p.getLiteral());
         assertEquals("this is some message", s);
     }
 
@@ -166,6 +165,43 @@ public class MessageTest extends ConversionSpecifierTest {
         //
         // we cannot really mismatch a message, as anything is valid as a message - noop
         //
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent() throws Exception {
+
+        Message cs = new Message();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        cs.injectIntoLog4jEvent(e, "something");
+
+        assertEquals("something", e.getMessage());
+        assertEquals("something", e.getStringProperty(Log4jEventImpl.MESSAGE_PROPERTY_NAME).getString());
+    }
+
+    @Test
+    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+
+        Message cs = new Message();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        try {
+
+            cs.injectIntoLog4jEvent(e, new Integer(3));
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("invalid value type"));
+            assertTrue(msg.contains("Integer"));
+            assertTrue(msg.contains("expected String"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

@@ -249,7 +249,7 @@ public class FormatModifierTest {
 
         try {
 
-            m.unapply(s, 0);
+            m.unapply(s, 0, null);
             fail("should have thrown exception");
         }
         catch(IllegalArgumentException e) {
@@ -267,7 +267,7 @@ public class FormatModifierTest {
         String s = m.apply("A");
         assertEquals("  A", s);
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("A", s2);
         assertEquals(0, ps.from());
@@ -282,7 +282,7 @@ public class FormatModifierTest {
         String s = m.apply("A");
         assertEquals("A  ", s);
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("A", s2);
         assertEquals(0, ps.from());
@@ -297,7 +297,7 @@ public class FormatModifierTest {
         String s = m.apply("ABCD");
         assertEquals("BCD", s);
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("BCD", s2);
         assertEquals(0, ps.from());
@@ -311,7 +311,7 @@ public class FormatModifierTest {
 
         String s = "ABCD";
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("ABC", s2);
         assertEquals(0, ps.from());
@@ -326,7 +326,7 @@ public class FormatModifierTest {
         String s = m.apply("ABCD");
         assertEquals("ABC", s);
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("ABC", s2);
         assertEquals(0, ps.from());
@@ -340,11 +340,71 @@ public class FormatModifierTest {
 
         String s = "ABCD";
 
-        ProcessedString ps = m.unapply(s, 0);
+        ProcessedString ps = m.unapply(s, 0, null);
         String s2 = ps.getProcessedString();
         assertEquals("ABC", s2);
         assertEquals(0, ps.from());
         assertEquals(3, ps.to());
+    }
+
+    @Test
+    public void unapply_Fill_LeftJustified_BlankOnEdge() throws Exception {
+
+        FormatModifier m = new FormatModifier("-5");
+
+        String s = "INFO something";
+
+        ProcessedString ps = m.unapply(s, 0, null);
+
+        String s2 = ps.getProcessedString();
+        assertEquals("INFO", s2);
+        assertEquals(0, ps.from());
+        assertEquals(5, ps.to());
+    }
+
+    @Test
+    public void unapply_Fill_RightJustified_BlankOnEdge() throws Exception {
+
+        FormatModifier m = new FormatModifier("5");
+
+        String s = " INFOsomething";
+
+        ProcessedString ps = m.unapply(s, 0, null);
+
+        String s2 = ps.getProcessedString();
+        assertEquals("INFOsomething", s2);
+        assertEquals(0, ps.from());
+        assertEquals(14, ps.to());
+    }
+
+    @Test
+    public void unapply_Fill_LeftJustified() throws Exception {
+
+        FormatModifier m = new FormatModifier("-4");
+
+        String s = ">ABC ";
+
+        ProcessedString ps = m.unapply(s, 1, null);
+
+        String s2 = ps.getProcessedString();
+        assertEquals("ABC", s2);
+        assertEquals(1, ps.from());
+        assertEquals(5, ps.to());
+    }
+
+    @Test
+    public void unapply_Production() throws Exception {
+
+        FormatModifier m = new FormatModifier("-5");
+
+        String s = "09:01:56,538 INFO  [org.xnio] (MSC service thread 1-3) XNIO Version 3.0.16.GA-redhat-1";
+
+        ProcessedString ps = m.unapply(s, 13, 18);
+
+        String s2 = ps.getProcessedString();
+        assertEquals("INFO", s2);
+        assertEquals(13, ps.from());
+        assertEquals(18, ps.to());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

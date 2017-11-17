@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
+import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifier;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierFinder;
 
 /**
@@ -58,6 +61,8 @@ public class Log4jPatternLayout {
         this.components = new ArrayList<>();
 
         parsePatternLayout();
+
+        validatePatternLayout();
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
@@ -84,10 +89,74 @@ public class Log4jPatternLayout {
         return components.iterator();
     }
 
+    /**
+     * @throws IllegalStateException if there are no conversion pattern component.
+     */
+    public Log4jEvent parse(long lineNumber, String line) throws Log4jPatternLayoutException {
+
+        Iterator<ConversionPatternComponent> i = getPatternComponentIterator();
+
+        if (!i.hasNext()) {
+
+            throw new IllegalStateException("no conversion pattern components");
+        }
+
+        int from = 0;
+        ConversionPatternComponent crt = i.next();
+        ConversionPatternComponent next = null;
+
+        if (i.hasNext()) {
+
+            next = i.next();
+        }
+
+        Log4jEventImpl log4jEvent = new Log4jEventImpl();
+        log4jEvent.setLineNumber(lineNumber);
+
+        do {
+
+            //
+            // process the current conversion pattern
+            //
+
+            RenderedLogEvent e = crt.parseLogContent(line, from, next);
+
+            crt.injectIntoLog4jEvent(log4jEvent, e.get());
+
+            crt = next;
+            from = e.to();
+
+            if (i.hasNext()) {
+
+                next = i.next();
+            }
+            else {
+
+                next = null;
+            }
+        }
+        while (crt != null && from < line.length());
+
+        //
+        // parsing successful, load the raw representation
+        //
+
+        log4jEvent.append(line);
+
+        return log4jEvent;
+    }
+
     @Override
     public String toString() {
 
-        return "Log4jPatternLayout[" + getLiteral() + "]";
+        String s = "";
+
+        for(Iterator<ConversionPatternComponent> i = getPatternComponentIterator(); i.hasNext(); ) {
+
+            s += i.next().getLiteral();
+        }
+
+        return s;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -172,6 +241,25 @@ public class Log4jPatternLayout {
 
             components.add(last);
         }
+    }
+
+    private void validatePatternLayout() throws Log4jPatternLayoutException {
+
+        //
+        // we need to have at least one conversion specifier
+        //
+
+        for(ConversionPatternComponent c: components) {
+
+            if (c instanceof ConversionSpecifier) {
+
+                return;
+            }
+        }
+
+        throw new Log4jPatternLayoutException(
+                "the log4j pattern layout must contain at least on conversion specifier (%...): " + getLiteral());
+
     }
 
     // Inner classes ---------------------------------------------------------------------------------------------------

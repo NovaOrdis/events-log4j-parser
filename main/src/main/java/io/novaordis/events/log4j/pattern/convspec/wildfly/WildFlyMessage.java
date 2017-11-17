@@ -16,8 +16,11 @@
 
 package io.novaordis.events.log4j.pattern.convspec.wildfly;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
 
@@ -61,25 +64,44 @@ public class WildFlyMessage extends ConversionSpecifierBase {
     }
 
     @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
+    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException {
 
-        if (next != null) {
+        return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
+    }
 
-            //
-            // if there's another conversion pattern component, we may use it to gather more information about
-            // how long the message may be, otherwise we assume it's to the end of the line
-            //
+    @Override
+    public Integer findNext(String logContent, int from) {
 
-            throw new RuntimeException("WildFlyMessage DOES NOT KNOW HOW TO HANDLE A next COMPONENT");
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        if (logContent.length() == from) {
+
+            return null;
         }
 
-        //
-        // we assume the message extends to the end of the line
-        //
+        throw new RuntimeException("findNext() NOT YET IMPLEMENTED");
+    }
 
-        String message = logContent.substring(from);
-        return new RenderedLogEvent(message, message, from, logContent.length());
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        if (value == null) {
+
+            //
+            // noop
+            //
+
+            return;
+        }
+
+        if (!(value instanceof String)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected String");
+        }
+
+        ((Log4jEventImpl)e).setMessage((String)value);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

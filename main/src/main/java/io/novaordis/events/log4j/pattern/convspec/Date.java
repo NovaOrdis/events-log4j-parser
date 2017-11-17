@@ -19,10 +19,13 @@ package io.novaordis.events.log4j.pattern.convspec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
+import io.novaordis.utilities.time.TimestampImpl;
 
 /**
  * Outputs the date of the logging event.
@@ -161,12 +164,56 @@ public class Date extends ConversionSpecifierBase {
     }
 
     @Override
-    public RenderedLogEvent parseLogContent(String s, int from, ConversionPatternComponent next)
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        if (logContent.length() == from) {
+
+            return null;
+        }
+
+        throw new RuntimeException("findNext() NOT YET IMPLEMENTED");
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        if (value == null) {
+
+            //
+            // noop
+            //
+
+            return;
+        }
+
+        if (!(value instanceof java.util.Date)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected java.util.Date");
+        }
+
+        e.setTimestamp(new TimestampImpl(((java.util.Date)value).getTime()));
+    }
+
+    @Override
+    public RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
             throws Log4jPatternLayoutException {
 
         int length = dateFormat.toPattern().length();
 
-        String s2 = s.substring(from, from + length);
+        String s2 = ps.getProcessedString();
+
+        if (s2.length() < length) {
+
+            throw new RuntimeException("NYE (1)");
+        }
+
+        if (s2.length() > length) {
+
+            throw new RuntimeException("NYE (2)");
+        }
 
         java.util.Date d;
 
@@ -179,13 +226,7 @@ public class Date extends ConversionSpecifierBase {
             throw new Log4jPatternLayoutException("date \"" + s2 + "\" does not match pattern " + getLiteral());
         }
 
-        return new RenderedLogEvent(d, s2, from, from + length);
-    }
-
-    @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+        return new RenderedLogEvent(d, ps.from(), ps.to());
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

@@ -1,0 +1,19 @@
+18:14:06,481 ERROR [io.novaordis.playground.jee.servlet.simplest.ServletExample] (http-127.0.0.1:8080-1) a message that accompanies an exception: java.lang.Exception: SYNTHETIC
+	at io.novaordis.playground.jee.servlet.simplest.ServletExample.doGet(ServletExample.java:69) [classes:]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:734) [jboss-servlet-api_3.0_spec-1.0.2.Final-redhat-2.jar:1.0.2.Final-redhat-2]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:847) [jboss-servlet-api_3.0_spec-1.0.2.Final-redhat-2.jar:1.0.2.Final-redhat-2]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:295) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:214) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:231) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:149) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.jboss.as.web.security.SecurityContextAssociationValve.invoke(SecurityContextAssociationValve.java:169) [jboss-as-web-7.5.15.Final-redhat-3.jar:7.5.15.Final-redhat-3]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:151) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:97) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:102) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:854) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:656) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:926) [jbossweb-7.5.22.Final-redhat-1.jar:7.5.22.Final-redhat-1]
+	at java.lang.Thread.run(Thread.java:745) [rt.jar:1.8.0_25]
+
+18:14:06,482 INFO  [io.novaordis.playground.jee.servlet.simplest.ServletExample] (http-127.0.0.1:8080-1) getHostName()

@@ -16,6 +16,8 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+
 /**
  * The representation of an individual element (component) in a conversion pattern string.
  *
@@ -27,6 +29,24 @@ public interface ConversionPatternComponent {
     // Constants -------------------------------------------------------------------------------------------------------
 
     // Static ----------------------------------------------------------------------------------------------------------
+
+    static void checkConsistency(String logContent, int from) throws IllegalArgumentException {
+
+        if (logContent == null) {
+
+            throw new IllegalArgumentException("null log content");
+        }
+
+        if (from < 0) {
+
+            throw new IllegalArgumentException("invalid 'from' index: " + from);
+        }
+
+        if (from > logContent.length()) {
+
+            throw new IllegalArgumentException("invalid 'from' index: " + from);
+        }
+    }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
@@ -66,5 +86,24 @@ public interface ConversionPatternComponent {
     RenderedLogEvent parseLogContent(String logContent, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException;
 
+    /**
+     * Scan the log content from the 'from' index in an attempt to find the next occurrence of this conversion pattern
+     * component. logContent.length() is interpreted as "the end of the string" and it is a valid return value.
+     *
+     * @return the next occurrence of this conversion pattern component, or null if there is no such component if is not
+     * possible to identify the next occurrence of the component.
+     */
+    Integer findNext(String logContent, int from);
+
+    /**
+     * Interprets the given value as the value of the corresponding log event property, and injects the property into
+     * the log event.
+     *
+     * @param value null is a noop
+     *
+     * @exception IllegalArgumentException if the conversion of the given value to the corresponding log event property
+     * is not possible.
+     */
+    void injectIntoLog4jEvent(Log4jEvent e, Object value);
 
 }

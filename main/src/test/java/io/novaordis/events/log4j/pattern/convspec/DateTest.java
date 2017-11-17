@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.LiteralText;
@@ -95,6 +96,52 @@ public class DateTest extends ConversionSpecifierTest {
         }
     }
 
+    //
+    // FormatModifier and LineSeparator are NOT used together
+    //
+
+    @Test
+    @Override
+    public void getFormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void getFormatModifier_2() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void getLiteral_ConversionSpecifier_WithFormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier_2() throws Exception {
+
+        // noop
+    }
+
+    @Test
+    @Override
+    public void parseLogContent_With_FormatModifier_3() throws Exception {
+
+        // noop
+    }
+
     // Tests -----------------------------------------------------------------------------------------------------------
 
     // constructors ----------------------------------------------------------------------------------------------------
@@ -111,8 +158,15 @@ public class DateTest extends ConversionSpecifierTest {
         catch(Log4jPatternLayoutException e) {
 
             String msg = e.getMessage();
-            assertTrue(msg.contains("invalid date pattern element identifier: 'e'"));
+            assertTrue(msg.contains("missing expected conversion character '" + Date.CONVERSION_CHARACTER + "'"));
         }
+    }
+
+    @Test
+    public void constructor() throws Exception {
+
+        Date d = new Date("d{MM/dd/yyyy HH:mm:ss}");
+        assertEquals("%d{MM/dd/yyyy HH:mm:ss}", d.getLiteral());
     }
 
     // add() -----------------------------------------------------------------------------------------------------------
@@ -365,7 +419,7 @@ public class DateTest extends ConversionSpecifierTest {
 
         Date e = getConversionSpecifierToTest(null);
 
-        assertEquals("%d", e.getLiteral());
+        assertEquals("%d{MM/dd/yyyy HH:mm:ss}", e.getLiteral());
     }
 
     @Test
@@ -375,7 +429,7 @@ public class DateTest extends ConversionSpecifierTest {
 
         e.setFormatModifier(new FormatModifier("-5"));
 
-        assertEquals("%-5d", e.getLiteral());
+        assertEquals("%-5d{MM/dd/yyyy HH:mm:ss}", e.getLiteral());
     }
 
     // parse() ---------------------------------------------------------------------------------------------------------
@@ -399,7 +453,43 @@ public class DateTest extends ConversionSpecifierTest {
 
         assertEquals(31, p.from());
         assertEquals(43, p.to());
-        assertEquals("09:01:55,011", p.getLiteral());
+        assertEquals("09:01:55,011", line.substring(p.from(), p.to()));
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent() throws Exception {
+
+        Date cs = new Date();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        cs.injectIntoLog4jEvent(e, new java.util.Date(7L));
+
+        assertEquals(7L, e.getTime().longValue());
+    }
+
+    @Test
+    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+
+        Date cs = new Date();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        try {
+
+            cs.injectIntoLog4jEvent(e, "something");
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("invalid value type"));
+            assertTrue(msg.contains("String"));
+            assertTrue(msg.contains("expected java.util.Date"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -408,13 +498,14 @@ public class DateTest extends ConversionSpecifierTest {
 
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        return "12/01/2017 18:10:20";
     }
 
     @Override
     protected Date getConversionSpecifierToTest(FormatModifier m) throws Exception {
 
-        Date cs = new Date();
+        Date cs = new Date("d{MM/dd/yyyy HH:mm:ss}");
         cs.setFormatModifier(m);
         return cs;
     }

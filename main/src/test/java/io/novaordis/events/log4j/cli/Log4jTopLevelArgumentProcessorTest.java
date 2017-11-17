@@ -149,7 +149,8 @@ public class Log4jTopLevelArgumentProcessorTest {
         catch(UserErrorException e) {
 
             String msg = e.getMessage();
-            assertTrue(msg.contains("invalid log4j pattern layout specification:"));
+            assertTrue(msg.contains("the log4j pattern layout must contain at least on conversion specifier (%...):"));
+            assertTrue(msg.contains("describe"));
         }
     }
 

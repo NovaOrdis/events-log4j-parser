@@ -16,8 +16,11 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
@@ -51,9 +54,44 @@ public class Logger extends ConversionSpecifierBase {
     }
 
     @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException {
+
+        return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
+    }
+
+    @Override
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        if (logContent.length() == from) {
+
+            return null;
+        }
+
+        throw new RuntimeException("findNext() NOT YET IMPLEMENTED");
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        if (value == null) {
+
+            //
+            // noop
+            //
+
+            return;
+        }
+
+        if (!(value instanceof String)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected String");
+        }
+
+        ((Log4jEventImpl)e).setLogger((String)value);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

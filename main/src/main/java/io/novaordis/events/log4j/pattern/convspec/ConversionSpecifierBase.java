@@ -90,7 +90,7 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
             // identifier not encountered
             //
 
-            throw new Log4jPatternLayoutException("expected identifier '" + identifier + "' not found");
+            throw new Log4jPatternLayoutException("missing expected conversion character '" + identifier + "'");
         }
         else {
 
@@ -118,15 +118,32 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
     }
 
     @Override
-    public RenderedLogEvent parseLogContent(String logContent, int from, ConversionPatternComponent next)
+    public RenderedLogEvent parseLogContent(String line, int from, ConversionPatternComponent next)
             throws Log4jPatternLayoutException {
+
+        Integer renderedLogEventEnd = null;
+
+        if (next != null) {
+
+            renderedLogEventEnd = next.findNext(line, from);
+        }
+
+        if (renderedLogEventEnd == null) {
+
+            //
+            // we cannot unequivocally determine the occurrence of the next conversion pattern component on the line
+            // or such pattern does not exist on the line, or there are no more patterns
+            //
+
+            renderedLogEventEnd = line.length();
+        }
 
         //
         // process format modifier information, if available, it'll give more details about how to parse the
         // literal
         //
 
-        RenderedLogEvent re;
+        ProcessedString ps;
 
         if (formatModifier != null) {
 
@@ -136,21 +153,14 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
             // format modifier rendering transformation (if possible)
             //
 
-            ProcessedString s = formatModifier.unapply(logContent, from);
-            re = parseLiteralAfterFormatModifierHandling(s.getProcessedString(), 0, next);
-
-            //
-            // apply the offset to "from" and "to"
-            //
-            re.setFrom(from);
-            re.setTo(s.to());
+            ps = formatModifier.unapply(line, from, renderedLogEventEnd);
         }
         else {
 
-            re = parseLiteralAfterFormatModifierHandling(logContent, from, next);
+            ps = new ProcessedString(from, line.substring(from, renderedLogEventEnd), renderedLogEventEnd);
         }
 
-        return re;
+         return parseLiteralAfterFormatModifierWasUnapplied(ps);
     }
 
     // ConversionSpecifier implementation ------------------------------------------------------------------------------
@@ -195,8 +205,8 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
     /**
      * Handles the literal after the format modifier information has been factored in.
      */
-    protected abstract RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String logContent, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException;
+    protected abstract RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException;
 
     // Private ---------------------------------------------------------------------------------------------------------
 

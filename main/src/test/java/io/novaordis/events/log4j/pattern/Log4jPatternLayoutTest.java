@@ -16,15 +16,20 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.pattern.convspec.Date;
 import io.novaordis.events.log4j.pattern.convspec.Level;
 import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
 import io.novaordis.events.log4j.pattern.convspec.Logger;
 import io.novaordis.events.log4j.pattern.convspec.ThreadName;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyException;
+import io.novaordis.events.log4j.pattern.convspec.wildfly.WildFlyMessage;
+import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -83,6 +88,40 @@ public class Log4jPatternLayoutTest {
 
             assertTrue(msg.contains(
                     "'" + Log4jPatternLayout.CONVERSION_SPECIFIER_MARKER + "' not followed by any pattern element"));
+        }
+    }
+
+    @Test
+    public void constructor_InvalidDateFormat() throws Exception {
+
+        try {
+
+            new Log4jPatternLayout("%d{blah}");
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("invalid date format"));
+            assertTrue(msg.contains("blah"));
+        }
+    }
+
+    @Test
+    public void constructor_ThereShouldBeAtLeastOneConversionSpecifier() throws Exception {
+
+        try {
+
+            new Log4jPatternLayout("blah");
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("the log4j pattern layout must contain at least on conversion specifier (%...)"));
+            assertTrue(msg.contains("blah"));
         }
     }
 
@@ -156,21 +195,19 @@ public class Log4jPatternLayoutTest {
 
         assertTrue(i.hasNext());
 
-        fail("return here");
+        WildFlyMessage u = (WildFlyMessage)i.next();
 
-//        UnknownPatternElement u = (UnknownPatternElement)i.next();
-//
-//        assertEquals("%s", u.getLiteral());
-//        assertEquals('s', u.getConversionCharacter().charValue());
-//
-//        assertTrue(i.hasNext());
-//
-//        UnknownPatternElement u2 = (UnknownPatternElement)i.next();
-//
-//        assertEquals("%E", u2.getLiteral());
-//        assertEquals('E', u2.getConversionCharacter().charValue());
-//
-//        assertTrue(i.hasNext());
+        assertEquals("%s", u.getLiteral());
+        assertEquals('s', u.getConversionCharacter().charValue());
+
+        assertTrue(i.hasNext());
+
+        WildFlyException u2 = (WildFlyException)i.next();
+
+        assertEquals("%E", u2.getLiteral());
+        assertEquals('E', u2.getConversionCharacter().charValue());
+
+        assertTrue(i.hasNext());
 
         LineSeparator n = (LineSeparator)i.next();
         assertNull(n.getFormatModifier());
@@ -179,21 +216,165 @@ public class Log4jPatternLayoutTest {
         assertFalse(i.hasNext());
     }
 
+    // parse() ---------------------------------------------------------------------------------------------------------
+
     @Test
-    public void constructor_InvalidDateFormat() throws Exception {
+    public void parse() throws Exception {
 
-        try {
+        String patternLayoutSpecification = "%m%n";
 
-            new Log4jPatternLayout("%d{blah}");
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
 
-            fail("should have thrown exception");
-        }
-        catch(Log4jPatternLayoutException e) {
+        String logLine = "some message";
 
-            String msg = e.getMessage();
-            assertTrue(msg.contains("invalid date format"));
-            assertTrue(msg.contains("blah"));
-        }
+        Log4jEvent event = patternLayout.parse(7, logLine);
+
+        String message = event.getMessage();
+
+        assertEquals("some message", message);
+
+        assertEquals(7L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse_ExceptionRendered_NoLineSeparator() throws Exception {
+
+        String patternLayoutSpecification = "%s%E";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
+
+        String logLine = "message: com.microsoft.sqlserver.jdbc.SQLServerException: something else";
+
+        Log4jEvent event = patternLayout.parse(8, logLine);
+
+        String message = event.getMessage();
+
+        assertEquals("message", message);
+
+        String exception = event.getExceptionRendering();
+
+        assertEquals(": com.microsoft.sqlserver.jdbc.SQLServerException: something else", exception);
+
+        assertEquals(8L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse_ExceptionRendered_LineSeparator() throws Exception {
+
+        String patternLayoutSpecification = "%s%E%n";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
+
+        String logLine = "message: com.microsoft.sqlserver.jdbc.SQLServerException: something else";
+
+        Log4jEvent event = patternLayout.parse(9L, logLine);
+
+        String message = event.getMessage();
+
+        assertEquals("message", message);
+
+        String exception = event.getExceptionRendering();
+
+        assertEquals(": com.microsoft.sqlserver.jdbc.SQLServerException: something else", exception);
+
+        assertEquals(9L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse_ExceptionNotRendered_NoLineSeparator() throws Exception {
+
+        String patternLayoutSpecification = "%s%E";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
+
+        String logLine = "something: blah";
+
+        Log4jEvent event = patternLayout.parse(10L, logLine);
+
+        String message = event.getMessage();
+
+        assertEquals("something: blah", message);
+
+        String exception = event.getExceptionRendering();
+
+        assertNull(exception);
+
+        assertEquals(10L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse_ExceptionNotRendered_LineSeparator() throws Exception {
+
+        String patternLayoutSpecification = "%s%E%n";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
+
+        String logLine = "something: blah";
+
+        Log4jEvent event = patternLayout.parse(7L, logLine);
+
+        String message = event.getMessage();
+
+        assertEquals("something: blah", message);
+
+        String exception = event.getExceptionRendering();
+
+        assertNull(exception);
+
+        assertEquals(7L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse3() throws Exception {
+
+        String patternLayoutSpecification = "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutSpecification);
+
+        String logLine = "09:01:56,538 INFO  [org.xnio] (MSC service thread 1-3) XNIO Version 3.0.16.GA-redhat-1";
+
+        Log4jEvent event = patternLayout.parse(7L, logLine);
+
+        long time = event.getTime();
+
+        assertEquals(time, new SimpleDateFormat("HH:mm:ss,SSS").parse("09:01:56,538").getTime());
+
+        String message = event.getMessage();
+
+        assertEquals("XNIO Version 3.0.16.GA-redhat-1", message);
+
+        String exception = event.getExceptionRendering();
+
+        assertNull(exception);
+
+        assertEquals(7L, event.getLineNumber().longValue());
+    }
+
+    @Test
+    public void parse4() throws Exception {
+
+        String line = "09:01:55,011 INFO  [org.jboss.modules] (main) JBoss Modules version 1.3.8.Final-redhat-1";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        int elementCount = patternLayout.getPatternComponentCount();
+
+        assertEquals(11, elementCount);
+
+        Log4jEvent event = patternLayout.parse(7L, line);
+
+        Long time = event.getTime();
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("09:01:55,011").getTime(), time.longValue());
+
+        assertEquals(Log4jLevel.INFO, event.getLevel());
+
+        assertEquals("org.jboss.modules", event.getLogger());
+
+        assertEquals("main", event.getThreadName());
+
+        assertEquals("JBoss Modules version 1.3.8.Final-redhat-1", event.getMessage());
+
+        assertEquals(7L, event.getLineNumber().longValue());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

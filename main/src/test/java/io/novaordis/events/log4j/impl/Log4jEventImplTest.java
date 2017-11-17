@@ -16,8 +16,9 @@
 
 package io.novaordis.events.log4j.impl;
 
-import io.novaordis.utilities.logging.log4j.Log4jLevel;
 import org.junit.Test;
+
+import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -47,17 +48,17 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         String s = "something that cannot be a log level";
 
-        e.setStringProperty(Log4jEventImpl.LOG_LEVEL_PROPERTY_NAME, s);
+        e.setStringProperty(Log4jEventImpl.LEVEL_PROPERTY_NAME, s);
 
         try {
 
-            e.getLogLevel();
+            e.getLevel();
             fail("should have failed");
         }
         catch(IllegalStateException ex) {
 
             String msg = ex.getMessage();
-            assertTrue(msg.equals("invalid '" + Log4jEventImpl.LOG_LEVEL_PROPERTY_NAME + "' value: \"" + s + "\""));
+            assertTrue(msg.equals("invalid '" + Log4jEventImpl.LEVEL_PROPERTY_NAME + "' value: \"" + s + "\""));
         }
     }
 
@@ -70,13 +71,13 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         Log4jEventImpl e = getLog4jEventToTest();
 
-        e.setLogLevel(Log4jLevel.ERROR);
+        e.setLevel(Log4jLevel.ERROR);
 
-        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
 
-        e.setLogLevel(null);
+        e.setLevel(null);
 
-        assertNull(e.getLogLevel());
+        assertNull(e.getLevel());
     }
 
     // log category ----------------------------------------------------------------------------------------------------
@@ -86,13 +87,13 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         Log4jEventImpl e = getLog4jEventToTest();
 
-        e.setLogCategory("io.novaordis");
+        e.setLogger("io.novaordis");
 
-        assertEquals("io.novaordis", e.getLogCategory());
+        assertEquals("io.novaordis", e.getLogger());
 
-        e.setLogCategory(null);
+        e.setLogger(null);
 
-        assertNull(e.getLogCategory());
+        assertNull(e.getLogger());
     }
 
     // thread name -----------------------------------------------------------------------------------------------------
@@ -145,7 +146,28 @@ public class Log4jEventImplTest extends Log4jEventTest {
         String s2 = e.getRawRepresentation();
 
         assertEquals("this is the first line\nthis is the second line", s2);
+    }
 
+    // appendToException() ---------------------------------------------------------------------------------------------
+
+    @Test
+    public void appendToException() throws Exception {
+
+        Log4jEventImpl e = getLog4jEventToTest();
+
+        String s = e.getExceptionRendering();
+
+        assertNull(s);
+
+        e.appendToException("first line");
+
+        String s2 = e.getExceptionRendering();
+        assertEquals("first line", s2);
+
+        e.appendToException("second line");
+
+        String s3 = e.getExceptionRendering();
+        assertEquals("first line\nsecond line", s3);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

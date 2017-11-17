@@ -18,9 +18,11 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
@@ -116,7 +118,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
             String msg = e.getMessage();
 
-            assertTrue(msg.contains("identifier '" + Level.CONVERSION_CHARACTER + "' not encountered"));
+            assertTrue(msg.contains("missing expected conversion character '" + Level.CONVERSION_CHARACTER + "'"));
         }
     }
 
@@ -139,7 +141,7 @@ public class LevelTest extends ConversionSpecifierTest {
         catch(Log4jPatternLayoutException ex) {
 
             String msg = ex.getMessage();
-            assertTrue(msg.contains("attempt to add more characters to a closed element"));
+            assertTrue(msg.contains("attempt to add more characters to a closed conversion pattern component"));
         }
     }
 
@@ -180,13 +182,170 @@ public class LevelTest extends ConversionSpecifierTest {
 
         assertEquals(0, p.from());
         assertEquals(5, p.to());
-        assertEquals("INFO ", p.getLiteral());
+        assertEquals("INFO ", line.substring(p.from(), p.to()));
     }
 
     @Test
-    public void parse_PatternMismatch() throws Exception {
+    public void parse_NoSuchLevel() throws Exception {
 
-        fail("return here");
+        String line = "something BLAHBLAH";
+
+        Level pe = new Level("-5p");
+
+        try {
+
+            pe.parseLogContent(line, 0, null);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("not a valid log4j level:"));
+            assertTrue(msg.contains("something BLAHBLAH"));
+        }
+    }
+
+    // parseLiteralAfterFormatModifierWasUnapplied() -------------------------------------------------------------------
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_Invalid() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(0, "blah");
+
+        try {
+
+            l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("not a valid log4j level:"));
+            assertTrue(msg.contains("blah"));
+        }
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_INFO() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "INFO");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(6, e.to());
+        assertEquals(Log4jLevel.INFO, e.get());
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_TRACE() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "TRACE");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(7, e.to());
+        assertEquals(Log4jLevel.TRACE, e.get());
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_DEBUG() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "DEBUG");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(7, e.to());
+        assertEquals(Log4jLevel.DEBUG, e.get());
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_WARN() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "WARN");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(6, e.to());
+        assertEquals(Log4jLevel.WARN, e.get());
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_ERROR() throws Exception {
+
+        Level l = new Level();
+
+        assertNull(l.getFormatModifier());
+
+        ProcessedString ps = new ProcessedString(2, "ERROR");
+
+        RenderedLogEvent e = l.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+        assertEquals(2, e.from());
+        assertEquals(7, e.to());
+        assertEquals(Log4jLevel.ERROR, e.get());
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent() throws Exception {
+
+        Level cs = new Level();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        cs.injectIntoLog4jEvent(e, Log4jLevel.INFO);
+
+        Log4jLevel result = e.getLevel();
+
+        assertEquals(Log4jLevel.INFO, result);
+    }
+
+    @Test
+    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+
+        Level cs = new Level();
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        try {
+
+            cs.injectIntoLog4jEvent(e, "INFO");
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("invalid value type"));
+            assertTrue(msg.contains("String"));
+            assertTrue(msg.contains("expected Log4jLevel"));
+        }
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
@@ -195,7 +354,8 @@ public class LevelTest extends ConversionSpecifierTest {
 
     @Override
     protected String getMatchingLogContent() throws Exception {
-        throw new RuntimeException("getMatchingLogContent() NOT YET IMPLEMENTED");
+
+        return "INFO";
     }
 
     @Override

@@ -30,17 +30,20 @@ public class RenderedLogEvent {
 
     // Attributes ------------------------------------------------------------------------------------------------------
 
+    // the index in the original string of the beginning of the substring the object value was extracted from.
     private int from;
+
+    // the index in the original string of the end of the substring (the index of the next character) the object value
+    // was extracted from.
     private int to;
-    private String literal;
+
     private Object object;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    public RenderedLogEvent(Object o, String literal, int from, int to) {
+    public RenderedLogEvent(Object o, int from, int to) {
 
         this.object = o;
-        this.literal = literal;
         this.from = from;
         this.to = to;
     }
@@ -74,20 +77,6 @@ public class RenderedLogEvent {
         this.to = i;
     }
 
-//    public void applyOffset(int offset) {
-//
-//        from = from + offset;
-//        to = to + offset;
-//    }
-
-    /**
-     * @return the string representation of the element, as it shows up in the original string.
-     */
-    public String getLiteral() {
-
-        return literal;
-    }
-
     /**
      * @return the parsed object, whose type depends on the ConversionSpecifier it corresponds to.
      */
@@ -99,7 +88,7 @@ public class RenderedLogEvent {
     @Override
     public String toString() {
 
-        return "(" + from + ", " + to + ") \"" + literal + "\" " + object;
+        return "(" + from + ", " + to + ") " + object;
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

@@ -163,20 +163,30 @@ public class FormatModifier {
             }
         }
 
-
         return s;
     }
 
     /**
-     * The inverse transformation to apply(). Of course, is not always possible to generate the original string.
+     * @param  to - may be null, in which case it means "to the end of the string"
+     *
+     * The inverse transformation to apply(). It is not always possible to produce the original string.
      */
-    public ProcessedString unapply(String s, int from) {
+    public ProcessedString unapply(String s, int from, Integer to) {
 
         ProcessedString result = new ProcessedString(from);
 
-        result.setTo(s.length());
+        String arg;
 
-        String arg = s.substring(from);
+        if (to == null) {
+
+            result.setTo(s.length());
+            arg = s.substring(from);
+        }
+        else {
+
+            result.setTo(to);
+            arg = s.substring(from, to);
+        }
 
         if (minimumFieldWidth != null) {
 
@@ -212,10 +222,25 @@ public class FormatModifier {
             else {
 
                 //
-                // drop spaces from the right of the string
+                // heuristics: see if there's a space at the edge of the zone that might have been filled
+                //             and unwind from there
                 //
 
-                int i = arg.length() - 1;
+                int i;
+
+                if (arg.charAt(minimumFieldWidth - 1) == ' ') {
+
+                    i = minimumFieldWidth - 1;
+                    result.setTo(from + minimumFieldWidth);
+                }
+                else {
+
+                    i = arg.length() - 1;
+                }
+
+                //
+                // drop spaces from the right of the string
+                //
 
                 while(i >= 0) {
 

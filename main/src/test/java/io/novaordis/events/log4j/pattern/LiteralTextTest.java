@@ -18,6 +18,8 @@ package io.novaordis.events.log4j.pattern;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -151,7 +153,6 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         assertEquals(31, p.from());
         assertEquals(45, p.to());
-        assertEquals("something else", p.getLiteral());
     }
 
     @Test
@@ -174,6 +175,50 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
             String msg = e.getMessage();
             assertEquals("pattern element's literal \"blih\" does not match the parsed string literal \"blah\"", msg);
         }
+    }
+
+    // findNext() ------------------------------------------------------------------------------------------------------
+
+    @Test
+    public void findNext() throws Exception {
+
+        LiteralText lt = new LiteralText(" ");
+
+        Integer i = lt.findNext(" something something else", 1);
+
+        assertEquals(10, i.intValue());
+    }
+
+    @Test
+    public void findNext_NotFound() throws Exception {
+
+        LiteralText lt = new LiteralText("@@@");
+
+        Integer i = lt.findNext("something something else", 0);
+
+        assertNull(i);
+    }
+
+    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoLog4jEvent() throws Exception {
+
+        //
+        // we're a noop
+        //
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        int propertyCount = e.getProperties().size();
+
+        LiteralText lt = new LiteralText("something");
+
+        lt.injectIntoLog4jEvent(e, "something else");
+
+        int propertyCount2 = e.getProperties().size();
+
+        assertEquals(propertyCount, propertyCount2);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

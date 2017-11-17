@@ -26,6 +26,7 @@ import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -74,7 +75,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     }
 
     @Test
-    public void getFormatModifier2() throws Exception {
+    public void getFormatModifier_2() throws Exception {
 
         FormatModifier m = new FormatModifier("-20.-30");
 
@@ -94,10 +95,10 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         assertNull(e.getFormatModifier());
 
-        String expected = "%" + e.getConversionCharacter();
+        String prefix = "%" + e.getConversionCharacter();
         String l = e.getLiteral();
 
-        assertEquals(expected, l);
+        assertTrue(l.startsWith(prefix));
     }
 
     @Test
@@ -116,7 +117,7 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
     // parseLogContent() -----------------------------------------------------------------------------------------------
 
     @Test
-    public void parseLogContent_NoFormatModifier() throws Exception {
+    public void parseLogContent_No_FormatModifier() throws Exception {
 
         FormatModifier m = null;
 
@@ -131,14 +132,13 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        assertEquals(rendering, e.getLiteral());
         assertNotNull(e.get());
         assertEquals(1, e.from());
         assertEquals(s.length(), e.to());
     }
 
     @Test
-    public void parseLogContent_WithFormatModifier() throws Exception {
+    public void parseLogContent_With_FormatModifier() throws Exception {
 
         String ms = "5.6";
 
@@ -152,21 +152,20 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        assertEquals(rendering, e.getLiteral());
-        assertNotNull(e.get());
+        Object logEvent = e.get();
+        assertNotNull(logEvent);
         assertEquals(1, e.from());
-        assertEquals(1 + rendering.length(), e.to());
+        assertEquals(1 + logEvent.toString().length(), e.to());
     }
 
     @Test
-    public void parseLogContent_WithFormatModifier2() throws Exception {
+    public void parseLogContent_With_FormatModifier_2() throws Exception {
 
         String ms = "100";
 
         FormatModifier m = new FormatModifier(ms);
 
         String rendering = getMatchingLogContent(m);
-        String trimmedRendering = rendering.trim();
 
         String s = ">" + rendering;
 
@@ -174,21 +173,19 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        assertEquals(trimmedRendering, e.getLiteral());
         assertNotNull(e.get());
         assertEquals(1, e.from());
         assertEquals(1 + rendering.length(), e.to());
     }
 
     @Test
-    public void parseLogContent_WithFormatModifier3() throws Exception {
+    public void parseLogContent_With_FormatModifier_3() throws Exception {
 
         String ms = "-100";
 
         FormatModifier m = new FormatModifier(ms);
 
         String rendering = getMatchingLogContent(m);
-        String trimmedRendering = rendering.trim();
 
         String s = ">" + rendering;
 
@@ -196,7 +193,6 @@ public abstract class ConversionSpecifierTest extends ConversionPatternComponent
 
         RenderedLogEvent e = cs.parseLogContent(s, 1, null);
 
-        assertEquals(trimmedRendering, e.getLiteral());
         assertNotNull(e.get());
         assertEquals(1, e.from());
         assertEquals(1 + rendering.length(), e.to());

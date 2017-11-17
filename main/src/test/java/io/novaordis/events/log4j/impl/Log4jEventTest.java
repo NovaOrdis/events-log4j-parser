@@ -57,8 +57,8 @@ public abstract class Log4jEventTest {
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
-        assertEquals(Log4jLevel.INFO, e.getLogLevel());
-        assertEquals("org.jboss.modules", e.getLogCategory());
+        assertEquals(Log4jLevel.INFO, e.getLevel());
+        assertEquals("org.jboss.modules", e.getLogger());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
         assertEquals(s, e.getRawRepresentation());
@@ -75,8 +75,8 @@ public abstract class Log4jEventTest {
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
-        assertEquals(Log4jLevel.INFO, e.getLogLevel());
-        assertEquals("org.jboss.modules", e.getLogCategory());
+        assertEquals(Log4jLevel.INFO, e.getLevel());
+        assertEquals("org.jboss.modules", e.getLogger());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
         assertEquals(s, e.getRawRepresentation());
@@ -93,8 +93,8 @@ public abstract class Log4jEventTest {
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
-        assertEquals(Log4jLevel.WARN, e.getLogLevel());
-        assertEquals("org.jboss.modules", e.getLogCategory());
+        assertEquals(Log4jLevel.WARN, e.getLevel());
+        assertEquals("org.jboss.modules", e.getLogger());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
         assertEquals(s, e.getRawRepresentation());
@@ -110,8 +110,8 @@ public abstract class Log4jEventTest {
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
-        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
-        assertEquals("org.jboss.modules", e.getLogCategory());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("org.jboss.modules", e.getLogger());
         assertEquals("main", e.getThreadName());
         assertEquals("JBoss Modules version 1.3.7.Final-redhat-1", e.getMessage());
         assertEquals(s, e.getRawRepresentation());
@@ -171,8 +171,8 @@ public abstract class Log4jEventTest {
 
         assertEquals(8L, e.getLineNumber().longValue());
         assertEquals(7L, e.getTime().longValue());
-        assertEquals(Log4jLevel.ERROR, e.getLogLevel());
-        assertEquals("org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]", e.getLogCategory());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/mp/train/consist/composite].[javax.ws.rs.core.Application]", e.getLogger());
         assertEquals("blah", e.getThreadName());
         assertEquals("blah2", e.getMessage());
         assertEquals(s, e.getRawRepresentation());
@@ -223,7 +223,7 @@ public abstract class Log4jEventTest {
 
         Log4jEvent e = getLog4jEventToTest();
 
-        assertNull(e.getLogLevel());
+        assertNull(e.getLevel());
     }
 
     // log category ----------------------------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ public abstract class Log4jEventTest {
 
         Log4jEvent e = getLog4jEventToTest();
 
-        assertNull(e.getLogCategory());
+        assertNull(e.getLogger());
     }
 
     // thread name -----------------------------------------------------------------------------------------------------

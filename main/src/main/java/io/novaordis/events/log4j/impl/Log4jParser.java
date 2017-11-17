@@ -19,7 +19,6 @@ package io.novaordis.events.log4j.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,10 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -45,67 +42,6 @@ public class Log4jParser extends ParserBase {
 
     // Static ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return the parsed objects that correspond to the given pattern elements. The objects can be Strings,
-     * Date instances, numbers, etc. The returned list size is equal to Log4jPatternLayout.getPatternComponentCount()
-     * value. The type correspondence is presented below:
-     *
-     * date pattern - java.lang.Date
-     *
-     * level pattern - io.novaordis.events.log4j.impl.Log4jLevel
-     *
-     * line separator pattern - platform specific line separator, as String.
-     *
-     * literal pattern - a string containing the literal
-     *
-     * logger - a string containing the logger
-     *
-     * thread name - a string containing the thread name
-     *
-     * @throws ParsingException
-     */
-    public static List<Object> matchPatterns(Long lineNumber, Log4jPatternLayout patternLayout, String line)
-            throws ParsingException {
-
-        Iterator<ConversionPatternComponent> i = patternLayout.getPatternComponentIterator();
-
-        if (!i.hasNext()) {
-
-            return Collections.emptyList();
-        }
-
-        ConversionPatternComponent current = i.next();
-        ConversionPatternComponent next = null;
-        int from = 0;
-
-        List<Object> result = new ArrayList<>();
-
-        do {
-
-            if (i.hasNext()) {
-
-                next = i.next();
-            }
-
-            try {
-
-                RenderedLogEvent pe = current.parseLogContent(line, from, next);
-                result.add(pe.get());
-                from = pe.to();
-
-            }
-            catch(Log4jPatternLayoutException e) {
-
-                throw new ParsingException(lineNumber, e);
-            }
-
-            current = next;
-        }
-        while(current != null);
-
-        return result;
-    }
-
     // Attributes ------------------------------------------------------------------------------------------------------
 
     private Log4jPatternLayout patternLayout;
@@ -119,6 +55,7 @@ public class Log4jParser extends ParserBase {
     public Log4jParser() {
 
         patternLayout = null;
+
         fullyParsedEvents = new ArrayList<>();
     }
 
@@ -127,17 +64,31 @@ public class Log4jParser extends ParserBase {
     @Override
     protected List<Event> parse(long lineNumber, String line) throws ParsingException {
 
-        if (patternLayout != null) {
-
-            matchPatterns(lineNumber, line);
-        }
-        else {
+        if (patternLayout == null) {
 
             applyHeuristics(lineNumber, line);
         }
+        else {
+
+            try {
+
+                Log4jEvent event = patternLayout.parse(lineNumber, line);
+
+                //
+                // TODO for the time being, we consider all events fully parsed after finishing the first line
+                //      this does not apply for exception rendering
+                //
+
+                fullyParsedEvents.add(event);
+
+            }
+            catch(Log4jPatternLayoutException e) {
+
+                throw new ParsingException(lineNumber, e);
+            }
+        }
 
         return flush();
-
     }
 
     @Override
@@ -195,13 +146,6 @@ public class Log4jParser extends ParserBase {
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
-
-    List<Event> matchPatterns(long lineNumber, String line) throws ParsingException {
-
-        List<Object> parsedElements = matchPatterns(lineNumber, this.patternLayout, line);
-
-        throw new RuntimeException("matchPattern(" + lineNumber + ", " + line + ") NOT YET IMPLEMENTED");
-    }
 
     void applyHeuristics(long lineNumber, String line) throws ParsingException {
 

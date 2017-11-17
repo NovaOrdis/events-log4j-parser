@@ -96,7 +96,7 @@ public class MessageProcessing extends ProcedureBase {
 
         Log4jEvent le = (Log4jEvent)e;
 
-        String category = le.getLogCategory();
+        String category = le.getLogger();
 
         String thread = le.getThreadName();
 

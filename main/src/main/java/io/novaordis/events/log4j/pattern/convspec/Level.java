@@ -16,9 +16,13 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
+import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
+import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 /**
  * The level of the logging event.
@@ -62,9 +66,65 @@ public class Level extends ConversionSpecifierBase {
     }
 
     @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierHandling(
-            String s, int from, ConversionPatternComponent next) throws Log4jPatternLayoutException {
-        throw new RuntimeException("parseLiteralAfterFormatModifierHandling() NOT YET IMPLEMENTED");
+    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
+            throws Log4jPatternLayoutException {
+
+        String s = ps.getProcessedString();
+
+        Log4jLevel l = Log4jLevel.find(s, 0);
+
+        if (l == null) {
+
+            throw new Log4jPatternLayoutException("not a valid log4j level: " + s);
+        }
+
+        int to;
+        int from = ps.from();
+
+        if (s.length() == l.name().length()) {
+
+            to = ps.to();
+        }
+        else {
+
+            to = from + l.name().length();
+        }
+
+        return new RenderedLogEvent(l, from, to);
+    }
+
+    @Override
+    public Integer findNext(String logContent, int from) {
+
+        ConversionPatternComponent.checkConsistency(logContent, from);
+
+        if (logContent.length() == from) {
+
+            return null;
+        }
+
+        throw new RuntimeException("findNext() NOT YET IMPLEMENTED");
+    }
+
+    @Override
+    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+
+        if (value == null) {
+
+            //
+            // noop
+            //
+
+            return;
+        }
+
+        if (!(value instanceof Log4jLevel)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected Log4jLevel");
+        }
+
+        ((Log4jEventImpl)e).setLevel((Log4jLevel) value);
     }
 
     // ConversionSpecifierBase overrides -------------------------------------------------------------------------------
