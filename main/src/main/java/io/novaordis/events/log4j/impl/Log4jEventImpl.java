@@ -41,8 +41,8 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
     public static final String LEVEL_PROPERTY_NAME = "level";
     public static final String LOGGER_PROPERTY_NAME = "logger";
-    public static final String THREAD_NAME_PROPERTY_NAME = "thread-name";
-    public static final String MESSAGE_PROPERTY_NAME = "message";
+    public static final String THREAD_NAME_PROPERTY_NAME = "thread";
+    public static final String MESSAGE_PROPERTY_NAME = "msg";
     public static final String EXCEPTION_PROPERTY_NAME = "exception";
 
     private static final DateFormat TO_STRING_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS");
