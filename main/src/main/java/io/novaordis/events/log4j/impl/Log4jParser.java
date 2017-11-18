@@ -54,9 +54,14 @@ public class Log4jParser extends ParserBase {
 
     public Log4jParser() {
 
-        patternLayout = null;
+        this(null);
+    }
+
+    public Log4jParser(Log4jPatternLayout patternLayout) {
 
         fullyParsedEvents = new ArrayList<>();
+
+        setPatternLayout(patternLayout);
     }
 
     // ParserBase implementation ---------------------------------------------------------------------------------------
@@ -70,22 +75,50 @@ public class Log4jParser extends ParserBase {
         }
         else {
 
+            //
+            // there is a pattern layout in place, use it to parse the line
+            //
+
+            //
+            // in most cases, lines are structured log event renderings so attempt preemptive parsing
+            //
+
             try {
 
-                Log4jEvent event = patternLayout.parse(lineNumber, line);
+                Log4jEventImpl event = patternLayout.parse(lineNumber, line);
 
                 //
-                // TODO for the time being, we consider all events fully parsed after finishing the first line
-                //      this does not apply for exception rendering
+                // parsing succeeded, we got another log event, move the current one, if any, to the fully parsed
+                // event queue, and roll with this one
                 //
 
-                fullyParsedEvents.add(event);
+                if (currentEvent != null) {
+
+                    fullyParsedEvents.add(currentEvent);
+                }
+
+                currentEvent = event;
 
             }
             catch(Log4jPatternLayoutException e) {
 
-                throw new ParsingException(lineNumber, e);
+                if (currentEvent == null) {
+
+                    //
+                    // bubble the exception up
+                    //
+
+                    throw new ParsingException(lineNumber, e);
+                }
+
+                //
+                // attempt to pass it to the current event, it may be an exception stack trace or multi-line message
+                // line
+                //
+
+                currentEvent.appendLine(line);
             }
+
         }
 
         return flush();
@@ -116,6 +149,8 @@ public class Log4jParser extends ParserBase {
     /**
      * The pattern layout can be injected into the parser instance after it is constructed, as long as it is done
      * before the instance is used to parse content.
+     *
+     * @param patternLayout null is acceptable, it means "reset".
      */
     public void setPatternLayout(Log4jPatternLayout patternLayout) {
 
@@ -164,7 +199,7 @@ public class Log4jParser extends ParserBase {
             }
             else {
 
-                currentEvent.append(line);
+                currentEvent.setRaw(line);
             }
         }
         else {

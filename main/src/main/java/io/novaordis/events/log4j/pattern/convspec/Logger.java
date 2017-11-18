@@ -16,7 +16,6 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -74,7 +73,7 @@ public class Logger extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         if (value == null) {
 
@@ -91,7 +90,7 @@ public class Logger extends ConversionSpecifierBase {
                     "invalid value type " + value.getClass().getSimpleName() + ", expected String");
         }
 
-        ((Log4jEventImpl)e).setLogger((String)value);
+        e.setLogger((String)value);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

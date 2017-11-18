@@ -196,7 +196,7 @@ public abstract class ConversionPatternComponentTest {
         }
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent_NullValue() throws Exception {
@@ -207,7 +207,7 @@ public abstract class ConversionPatternComponentTest {
 
         int propertyCount = e.getProperties().size();
 
-        c.injectIntoLog4jEvent(e, null);
+        c.injectIntoEvent(e, null);
 
         int propertyCount2 = e.getProperties().size();
 

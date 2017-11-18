@@ -16,7 +16,7 @@
 
 package io.novaordis.events.log4j.pattern;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
@@ -133,7 +133,7 @@ public class LiteralText implements ConversionPatternComponent {
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         //
         // noop, we are not injecting anything

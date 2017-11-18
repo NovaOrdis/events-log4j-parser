@@ -199,7 +199,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
         assertNull(i);
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -214,7 +214,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         LiteralText lt = new LiteralText("something");
 
-        lt.injectIntoLog4jEvent(e, "something else");
+        lt.injectIntoEvent(e, "something else");
 
         int propertyCount2 = e.getProperties().size();
 

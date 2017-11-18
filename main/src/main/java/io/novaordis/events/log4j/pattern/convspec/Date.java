@@ -19,7 +19,7 @@ package io.novaordis.events.log4j.pattern.convspec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -177,7 +177,7 @@ public class Date extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         if (value == null) {
 
@@ -205,14 +205,23 @@ public class Date extends ConversionSpecifierBase {
 
         String s2 = ps.getProcessedString();
 
-        if (s2.length() < length) {
+        int s2Length = s2.length();
 
-            throw new RuntimeException("NYE (1)");
+        if (s2Length == 0) {
+
+            throw new Log4jPatternLayoutException("empty string when expecting a time stamp");
         }
+        else if (s2Length < length) {
 
-        if (s2.length() > length) {
+            throw new Log4jPatternLayoutException(
+                    "date rendering string is shorted that what would have been expected given the pattern " +
+                            getLiteral());
+        }
+        else if (s2Length > length) {
 
-            throw new RuntimeException("NYE (2)");
+            throw new Log4jPatternLayoutException(
+                    "date rendering string is longer that what would have been expected given the pattern " +
+                            getLiteral());
         }
 
         java.util.Date d;

@@ -16,8 +16,11 @@
 
 package io.novaordis.events.log4j.impl;
 
+import java.util.StringTokenizer;
+
 import org.junit.Test;
 
+import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 import static org.junit.Assert.assertEquals;
@@ -131,43 +134,341 @@ public class Log4jEventImplTest extends Log4jEventTest {
     // raw representation/append() -------------------------------------------------------------------------------------
 
     @Test
-    public void rawRepresentation_append() throws Exception {
+    public void setRaw() throws Exception {
 
         Log4jEventImpl e = getLog4jEventToTest();
 
-        e.append("this is the first line");
+        e.setRaw("this is the first line");
 
         String s = e.getRawRepresentation();
 
         assertEquals("this is the first line", s);
 
-        e.append("this is the second line");
+        e.setRaw("this is another line");
 
         String s2 = e.getRawRepresentation();
 
-        assertEquals("this is the first line\nthis is the second line", s2);
+        assertEquals("this is another line", s2);
     }
 
-    // appendToException() ---------------------------------------------------------------------------------------------
+    @Test
+    public void setRaw_2() throws Exception {
+
+        String line = "20:00:00 multi-line message\n sub-line-1\nsub-line-2";
+
+        Log4jParser p = new Log4jParser(new Log4jPatternLayout("%d{HH:mm:ss} %m%n"));
+
+        int i = 1;
+
+        for(StringTokenizer st = new StringTokenizer(line, "\n"); st.hasMoreTokens(); i ++) {
+
+            p.parse(i, st.nextToken());
+        }
+
+        Log4jEventImpl e = (Log4jEventImpl)p.close().get(0);
+
+        assertEquals("multi-line message\n sub-line-1\nsub-line-2", e.getMessage());
+
+        String raw = e.getRawRepresentation();
+
+        assertEquals(line, raw);
+    }
+
+    // append mode -----------------------------------------------------------------------------------------------------
 
     @Test
-    public void appendToException() throws Exception {
+    public void defaultAppendMode() throws Exception {
 
-        Log4jEventImpl e = getLog4jEventToTest();
+        Log4jEventImpl le = new Log4jEventImpl();
 
-        String s = e.getExceptionRendering();
+        assertEquals(Log4jEventImpl.NO_APPEND_MODE, le.getAppendMode());
+    }
 
-        assertNull(s);
+    @Test
+    public void setAppendMode_NO_APPEND_MODE() throws Exception {
 
-        e.appendToException("first line");
+        Log4jEventImpl le = new Log4jEventImpl();
 
-        String s2 = e.getExceptionRendering();
-        assertEquals("first line", s2);
+        le.setAppendMode(Log4jEventImpl.NO_APPEND_MODE);
 
-        e.appendToException("second line");
+        assertEquals(Log4jEventImpl.NO_APPEND_MODE, le.getAppendMode());
+    }
 
-        String s3 = e.getExceptionRendering();
-        assertEquals("first line\nsecond line", s3);
+    @Test
+    public void setAppendMode_EXCEPTION_APPEND_MODE() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, le.getAppendMode());
+    }
+
+    @Test
+    public void setAppendMode_MESSAGE_APPEND_MODE() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.MESSAGE_APPEND_MODE);
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, le.getAppendMode());
+    }
+
+    @Test
+    public void setAppendMode_Invalid() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        try {
+
+            le.setAppendMode((byte) 5);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("invalid append mode"));
+            assertTrue(msg.contains("5"));
+        }
+    }
+
+    // appendLine() ----------------------------------------------------------------------------------------------------
+
+    @Test
+    public void appendLine_Null() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
+
+        try {
+
+            le.appendLine(null);
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalArgumentException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("null line"));
+        }
+    }
+
+    @Test
+    public void appendLine_NotInAppendMode() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        assertEquals(Log4jEventImpl.NO_APPEND_MODE, le.getAppendMode());
+
+        try {
+
+            le.appendLine("something");
+
+            fail("should have thrown exception");
+        }
+        catch(IllegalStateException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("not in append mode"));
+        }
+    }
+
+    @Test
+    public void appendLine_ExceptionMode_NoRaw() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
+
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 1");
+
+        assertEquals("line 1", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 2");
+
+        assertEquals("line 1\nline 2", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine(" ");
+
+        assertEquals("line 1\nline 2\n ", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("\t");
+
+        assertEquals("line 1\nline 2\n \n\t", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("");
+
+        assertEquals("line 1\nline 2\n \n\t\n", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 3");
+
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+    }
+
+    @Test
+    public void appendLine_ExceptionMode_WithRaw() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
+
+        le.setRaw("first line");
+
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line", le.getRawRepresentation());
+
+        le.appendLine("line 1");
+
+        assertEquals("line 1", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1", le.getRawRepresentation());
+
+        le.appendLine("line 2");
+
+        assertEquals("line 1\nline 2", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1\nline 2", le.getRawRepresentation());
+
+        le.appendLine(" ");
+
+        assertEquals("line 1\nline 2\n ", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1\nline 2\n ", le.getRawRepresentation());
+
+        le.appendLine("\t");
+
+        assertEquals("line 1\nline 2\n \n\t", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1\nline 2\n \n\t", le.getRawRepresentation());
+
+        le.appendLine("");
+
+        assertEquals("line 1\nline 2\n \n\t\n", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1\nline 2\n \n\t\n", le.getRawRepresentation());
+
+        le.appendLine("line 3");
+
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line\nline 1\nline 2\n \n\t\n\nline 3", le.getRawRepresentation());
+    }
+
+    @Test
+    public void appendLine_MessageMode_NoRaw() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setAppendMode(Log4jEventImpl.MESSAGE_APPEND_MODE);
+
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 1");
+
+        assertEquals("line 1", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 2");
+
+        assertEquals("line 1\nline 2", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine(" ");
+
+        assertEquals("line 1\nline 2\n ", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("\t");
+
+        assertEquals("line 1\nline 2\n \n\t", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("");
+
+        assertEquals("line 1\nline 2\n \n\t\n", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+
+        le.appendLine("line 3");
+
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getRawRepresentation());
+    }
+
+    @Test
+    public void appendLine_MessageMode_WithRaw() throws Exception {
+
+        Log4jEventImpl le = new Log4jEventImpl();
+
+        le.setRaw("first line");
+
+        le.setAppendMode(Log4jEventImpl.MESSAGE_APPEND_MODE);
+
+        assertNull(le.getExceptionRendering());
+        assertNull(le.getMessage());
+        assertEquals("first line", le.getRawRepresentation());
+
+        le.appendLine("line 1");
+
+        assertEquals("line 1", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1", le.getRawRepresentation());
+
+        le.appendLine("line 2");
+
+        assertEquals("line 1\nline 2", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1\nline 2", le.getRawRepresentation());
+
+        le.appendLine(" ");
+
+        assertEquals("line 1\nline 2\n ", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1\nline 2\n ", le.getRawRepresentation());
+
+        le.appendLine("\t");
+
+        assertEquals("line 1\nline 2\n \n\t", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1\nline 2\n \n\t", le.getRawRepresentation());
+
+        le.appendLine("");
+
+        assertEquals("line 1\nline 2\n \n\t\n", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1\nline 2\n \n\t\n", le.getRawRepresentation());
+
+        le.appendLine("line 3");
+
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getMessage());
+        assertNull(le.getExceptionRendering());
+        assertEquals("first line\nline 1\nline 2\n \n\t\n\nline 3", le.getRawRepresentation());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

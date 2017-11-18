@@ -310,7 +310,7 @@ public class LevelTest extends ConversionSpecifierTest {
         assertEquals(Log4jLevel.ERROR, e.get());
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -319,7 +319,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
         Log4jEventImpl e = new Log4jEventImpl();
 
-        cs.injectIntoLog4jEvent(e, Log4jLevel.INFO);
+        cs.injectIntoEvent(e, Log4jLevel.INFO);
 
         Log4jLevel result = e.getLevel();
 
@@ -335,7 +335,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
         try {
 
-            cs.injectIntoLog4jEvent(e, "INFO");
+            cs.injectIntoEvent(e, "INFO");
 
             fail("should have thrown exception");
         }

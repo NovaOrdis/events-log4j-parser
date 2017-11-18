@@ -16,7 +16,7 @@
 
 package io.novaordis.events.log4j.pattern;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 
 /**
  * The representation of an individual element (component) in a conversion pattern string.
@@ -104,6 +104,6 @@ public interface ConversionPatternComponent {
      * @exception IllegalArgumentException if the conversion of the given value to the corresponding log event property
      * is not possible.
      */
-    void injectIntoLog4jEvent(Log4jEvent e, Object value);
+    void injectIntoEvent(Log4jEventImpl e, Object value);
 
 }

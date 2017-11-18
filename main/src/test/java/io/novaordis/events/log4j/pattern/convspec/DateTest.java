@@ -26,6 +26,7 @@ import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.LiteralText;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
@@ -443,9 +444,9 @@ public class DateTest extends ConversionSpecifierTest {
 
         LiteralText next = new LiteralText(" ");
 
-        Date pe = new Date("d{HH:mm:ss,SSS}");
+        Date cs = new Date("d{HH:mm:ss,SSS}");
 
-        RenderedLogEvent p = pe.parseLogContent(line, from, next);
+        RenderedLogEvent p = cs.parseLogContent(line, from, next);
 
         java.util.Date d = (java.util.Date)p.get();
 
@@ -456,7 +457,95 @@ public class DateTest extends ConversionSpecifierTest {
         assertEquals("09:01:55,011", line.substring(p.from(), p.to()));
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // parseLiteralAfterFormatModifierWasUnapplied() -------------------------------------------------------------------
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_EmptyString() throws Exception {
+
+        Date cs = new Date("d{HH:mm:ss,SSS}");
+
+        ProcessedString ps = new ProcessedString(0, "", 0);
+
+        try {
+
+            cs.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains("empty string when expecting a time stamp"));
+        }
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_RenderingShorterThanExpected() throws Exception {
+
+        Date cs = new Date("d{HH:mm:ss,SSS}");
+
+        ProcessedString ps = new ProcessedString(0, "blah", 4);
+
+        try {
+
+            cs.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains(
+                    "date rendering string is shorted that what would have been expected given the pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_RenderingLongerThanExpected() throws Exception {
+
+        Date cs = new Date("d{HH:mm:ss,SSS}");
+
+        ProcessedString ps = new ProcessedString(0, "blahblahblahblahblah", 20);
+
+        try {
+
+            cs.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains(
+                    "date rendering string is longer that what would have been expected given the pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+    }
+
+    @Test
+    public void parseLiteralAfterFormatModifierWasUnapplied_RenderingDoesNotMatchPattern() throws Exception {
+
+        Date cs = new Date("d{HH:mm:ss,SSS}");
+
+        ProcessedString ps = new ProcessedString(0, "AA_BB_CC_DDD", "AA_BB_CC_DDD".length());
+
+        try {
+
+            cs.parseLiteralAfterFormatModifierWasUnapplied(ps);
+
+            fail("should have thrown exception");
+        }
+        catch(Log4jPatternLayoutException e) {
+
+            String msg = e.getMessage();
+            assertTrue(msg.contains(""));
+            assertTrue(msg.contains("does not match pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+    }
+
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -465,7 +554,7 @@ public class DateTest extends ConversionSpecifierTest {
 
         Log4jEventImpl e = new Log4jEventImpl();
 
-        cs.injectIntoLog4jEvent(e, new java.util.Date(7L));
+        cs.injectIntoEvent(e, new java.util.Date(7L));
 
         assertEquals(7L, e.getTime().longValue());
     }
@@ -479,7 +568,7 @@ public class DateTest extends ConversionSpecifierTest {
 
         try {
 
-            cs.injectIntoLog4jEvent(e, "something");
+            cs.injectIntoEvent(e, "something");
 
             fail("should have thrown exception");
         }

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifier;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierFinder;
@@ -90,9 +89,18 @@ public class Log4jPatternLayout {
     }
 
     /**
+     * Parse a log4j-generated log event line. It will fail if the line does not match the pattern. The method is
+     * not intended to parse (does not keep internal state of) multi-line messages or exception stack trace lines.
+     * This is because the upper layer must manage that kind of content and add them directly to the event instance.
+     *
+     * @see Log4jEventImpl#appendLine(String)
+     *
      * @throws IllegalStateException if there are no conversion pattern component.
+     *
+     * @throws Log4jPatternLayoutException on invalid log event rendering line, including the case of an exception
+     * stack trace line.
      */
-    public Log4jEvent parse(long lineNumber, String line) throws Log4jPatternLayoutException {
+    public Log4jEventImpl parse(long lineNumber, String line) throws Log4jPatternLayoutException {
 
         Iterator<ConversionPatternComponent> i = getPatternComponentIterator();
 
@@ -110,8 +118,7 @@ public class Log4jPatternLayout {
             next = i.next();
         }
 
-        Log4jEventImpl log4jEvent = new Log4jEventImpl();
-        log4jEvent.setLineNumber(lineNumber);
+        Log4jEventImpl log4jEvent = null;
 
         do {
 
@@ -121,7 +128,18 @@ public class Log4jPatternLayout {
 
             RenderedLogEvent e = crt.parseLogContent(line, from, next);
 
-            crt.injectIntoLog4jEvent(log4jEvent, e.get());
+            //
+            // lazy instantiation, if we survive current conversion pattern parsing, we avoid creating an useless
+            // instance if we fail - as in the case of exception stack trace lines
+            //
+
+            if (log4jEvent == null) {
+
+                log4jEvent = new Log4jEventImpl();
+                log4jEvent.setLineNumber(lineNumber);
+            }
+
+            crt.injectIntoEvent(log4jEvent, e.get());
 
             crt = next;
             from = e.to();
@@ -141,7 +159,7 @@ public class Log4jPatternLayout {
         // parsing successful, load the raw representation
         //
 
-        log4jEvent.append(line);
+        log4jEvent.setRaw(line);
 
         return log4jEvent;
     }

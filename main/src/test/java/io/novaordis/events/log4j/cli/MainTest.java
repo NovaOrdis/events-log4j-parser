@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -37,6 +39,8 @@ import static org.junit.Assert.fail;
 public class MainTest {
 
     // Constants -------------------------------------------------------------------------------------------------------
+
+    private static final Logger log = LoggerFactory.getLogger(MainTest.class);
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -215,16 +219,33 @@ public class MainTest {
 
         String originalLine, lineAfterParsing;
 
+        int firstDifferentLine = -1;
+        String firstDifferentOriginalLine = null;
+        String firstDifferentLineAfterParsing = null;
+        String parsedContent = "";
+
         while((originalLine = originalContentReader.readLine()) != null) {
 
             lineNumber ++;
             lineAfterParsing = parsedContentReader.readLine();
+            parsedContent += lineAfterParsing + "\n";
 
-            if (!originalLine.equals(lineAfterParsing)) {
+            if (firstDifferentLine == -1 && !originalLine.equals(lineAfterParsing)) {
 
-                fail("lines " + lineNumber + " differ\n\n  original line:\n\n    " +
-                        originalLine + "\n\n  line after parsing:\n\n    " + lineAfterParsing + "\n\n\n");
+                firstDifferentLine = lineNumber;
+                firstDifferentOriginalLine = originalLine;
+                firstDifferentLineAfterParsing = lineAfterParsing;
             }
+        }
+
+        log.info("PARSED CONTENT:\n\n" + parsedContent + "\n\n");
+
+        if (firstDifferentLine != -1) {
+
+            fail("lines " + lineNumber + " differ\n\n  original line:\n\n    " +
+                    firstDifferentOriginalLine + "\n\n  line after parsing:\n\n    " +
+                    firstDifferentLineAfterParsing + "\n\n\n");
+
         }
 
         //

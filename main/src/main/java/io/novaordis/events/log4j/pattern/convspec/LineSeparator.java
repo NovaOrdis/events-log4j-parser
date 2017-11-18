@@ -16,7 +16,7 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
@@ -85,7 +85,7 @@ public class LineSeparator extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         //
         // we don't inject anything for a line separator

@@ -19,7 +19,7 @@ package io.novaordis.events.log4j.pattern.convspec.wildfly;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.api.event.StringProperty;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -95,11 +95,11 @@ public class WildFlyException extends ConversionSpecifierBase {
             return null;
         }
 
-        return m.start(1);
+        return from + m.start(1);
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         if (value == null) {
 
@@ -116,7 +116,25 @@ public class WildFlyException extends ConversionSpecifierBase {
                     "invalid value type " + value.getClass().getSimpleName() + ", expected String");
         }
 
-        ((Log4jEventImpl)e).appendToException((String) value);
+        //
+        // this is only used to initialize the exception rendering, if it's already initialized, something is wrong
+        //
+
+        StringProperty p = e.getStringProperty(Log4jEventImpl.EXCEPTION_PROPERTY_NAME);
+
+        if (p != null) {
+
+            throw new IllegalArgumentException("exception already initialized");
+        }
+
+        e.setStringProperty(Log4jEventImpl.EXCEPTION_PROPERTY_NAME, (String)value);
+
+        //
+        // set the logging event to "exception append mode"
+        //
+
+        e.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
+
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

@@ -91,10 +91,14 @@ public class Log4jParserTest {
         p.setPatternLayout(layout);
 
         List<Event> events = p.parse(7, line);
+        assertTrue(events.isEmpty());
 
-        assertEquals(1, events.size());
+        List<Event> events2 = p.close();
+        assertEquals(2, events2.size());
 
-        Log4jEvent e = (Log4jEvent)events.get(0);
+        assertTrue(events2.get(1) instanceof EndOfStreamEvent);
+
+        Log4jEvent e = (Log4jEvent)events2.get(0);
 
         Long time = e.getTime();
         assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("09:01:55,011").getTime(), time.longValue());
@@ -116,6 +120,146 @@ public class Log4jParserTest {
 
         String raw = e.getRawRepresentation();
         assertEquals(line, raw);
+    }
+
+    @Test
+    public void parse_Log4jPatternLayout_Exception() throws Exception {
+
+        String[] content  = new String[] {
+
+                "20:00:00,000 ERROR [io.novaordis.A] (thread-1) red: a.b.C: blue",
+                "\texception line 1",
+                "",
+                "22:22:22,222 INFO  [io.novaordis.B] (thread-2) green"
+        };
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        Log4jParser p = new Log4jParser();
+
+        p.setPatternLayout(patternLayout);
+
+        List<Event> events = p.parse(1, content[0]);
+
+        assertTrue(events.isEmpty());
+
+        List<Event> events2 = p.parse(2, content[1]);
+
+        assertTrue(events2.isEmpty());
+
+        List<Event> events3 = p.parse(3, content[2]);
+
+        assertTrue(events3.isEmpty());
+
+        List<Event> events4 = p.parse(4, content[3]);
+
+        assertEquals(1, events4.size());
+
+        Log4jEventImpl e = (Log4jEventImpl)events4.get(0);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("20:00:00,000").getTime(), e.getTime().longValue());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("io.novaordis.A", e.getLogger());
+        assertEquals("thread-1", e.getThreadName());
+        assertEquals("red", e.getMessage());
+
+        assertEquals(": a.b.C: blue\n\texception line 1\n", e.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+
+        List<Event> events5 = p.close();
+
+        assertEquals(2, events5.size());
+
+        assertTrue(events5.get(1) instanceof EndOfStreamEvent);
+
+        Log4jEvent e2 = (Log4jEvent) events5.get(0);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("22:22:22,222").getTime(), e2.getTime().longValue());
+        assertEquals(Log4jLevel.INFO, e2.getLevel());
+        assertEquals("io.novaordis.B", e2.getLogger());
+        assertEquals("thread-2", e2.getThreadName());
+        assertEquals("green", e2.getMessage());
+
+        assertNull(e2.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+    }
+
+    @Test
+    public void parse_Log4jPatternLayout_MultiLineComment() throws Exception {
+
+        String[] content  = new String[] {
+
+                "20:00:00,000 ERROR [a.B] (thread-C) multi-line message follows:",
+                "\tA",
+                "",
+                "\tB",
+                "21:11:11,111 INFO  [d.E] (thread-F) green",
+                "22:22:22,222 WARN  [g.H] (thread-I) blue",
+        };
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        Log4jParser p = new Log4jParser();
+
+        p.setPatternLayout(patternLayout);
+
+        List<Event> events = p.parse(1, content[0]);
+        assertTrue(events.isEmpty());
+
+        List<Event> events2 = p.parse(2, content[1]);
+        assertTrue(events2.isEmpty());
+
+        List<Event> events3 = p.parse(3, content[2]);
+        assertTrue(events3.isEmpty());
+
+        List<Event> events4 = p.parse(4, content[3]);
+        assertTrue(events4.isEmpty());
+
+        List<Event> events5 = p.parse(5, content[4]);
+
+        assertEquals(1, events5.size());
+
+        Log4jEventImpl e = (Log4jEventImpl)events5.get(0);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("20:00:00,000").getTime(), e.getTime().longValue());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("a.B", e.getLogger());
+        assertEquals("thread-C", e.getThreadName());
+        assertEquals("multi-line message follows:\n\tA\n\n\tB", e.getMessage());
+        assertNull(e.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+        List<Event> events6 = p.parse(6, content[5]);
+
+        assertEquals(1, events6.size());
+
+        Log4jEvent e2 = (Log4jEvent)events6.get(0);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("21:11:11,111").getTime(), e2.getTime().longValue());
+        assertEquals(Log4jLevel.INFO, e2.getLevel());
+        assertEquals("d.E", e2.getLogger());
+        assertEquals("thread-F", e2.getThreadName());
+        assertEquals("green", e2.getMessage());
+        assertNull(e2.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+        List<Event> events7 = p.close();
+
+        assertEquals(2, events7.size());
+
+        assertTrue(events7.get(1) instanceof EndOfStreamEvent);
+
+        Log4jEvent e3 = (Log4jEvent)events7.get(0);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("22:22:22,222").getTime(), e3.getTime().longValue());
+        assertEquals(Log4jLevel.WARN, e3.getLevel());
+        assertEquals("g.H", e3.getLogger());
+        assertEquals("thread-I", e3.getThreadName());
+        assertEquals("blue", e3.getMessage());
+        assertNull(e3.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     // applyHeuristics() -----------------------------------------------------------------------------------------------

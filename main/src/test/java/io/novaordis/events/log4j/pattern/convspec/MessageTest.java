@@ -167,7 +167,7 @@ public class MessageTest extends ConversionSpecifierTest {
         //
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -176,7 +176,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
         Log4jEventImpl e = new Log4jEventImpl();
 
-        cs.injectIntoLog4jEvent(e, "something");
+        cs.injectIntoEvent(e, "something");
 
         assertEquals("something", e.getMessage());
         assertEquals("something", e.getStringProperty(Log4jEventImpl.MESSAGE_PROPERTY_NAME).getString());
@@ -191,7 +191,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
         try {
 
-            cs.injectIntoLog4jEvent(e, new Integer(3));
+            cs.injectIntoEvent(e, new Integer(3));
 
             fail("should have thrown exception");
         }

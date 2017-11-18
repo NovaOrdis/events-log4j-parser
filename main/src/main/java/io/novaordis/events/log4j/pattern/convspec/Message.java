@@ -16,7 +16,6 @@
 
 package io.novaordis.events.log4j.pattern.convspec;
 
-import io.novaordis.events.log4j.impl.Log4jEvent;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -83,7 +82,7 @@ public class Message extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoLog4jEvent(Log4jEvent e, Object value) {
+    public void injectIntoEvent(Log4jEventImpl e, Object value) {
 
         if (value == null) {
 
@@ -100,7 +99,13 @@ public class Message extends ConversionSpecifierBase {
                     "invalid value type " + value.getClass().getSimpleName() + ", expected String");
         }
 
-        ((Log4jEventImpl)e).setMessage((String)value);
+        e.setMessage((String)value);
+
+        //
+        // set the logging event to "message append mode"
+        //
+
+        e.setAppendMode(Log4jEventImpl.MESSAGE_APPEND_MODE);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

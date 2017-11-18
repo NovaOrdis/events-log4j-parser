@@ -208,6 +208,18 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
     }
 
     @Test
+    public void findNext_ExceptionPattern_Offset() throws Exception {
+
+        String s = "_____blah: java.lang.Exception: SYNTHETIC";
+
+        WildFlyException e = new WildFlyException();
+
+        Integer i = e.findNext(s, 5);
+
+        assertEquals(9, i.intValue());
+    }
+
+    @Test
     public void findNext_NoMatch() throws Exception {
 
         String s = "something";
@@ -237,7 +249,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
         assertEquals(20, re.to());
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -246,7 +258,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         Log4jEventImpl e = new Log4jEventImpl();
 
-        cs.injectIntoLog4jEvent(e, "first line of the exception");
+        cs.injectIntoEvent(e, "first line of the exception");
 
         String s = e.getExceptionRendering();
         assertEquals("first line of the exception", s);
@@ -261,7 +273,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         try {
 
-            cs.injectIntoLog4jEvent(e, new Integer(3));
+            cs.injectIntoEvent(e, new Integer(3));
 
             fail("should have thrown exception");
         }

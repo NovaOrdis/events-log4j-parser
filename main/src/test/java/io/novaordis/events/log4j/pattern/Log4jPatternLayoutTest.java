@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import io.novaordis.events.log4j.impl.Log4jEvent;
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.convspec.Date;
 import io.novaordis.events.log4j.pattern.convspec.Level;
 import io.novaordis.events.log4j.pattern.convspec.LineSeparator;
@@ -227,13 +228,15 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "some message";
 
-        Log4jEvent event = patternLayout.parse(7, logLine);
+        Log4jEventImpl e = patternLayout.parse(7, logLine);
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("some message", message);
 
-        assertEquals(7L, event.getLineNumber().longValue());
+        assertEquals(7L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -245,17 +248,19 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "message: com.microsoft.sqlserver.jdbc.SQLServerException: something else";
 
-        Log4jEvent event = patternLayout.parse(8, logLine);
+        Log4jEventImpl e = patternLayout.parse(8, logLine);
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("message", message);
 
-        String exception = event.getExceptionRendering();
+        String exception = e.getExceptionRendering();
 
         assertEquals(": com.microsoft.sqlserver.jdbc.SQLServerException: something else", exception);
 
-        assertEquals(8L, event.getLineNumber().longValue());
+        assertEquals(8L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -267,17 +272,19 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "message: com.microsoft.sqlserver.jdbc.SQLServerException: something else";
 
-        Log4jEvent event = patternLayout.parse(9L, logLine);
+        Log4jEventImpl e = patternLayout.parse(9L, logLine);
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("message", message);
 
-        String exception = event.getExceptionRendering();
+        String exception = e.getExceptionRendering();
 
         assertEquals(": com.microsoft.sqlserver.jdbc.SQLServerException: something else", exception);
 
-        assertEquals(9L, event.getLineNumber().longValue());
+        assertEquals(9L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -289,17 +296,19 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "something: blah";
 
-        Log4jEvent event = patternLayout.parse(10L, logLine);
+        Log4jEventImpl e = patternLayout.parse(10L, logLine);
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("something: blah", message);
 
-        String exception = event.getExceptionRendering();
+        String exception = e.getExceptionRendering();
 
         assertNull(exception);
 
-        assertEquals(10L, event.getLineNumber().longValue());
+        assertEquals(10L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -311,17 +320,19 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "something: blah";
 
-        Log4jEvent event = patternLayout.parse(7L, logLine);
+        Log4jEventImpl e = patternLayout.parse(7L, logLine);
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("something: blah", message);
 
-        String exception = event.getExceptionRendering();
+        String exception = e.getExceptionRendering();
 
         assertNull(exception);
 
-        assertEquals(7L, event.getLineNumber().longValue());
+        assertEquals(7L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -333,21 +344,23 @@ public class Log4jPatternLayoutTest {
 
         String logLine = "09:01:56,538 INFO  [org.xnio] (MSC service thread 1-3) XNIO Version 3.0.16.GA-redhat-1";
 
-        Log4jEvent event = patternLayout.parse(7L, logLine);
+        Log4jEventImpl e = patternLayout.parse(7L, logLine);
 
-        long time = event.getTime();
+        long time = e.getTime();
 
         assertEquals(time, new SimpleDateFormat("HH:mm:ss,SSS").parse("09:01:56,538").getTime());
 
-        String message = event.getMessage();
+        String message = e.getMessage();
 
         assertEquals("XNIO Version 3.0.16.GA-redhat-1", message);
 
-        String exception = event.getExceptionRendering();
+        String exception = e.getExceptionRendering();
 
         assertNull(exception);
 
-        assertEquals(7L, event.getLineNumber().longValue());
+        assertEquals(7L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     @Test
@@ -361,20 +374,252 @@ public class Log4jPatternLayoutTest {
 
         assertEquals(11, elementCount);
 
-        Log4jEvent event = patternLayout.parse(7L, line);
+        Log4jEventImpl e = patternLayout.parse(7L, line);
 
-        Long time = event.getTime();
+        Long time = e.getTime();
         assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("09:01:55,011").getTime(), time.longValue());
 
-        assertEquals(Log4jLevel.INFO, event.getLevel());
+        assertEquals(Log4jLevel.INFO, e.getLevel());
 
-        assertEquals("org.jboss.modules", event.getLogger());
+        assertEquals("org.jboss.modules", e.getLogger());
 
-        assertEquals("main", event.getThreadName());
+        assertEquals("main", e.getThreadName());
 
-        assertEquals("JBoss Modules version 1.3.8.Final-redhat-1", event.getMessage());
+        assertEquals("JBoss Modules version 1.3.8.Final-redhat-1", e.getMessage());
 
-        assertEquals(7L, event.getLineNumber().longValue());
+        assertEquals(7L, e.getLineNumber().longValue());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+    }
+
+    @Test
+    public void parse_Exception() throws Exception {
+
+        String[] content = new String[] {
+
+                "18:14:06,481 ERROR [io.novaordis.playground.jee.servlet.simplest.ServletExample] (http-127.0.0.1:8080-1) a message that accompanies an exception: java.lang.Exception: SYNTHETIC",
+                "\tat io.novaordis.playground.jee.servlet.simplest.ServletExample.doGet(ServletExample.java:69) [classes:]",
+                "",
+                "18:14:06,482 INFO  [io.novaordis.playground.jee.servlet.simplest.ServletExample2] (http-127.0.0.1:8080-2) getHostName()"
+        };
+
+        String patternLayoutString = "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n";
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout(patternLayoutString);
+
+        Log4jEventImpl e = patternLayout.parse(1, content[0]);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("18:14:06,481").getTime(), e.getTime().longValue());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("io.novaordis.playground.jee.servlet.simplest.ServletExample", e.getLogger());
+        assertEquals("http-127.0.0.1:8080-1", e.getThreadName());
+        assertEquals("a message that accompanies an exception", e.getMessage());
+
+        assertEquals(": java.lang.Exception: SYNTHETIC", e.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+
+        //
+        // the Log4jPatternLayout instance must fail when asked to parse an exception stack trace line, the upper
+        // layer must add that line to the current Log4jEvent instance.
+        //
+
+        try {
+
+            patternLayout.parse(2, content[1]);
+
+            fail("should have thrown exceptions");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains(
+                    "date rendering string is shorted that what would have been expected given the pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+
+        //
+        // instead the line should be added directly
+        //
+
+        e.appendLine(content[1]);
+
+        assertEquals(
+                ": java.lang.Exception: SYNTHETIC\n" +
+                        "\tat io.novaordis.playground.jee.servlet.simplest.ServletExample.doGet(ServletExample.java:69) [classes:]",
+                e.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+
+        //
+        // the Log4jPatternLayout instance must fail when asked to parse an exception stack trace line, the upper
+        // layer must add that line to the current Log4jEvent instance.
+        //
+
+        try {
+
+            patternLayout.parse(3, content[2]);
+
+            fail("should have thrown exceptions");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("empty string when expecting a time stamp"));
+        }
+
+        //
+        // instead the line should be added directly
+        //
+
+        //
+        // empty line turns off exception collection mode
+        //
+
+        e.appendLine(content[2]);
+
+        assertEquals(
+                ": java.lang.Exception: SYNTHETIC\n" +
+                        "\tat io.novaordis.playground.jee.servlet.simplest.ServletExample.doGet(ServletExample.java:69) [classes:]\n",
+                e.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+
+        Log4jEvent e2 = patternLayout.parse(4, content[3]);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("18:14:06,482").getTime(), e2.getTime().longValue());
+        assertEquals(Log4jLevel.INFO, e2.getLevel());
+        assertEquals("io.novaordis.playground.jee.servlet.simplest.ServletExample2", e2.getLogger());
+        assertEquals("http-127.0.0.1:8080-2", e2.getThreadName());
+        assertEquals("getHostName()", e2.getMessage());
+
+        assertNull(e2.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.EXCEPTION_APPEND_MODE, e.getAppendMode());
+    }
+
+    @Test
+    public void parse_MultiLineMessage() throws Exception {
+
+        String[] content  = new String[] {
+
+                "20:00:00,000 ERROR [a.B] (thread-C) multi-line message follows:",
+                "\tA",
+                "",
+                "\tB",
+                "22:22:22,222 INFO  [d.E] (thread-F) green"
+        };
+
+        Log4jPatternLayout patternLayout = new Log4jPatternLayout("%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n");
+
+        Log4jEventImpl e = patternLayout.parse(1, content[0]);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("20:00:00,000").getTime(), e.getTime().longValue());
+        assertEquals(Log4jLevel.ERROR, e.getLevel());
+        assertEquals("a.B", e.getLogger());
+        assertEquals("thread-C", e.getThreadName());
+        assertEquals("multi-line message follows:", e.getMessage());
+        assertNull(e.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+        //
+        // the Log4jPatternLayout instance must fail when asked to parse unformatted line, the upper layer must add
+        // that line to the current Log4jEvent instance.
+        //
+
+        try {
+
+            patternLayout.parse(2, content[1]);
+
+            fail("should have thrown exceptions");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains(
+                    "date rendering string is shorted that what would have been expected given the pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+
+        //
+        // instead the line should be added directly
+        //
+
+        e.appendLine(content[1]);
+
+        assertEquals("multi-line message follows:\n\tA", e.getMessage());
+        assertNull(e.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+        //
+        // the Log4jPatternLayout instance must fail when asked to parse unformatted line, the upper layer must add
+        // that line to the current Log4jEvent instance.
+        //
+
+        try {
+
+            patternLayout.parse(3, content[2]);
+
+            fail("should have thrown exceptions");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains("empty string when expecting a time stamp"));
+        }
+
+        //
+        // instead the line should be added directly
+        //
+
+        e.appendLine(content[2]);
+
+        assertEquals("multi-line message follows:\n\tA\n", e.getMessage());
+        assertNull(e.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+
+        //
+        // the Log4jPatternLayout instance must fail when asked to parse unformatted line, the upper layer must add
+        // that line to the current Log4jEvent instance.
+        //
+
+        try {
+
+            patternLayout.parse(4, content[3]);
+
+            fail("should have thrown exceptions");
+        }
+        catch(Log4jPatternLayoutException ex) {
+
+            String msg = ex.getMessage();
+            assertTrue(msg.contains(
+                    "date rendering string is shorted that what would have been expected given the pattern"));
+            assertTrue(msg.contains("HH:mm:ss,SSS"));
+        }
+
+        //
+        // instead the line should be added directly
+        //
+
+        e.appendLine(content[3]);
+
+        assertEquals("multi-line message follows:\n\tA\n\n\tB", e.getMessage());
+        assertNull(e.getExceptionRendering());
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
+
+
+        Log4jEvent e2 = patternLayout.parse(5, content[4]);
+
+        assertEquals(new SimpleDateFormat("HH:mm:ss,SSS").parse("22:22:22,222").getTime(), e2.getTime().longValue());
+        assertEquals(Log4jLevel.INFO, e2.getLevel());
+        assertEquals("d.E", e2.getLogger());
+        assertEquals("thread-F", e2.getThreadName());
+        assertEquals("green", e2.getMessage());
+
+        assertNull(e2.getExceptionRendering());
+
+        assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

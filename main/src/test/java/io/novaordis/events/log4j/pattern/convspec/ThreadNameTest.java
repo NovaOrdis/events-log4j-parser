@@ -99,7 +99,7 @@ public class ThreadNameTest extends ConversionSpecifierTest {
         assertEquals("MSC service thread 1-6", e.get());
     }
 
-    // injectIntoLog4jEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() ------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent() throws Exception {
@@ -108,7 +108,7 @@ public class ThreadNameTest extends ConversionSpecifierTest {
 
         Log4jEventImpl e = new Log4jEventImpl();
 
-        cs.injectIntoLog4jEvent(e, "MSC service thread 1-3");
+        cs.injectIntoEvent(e, "MSC service thread 1-3");
 
         assertEquals("MSC service thread 1-3", e.getThreadName());
     }
@@ -122,7 +122,7 @@ public class ThreadNameTest extends ConversionSpecifierTest {
 
         try {
 
-            cs.injectIntoLog4jEvent(e, new Integer(3));
+            cs.injectIntoEvent(e, new Integer(3));
 
             fail("should have thrown exception");
         }

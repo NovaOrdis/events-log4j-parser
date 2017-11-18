@@ -47,9 +47,15 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
     private static final DateFormat TO_STRING_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy HH:mm:ss,SSS");
 
+    public static final byte NO_APPEND_MODE = 0;
+    public static final byte EXCEPTION_APPEND_MODE = 1;
+    public static final byte MESSAGE_APPEND_MODE = 2;
+
     // Static ----------------------------------------------------------------------------------------------------------
 
     // Attributes ------------------------------------------------------------------------------------------------------
+
+    private byte appendMode;
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
@@ -66,12 +72,18 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
                           String message, String rawLine) {
 
         super(timestamp);
+
         setLineNumber(lineNumber);
         setLevel(level);
         setLogger(category);
         setThreadName(threadName);
         setMessage(message);
-        append(rawLine);
+        setRaw(rawLine);
+
+        //
+        // not in append mode
+        //
+        this.appendMode = NO_APPEND_MODE;
     }
 
     // Log4jEvent implementation ---------------------------------------------------------------------------------------
@@ -183,33 +195,66 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     }
 
     /**
-     * Append the given line to the raw representation of the event. It works with all lines, including the first line.
+     *
+     * @return the append mode (EXCEPTION_APPEND_MODE, MESSAGE_APPEND_MODE). Anything else means "not in append mode",
+     * and appendLine() invocation will throw exception.
      */
-    public void append(String line) {
+    public byte getAppendMode() {
 
-        StringProperty p = getStringProperty(Event.RAW_PROPERTY_NAME);
+        return appendMode;
+    }
 
-        String rawRepresentation;
+    public void setAppendMode(byte m) {
 
-        if (p == null) {
+        if (NO_APPEND_MODE != m && EXCEPTION_APPEND_MODE != m && MESSAGE_APPEND_MODE != m) {
 
-            rawRepresentation = line;
+            throw new IllegalArgumentException("invalid append mode: " + m);
+        }
+
+        this.appendMode = m;
+    }
+
+    /**
+     * Use it to append lines following a formatted log event rendering line. These lines belong either to a
+     * multi-line message or to an exception stack trace. The Log4jEventImpl instance will interpret the semantics
+     * of the line being appended relative to the value of the appendMode flag. Possible append modes:
+     * EXCEPTION_APPEND_MODE, MESSAGE_APPEND_MODE.
+     *
+     * It is imperative that the whole log line is added in a single appendLine() invocation, otherwise the line number
+     * counting will fail.
+     *
+     * @param line may be an empty line, but never null.
+     *
+     * @exception IllegalStateException if the instance is not in append mode.
+     */
+    public void appendLine(String line) {
+
+        if (line == null) {
+
+            throw new IllegalArgumentException("null line");
+        }
+
+        String propertyName;
+
+        if (MESSAGE_APPEND_MODE == appendMode) {
+
+            propertyName = MESSAGE_PROPERTY_NAME;
+        }
+        else if (EXCEPTION_APPEND_MODE == appendMode) {
+
+            propertyName = EXCEPTION_PROPERTY_NAME;
         }
         else {
 
-            rawRepresentation = p.getString() + "\n" + line;
+            throw new IllegalStateException("not in append mode");
         }
 
-        setStringProperty(Event.RAW_PROPERTY_NAME, rawRepresentation);
-    }
-
-    public void appendToException(String line) {
-
-        StringProperty p = getStringProperty(EXCEPTION_PROPERTY_NAME);
+        StringProperty p = getStringProperty(propertyName);
 
         if (p == null) {
 
-            p = new StringProperty(EXCEPTION_PROPERTY_NAME);
+            p = new StringProperty(propertyName);
+
             setProperty(p);
         }
 
@@ -226,11 +271,40 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         }
 
         p.setValue(s);
+
+        //
+        // update the raw representation, if present
+        //
+
+        StringProperty rp = getStringProperty(Event.RAW_PROPERTY_NAME);
+
+        if (rp != null) {
+
+            String raw = rp.getString();
+
+            if (raw != null) {
+
+                raw += "\n";
+                raw += line;
+                rp.setValue(raw);
+            }
+        }
+    }
+
+    /**
+     * Records the raw first line, as read from log. This is all that is needed to preserve the raw representation of
+     * most log events. The only ones that require more are the events carrying exception stack traces and multi-line
+     * messages. For those, use appendLine() - it will update the raw representation.
+     *
+     * @see Log4jEventImpl#appendLine(String)
+     */
+    public void setRaw(String line) {
+
+        setStringProperty(Event.RAW_PROPERTY_NAME, line);
     }
 
     @Override
     public String toString() {
-
 
         String s = "";
 
