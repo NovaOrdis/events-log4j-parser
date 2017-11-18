@@ -17,16 +17,13 @@
 package io.novaordis.events.log4j.pattern.convspec;
 
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
 
 /**
- * The level of the logging event.
- *
- * p
+ * The level of the logging event ('p').
  *
  * The type of the corresponding parsed object instance is io.novaordis.events.log4j.impl.Log4jLevel
  *
@@ -90,19 +87,6 @@ public class Level extends ConversionSpecifierBase {
         }
 
         return new RenderedLogEvent(l, from, to);
-    }
-
-    @Override
-    public Integer find(String s, int from) {
-
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        if (s.length() == from) {
-
-            return null;
-        }
-
-        throw new RuntimeException("find() NOT YET IMPLEMENTED");
     }
 
     @Override

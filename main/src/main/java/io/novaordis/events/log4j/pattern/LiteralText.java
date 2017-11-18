@@ -22,7 +22,7 @@ import io.novaordis.events.log4j.impl.Log4jEventImpl;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
  */
-public class LiteralText implements ConversionPatternComponent {
+public class LiteralText extends ConversionPatternComponentBase {
 
     // Constants -------------------------------------------------------------------------------------------------------
 
@@ -118,11 +118,9 @@ public class LiteralText implements ConversionPatternComponent {
     }
 
     @Override
-    public Integer find(String s, int from) {
+    public Integer find(String s) {
 
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        int i = s.indexOf(getLiteral(), from);
+        int i = s.indexOf(getLiteral());
 
         if (i == -1) {
 

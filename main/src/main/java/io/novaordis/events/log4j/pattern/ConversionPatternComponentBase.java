@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package io.novaordis.events.log4j.pattern.convspec;
-
-import io.novaordis.events.log4j.impl.Log4jEventImpl;
-import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
-import io.novaordis.events.log4j.pattern.ProcessedString;
-import io.novaordis.events.log4j.pattern.RenderedLogEvent;
+package io.novaordis.events.log4j.pattern;
 
 /**
- * The name of the thread that generated the logging event ('t').
- *
- * The type of the corresponding parsed object instance is a String containing the thread name.
- *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
- * @since 10/30/17
+ * @since 11/17/17
  */
-public class ThreadName extends ConversionSpecifierBase {
+public abstract class ConversionPatternComponentBase implements ConversionPatternComponent {
 
     // Constants -------------------------------------------------------------------------------------------------------
-
-    public static final char CONVERSION_CHARACTER = 't';
 
     // Static ----------------------------------------------------------------------------------------------------------
 
@@ -41,47 +30,60 @@ public class ThreadName extends ConversionSpecifierBase {
 
     // Constructors ----------------------------------------------------------------------------------------------------
 
-    // ConversionSpecifier implementation ------------------------------------------------------------------------------
+    // ConversionPatternComponent implementation -----------------------------------------------------------------------
 
     @Override
-    public Character getConversionCharacter() {
+    public final Integer find(String s, int from) {
 
-        return CONVERSION_CHARACTER;
-    }
+        if (s == null) {
 
-    @Override
-    protected RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
-            throws Log4jPatternLayoutException {
-
-        return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
-    }
-
-    @Override
-    public void injectIntoEvent(Log4jEventImpl e, Object value) {
-
-        if (value == null) {
-
-            //
-            // noop
-            //
-
-            return;
+            throw new IllegalArgumentException("null log content");
         }
 
-        if (!(value instanceof String)) {
+        if (from < 0) {
 
-            throw new IllegalArgumentException(
-                    "invalid value type " + value.getClass().getSimpleName() + ", expected String");
+            throw new IllegalArgumentException("invalid 'from' index: " + from);
         }
 
-        e.setThreadName((String) value);
+        if (from > s.length()) {
+
+            throw new IllegalArgumentException("invalid 'from' index: " + from);
+        }
+
+        if (s.length() == from) {
+
+            return null;
+        }
+
+        Integer i = find(s.substring(from));
+
+        if (i == null) {
+
+            return null;
+        }
+
+        return from + i;
     }
+
 
     // Public ----------------------------------------------------------------------------------------------------------
 
     // Package protected -----------------------------------------------------------------------------------------------
 
     // Protected -------------------------------------------------------------------------------------------------------
+
+    /**
+     * Scan the given string, which represents log content, in an attempt to find the first occurrence of
+     * <b>this</b> conversion pattern component.
+     *
+     * @return the index of the first occurrence of this conversion pattern component, within the string, or null if
+     * there is no such component or if is not possible to identify an occurrence of the component. The s.length() value
+     * is interpreted as "the end of the string" and it is a valid return value.
+     */
+    protected Integer find(String s) {
+
+        throw new RuntimeException("find() NOT YET IMPLEMENTED FOR " + this);
+    }
 
     // Private ---------------------------------------------------------------------------------------------------------
 

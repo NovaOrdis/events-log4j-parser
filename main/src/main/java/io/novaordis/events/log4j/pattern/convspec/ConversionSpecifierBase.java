@@ -18,6 +18,7 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
+import io.novaordis.events.log4j.pattern.ConversionPatternComponentBase;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -28,7 +29,7 @@ import io.novaordis.events.log4j.pattern.RenderedLogEvent;
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/31/17
  */
-public abstract class ConversionSpecifierBase implements ConversionSpecifier {
+public abstract class ConversionSpecifierBase extends ConversionPatternComponentBase implements ConversionSpecifier {
 
     // Constants -------------------------------------------------------------------------------------------------------
 

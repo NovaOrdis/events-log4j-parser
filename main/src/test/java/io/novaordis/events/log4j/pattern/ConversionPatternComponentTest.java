@@ -103,7 +103,7 @@ public abstract class ConversionPatternComponentTest {
         assertEquals(matchingLogContent.length(), rendering.to());
     }
 
-    // find() ------------------------------------------------------------------------------------------------------
+    // find() ----------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext_NullLogContent() throws Exception {
@@ -196,7 +196,7 @@ public abstract class ConversionPatternComponentTest {
         }
     }
 
-    // injectIntoEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() -----------------------------------------------------------------------------------------------
 
     @Test
     public void injectIntoLog4jEvent_NullValue() throws Exception {

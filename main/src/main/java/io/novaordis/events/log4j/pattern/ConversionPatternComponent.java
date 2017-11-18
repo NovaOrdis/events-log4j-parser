@@ -30,24 +30,6 @@ public interface ConversionPatternComponent {
 
     // Static ----------------------------------------------------------------------------------------------------------
 
-    static void checkConsistency(String logContent, int from) throws IllegalArgumentException {
-
-        if (logContent == null) {
-
-            throw new IllegalArgumentException("null log content");
-        }
-
-        if (from < 0) {
-
-            throw new IllegalArgumentException("invalid 'from' index: " + from);
-        }
-
-        if (from > logContent.length()) {
-
-            throw new IllegalArgumentException("invalid 'from' index: " + from);
-        }
-    }
-
     // Public ----------------------------------------------------------------------------------------------------------
 
     /**
@@ -87,12 +69,12 @@ public interface ConversionPatternComponent {
             throws Log4jPatternLayoutException;
 
     /**
-     * Scan the log content from the 'from' index in an attempt to find the next occurrence of <b>this</b> conversion
-     * pattern component.
+     * Scan the log content, starting with the 'from' index character in an attempt to find the first occurrence of
+     * <b>this</b> conversion pattern component.
      *
-     * @return the first occurrence of this conversion pattern component, within the string, starting with 'from', or
-     * null if there is no such component if is not possible to identify the next occurrence of the component.
-     * The logContent.length() value is interpreted as "the end of the string" and it is a valid return value.
+     * @return the index of the first occurrence of this conversion pattern component, within the string, starting with
+     * the 'from' index character, or null if there is no such component or if is not possible to identify an occurrence
+     * of the component. The s.length() value is interpreted as "the end of the string" and it is a valid return value.
      */
     Integer find(String s, int from);
 

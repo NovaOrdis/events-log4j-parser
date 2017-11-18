@@ -21,16 +21,13 @@ import java.text.SimpleDateFormat;
 
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.utilities.time.TimestampImpl;
 
 /**
- * Outputs the date of the logging event.
- *
- * 'd{pattern}'
+ * Outputs the date of the logging event ('d{pattern}').
  *
  * The type of the corresponding parsed object instance is java.lang.Date.
  *
@@ -161,19 +158,6 @@ public class Date extends ConversionSpecifierBase {
 
             throw new IllegalStateException("unknown state " + state);
         }
-    }
-
-    @Override
-    public Integer find(String s, int from) {
-
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        if (s.length() == from) {
-
-            return null;
-        }
-
-        throw new RuntimeException("find() NOT YET IMPLEMENTED");
     }
 
     @Override

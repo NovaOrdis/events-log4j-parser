@@ -17,15 +17,12 @@
 package io.novaordis.events.log4j.pattern.convspec;
 
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
- * The name of the logger that publishes the logging event.
- *
- * n
+ * The name of the logger that publishes the logging event ('n').
  *
  * The type of the corresponding parsed object instance is a String containing platform-specific line separator.
  *
@@ -57,7 +54,7 @@ public class LineSeparator extends ConversionSpecifierBase {
             throws Log4jPatternLayoutException {
 
         //
-        // we should be at the end of the line, anything else is an erro
+        // we should be at the end of the line, anything else is an error
         //
 
         int from = ps.from();
@@ -72,14 +69,7 @@ public class LineSeparator extends ConversionSpecifierBase {
     }
 
     @Override
-    public Integer find(String s, int from) {
-
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        if (from == s.length()) {
-
-            return null;
-        }
+    public Integer find(String s) {
 
         return s.length();
     }

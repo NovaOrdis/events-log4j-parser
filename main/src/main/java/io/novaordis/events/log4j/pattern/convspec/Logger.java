@@ -17,15 +17,12 @@
 package io.novaordis.events.log4j.pattern.convspec;
 
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 /**
- * The name of the logger that publishes the logging event.
- *
- * c{precision}
+ * The name of the logger that publishes the logging event ('c{precision}').
  *
  * The type of the corresponding parsed object instance is a String containing the logger value.
  *
@@ -57,19 +54,6 @@ public class Logger extends ConversionSpecifierBase {
             throws Log4jPatternLayoutException {
 
         return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
-    }
-
-    @Override
-    public Integer find(String s, int from) {
-
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        if (s.length() == from) {
-
-            return null;
-        }
-
-        throw new RuntimeException("find() NOT YET IMPLEMENTED");
     }
 
     @Override

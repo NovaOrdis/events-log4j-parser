@@ -21,14 +21,13 @@ import java.util.regex.Pattern;
 
 import io.novaordis.events.api.event.StringProperty;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
-import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
 import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierBase;
 
 /**
- * A WildFly log4j pattern layout extension that renders the log event exception.
+ * A WildFly log4j pattern layout extension that renders the log event exception ('E').
  *
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 10/30/17
@@ -84,18 +83,16 @@ public class WildFlyException extends ConversionSpecifierBase {
      * TODO: Not thread safe.
      */
     @Override
-    public Integer find(String s, int from) {
+    public Integer find(String s) {
 
-        ConversionPatternComponent.checkConsistency(s, from);
-
-        Matcher m = EXCEPTION_RENDERING_PATTERN.matcher(s.substring(from));
+        Matcher m = EXCEPTION_RENDERING_PATTERN.matcher(s);
 
         if (!m.matches()) {
 
             return null;
         }
 
-        return from + m.start(1);
+        return m.start(1);
     }
 
     @Override

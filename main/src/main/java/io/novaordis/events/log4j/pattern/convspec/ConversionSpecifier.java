@@ -18,6 +18,7 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import io.novaordis.events.log4j.pattern.ConversionPatternComponent;
 import io.novaordis.events.log4j.pattern.FormatModifier;
+
 /**
  * A conversion specifier: https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Specifier.
  *
