@@ -7,3 +7,4 @@ Usage:
 More details:
 
     https://kb.novaordis.com/index.php/Events-log4j-parser#Usage
+
