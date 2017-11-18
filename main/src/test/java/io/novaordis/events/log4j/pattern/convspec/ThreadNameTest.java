@@ -114,7 +114,7 @@ public class ThreadNameTest extends ConversionSpecifierTest {
     }
 
     @Test
-    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+    public void injectIntoEvent_InvalidType() throws Exception {
 
         ThreadName cs = new ThreadName();
 

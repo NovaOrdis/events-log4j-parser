@@ -139,7 +139,7 @@ public class Log4jPatternLayout {
                 log4jEvent.setLineNumber(lineNumber);
             }
 
-            crt.injectIntoEvent(log4jEvent, e.get());
+            crt.injectIntoEvent(lineNumber, log4jEvent, e.get());
 
             crt = next;
             from = e.to();

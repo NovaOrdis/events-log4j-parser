@@ -560,7 +560,7 @@ public class DateTest extends ConversionSpecifierTest {
     }
 
     @Test
-    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+    public void injectIntoEvent_InvalidType() throws Exception {
 
         Date cs = new Date();
 

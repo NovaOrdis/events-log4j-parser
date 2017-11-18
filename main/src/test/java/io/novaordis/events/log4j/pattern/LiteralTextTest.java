@@ -21,6 +21,7 @@ import org.junit.Test;
 import io.novaordis.events.log4j.impl.Log4jEventImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -177,7 +178,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
         }
     }
 
-    // find() ------------------------------------------------------------------------------------------------------
+    // find() ----------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext() throws Exception {
@@ -186,6 +187,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         Integer i = lt.find(" something something else", 1);
 
+        assertNotNull(i);
         assertEquals(10, i.intValue());
     }
 
@@ -199,10 +201,10 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
         assertNull(i);
     }
 
-    // injectIntoEvent() ------------------------------------------------------------------------------------------
+    // injectIntoEvent() -----------------------------------------------------------------------------------------------
 
     @Test
-    public void injectIntoLog4jEvent() throws Exception {
+    public void injectIntoEvent() throws Exception {
 
         //
         // we're a noop
@@ -214,7 +216,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         LiteralText lt = new LiteralText("something");
 
-        lt.injectIntoEvent(e, "something else");
+        lt.injectIntoEvent(7L, e, "something else");
 
         int propertyCount2 = e.getProperties().size();
 

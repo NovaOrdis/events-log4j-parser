@@ -161,27 +161,6 @@ public class Date extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoEvent(Log4jEventImpl e, Object value) {
-
-        if (value == null) {
-
-            //
-            // noop
-            //
-
-            return;
-        }
-
-        if (!(value instanceof java.util.Date)) {
-
-            throw new IllegalArgumentException(
-                    "invalid value type " + value.getClass().getSimpleName() + ", expected java.util.Date");
-        }
-
-        e.setTimestamp(new TimestampImpl(((java.util.Date)value).getTime()));
-    }
-
-    @Override
     public RenderedLogEvent parseLiteralAfterFormatModifierWasUnapplied(ProcessedString ps)
             throws Log4jPatternLayoutException {
 
@@ -220,6 +199,22 @@ public class Date extends ConversionSpecifierBase {
         }
 
         return new RenderedLogEvent(d, ps.from(), ps.to());
+    }
+
+    @Override
+    protected void injectIntoEvent(Log4jEventImpl e, Object value) {
+
+        //
+        // null handled by superclass method
+        //
+
+        if (!(value instanceof java.util.Date)) {
+
+            throw new IllegalArgumentException(
+                    "invalid value type " + value.getClass().getSimpleName() + ", expected java.util.Date");
+        }
+
+        e.setTimestamp(new TimestampImpl(((java.util.Date)value).getTime()));
     }
 
     // Public ----------------------------------------------------------------------------------------------------------

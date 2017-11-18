@@ -185,7 +185,7 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
     }
 
     @Test
-    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+    public void injectIntoEvent_InvalidType() throws Exception {
 
         WildFlyMessage cs = new WildFlyMessage();
 

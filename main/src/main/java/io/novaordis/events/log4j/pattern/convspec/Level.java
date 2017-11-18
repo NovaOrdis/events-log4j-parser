@@ -90,16 +90,11 @@ public class Level extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoEvent(Log4jEventImpl e, Object value) {
+    protected void injectIntoEvent(Log4jEventImpl e, Object value) {
 
-        if (value == null) {
-
-            //
-            // noop
-            //
-
-            return;
-        }
+        //
+        // null is handled by the upper layer
+        //
 
         if (!(value instanceof Log4jLevel)) {
 

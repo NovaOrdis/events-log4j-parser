@@ -16,6 +16,8 @@
 
 package io.novaordis.events.log4j.pattern;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
+
 /**
  * @author Ovidiu Feodorov <ovidiu@novaordis.com>
  * @since 11/17/17
@@ -65,6 +67,20 @@ public abstract class ConversionPatternComponentBase implements ConversionPatter
         return from + i;
     }
 
+    @Override
+    public final void injectIntoEvent(Long lineNumber, Log4jEventImpl e, Object value) {
+
+        //
+        // injecting null is a noop
+        //
+
+        if (value == null) {
+
+            return;
+        }
+
+        injectIntoEvent(e, value);
+    }
 
     // Public ----------------------------------------------------------------------------------------------------------
 
@@ -83,6 +99,16 @@ public abstract class ConversionPatternComponentBase implements ConversionPatter
     protected Integer find(String s) {
 
         throw new RuntimeException("find() NOT YET IMPLEMENTED FOR " + this);
+    }
+
+    /**
+     * @see ConversionPatternComponent#injectIntoEvent(Long, Log4jEventImpl, Object)
+     */
+    protected void injectIntoEvent(Log4jEventImpl e, Object value) {
+
+        //
+        // default implementation is a noop, subclasses may override if they want to do anything there
+        //
     }
 
     // Private ---------------------------------------------------------------------------------------------------------

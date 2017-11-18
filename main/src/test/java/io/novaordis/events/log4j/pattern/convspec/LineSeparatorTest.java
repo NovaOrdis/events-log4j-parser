@@ -18,6 +18,7 @@ package io.novaordis.events.log4j.pattern.convspec;
 
 import org.junit.Test;
 
+import io.novaordis.events.log4j.impl.Log4jEventImpl;
 import io.novaordis.events.log4j.pattern.AddResult;
 import io.novaordis.events.log4j.pattern.FormatModifier;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
@@ -188,6 +189,28 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
         assertEquals(10, e.from());
         assertEquals(10, e.to());
+    }
+
+    // injectIntoEvent() -----------------------------------------------------------------------------------------------
+
+    @Test
+    public void injectIntoEvent() throws Exception {
+
+        //
+        // we're a noop
+        //
+
+        Log4jEventImpl e = new Log4jEventImpl();
+
+        int propertyCount = e.getProperties().size();
+
+        LineSeparator ls = new LineSeparator();
+
+        ls.injectIntoEvent(7L, e, "something else");
+
+        int propertyCount2 = e.getProperties().size();
+
+        assertEquals(propertyCount, propertyCount2);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------

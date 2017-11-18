@@ -82,11 +82,13 @@ public interface ConversionPatternComponent {
      * Interprets the given value as the value of the corresponding log event property, and injects the property into
      * the log event.
      *
+     * @param lineNumber may be null
+     *
      * @param value null is a noop
      *
      * @exception IllegalArgumentException if the conversion of the given value to the corresponding log event property
      * is not possible.
      */
-    void injectIntoEvent(Log4jEventImpl e, Object value);
+    void injectIntoEvent(Long lineNumber, Log4jEventImpl e, Object value);
 
 }

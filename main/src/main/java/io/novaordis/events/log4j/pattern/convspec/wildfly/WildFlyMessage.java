@@ -69,16 +69,11 @@ public class WildFlyMessage extends ConversionSpecifierBase {
     }
 
     @Override
-    public void injectIntoEvent(Log4jEventImpl e, Object value) {
+    protected void injectIntoEvent(Log4jEventImpl e, Object value) {
 
-        if (value == null) {
-
-            //
-            // noop
-            //
-
-            return;
-        }
+        //
+        // null handled by superclass method
+        //
 
         if (!(value instanceof String)) {
 

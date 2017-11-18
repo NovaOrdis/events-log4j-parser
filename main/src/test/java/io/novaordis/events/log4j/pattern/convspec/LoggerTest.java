@@ -114,7 +114,7 @@ public class LoggerTest extends ConversionSpecifierTest {
     }
 
     @Test
-    public void injectIntoLog4jEvent_InvalidType() throws Exception {
+    public void injectIntoEvent_InvalidType() throws Exception {
 
         Logger cs = new Logger();
 
