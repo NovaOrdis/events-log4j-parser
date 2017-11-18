@@ -61,7 +61,7 @@ public class WildFlyException extends ConversionSpecifierBase {
     // ConversionSpecifier implementation ------------------------------------------------------------------------------
 
     @Override
-    public Character getConversionCharacter() {
+    public char getConversionCharacter() {
 
         return CONVERSION_CHARACTER;
     }

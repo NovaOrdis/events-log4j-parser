@@ -40,9 +40,9 @@ public interface ConversionSpecifier extends ConversionPatternComponent {
      *
      * https://kb.novaordis.com/index.php/Log4j_Pattern_Layout#Conversion_Character
      *
-     * May return null.
+     * May never return.
      */
-    Character getConversionCharacter();
+    char getConversionCharacter();
 
     /**
      * May return null if hte element has no format modifier.

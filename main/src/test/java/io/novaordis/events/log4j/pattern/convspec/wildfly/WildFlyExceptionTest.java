@@ -27,6 +27,7 @@ import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 import io.novaordis.events.log4j.pattern.convspec.ConversionSpecifierTest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -97,7 +98,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException s = new WildFlyException("E");
 
-        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter());
         assertNull(s.getFormatModifier());
         assertEquals("%E", s.getLiteral());
     }
@@ -107,7 +108,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException s = new WildFlyException("-5E");
 
-        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(WildFlyException.CONVERSION_CHARACTER, s.getConversionCharacter());
         FormatModifier m = s.getFormatModifier();
         assertEquals("-5", m.getLiteral());
         assertEquals("%-5E", s.getLiteral());
@@ -192,6 +193,8 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         Integer i = e.find(s, 0);
 
+        assertNotNull(i);
+        
         assertEquals(9, i.intValue());
     }
 
@@ -204,6 +207,8 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         Integer i = e.find(s, 0);
 
+        assertNotNull(i);
+
         assertEquals("a message that accompanies an exception".length(), i.intValue());
     }
 
@@ -215,6 +220,8 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
         WildFlyException e = new WildFlyException();
 
         Integer i = e.find(s, 5);
+
+        assertNotNull(i);
 
         assertEquals(9, i.intValue());
     }

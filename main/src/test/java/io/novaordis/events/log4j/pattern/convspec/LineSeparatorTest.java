@@ -26,6 +26,7 @@ import io.novaordis.events.log4j.pattern.ProcessedString;
 import io.novaordis.events.log4j.pattern.RenderedLogEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -145,14 +146,17 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
         Integer i = ls.find("something", 0);
 
+        assertNotNull(i);
         assertEquals("something".length(), i.intValue());
 
         Integer i2 = ls.find("something", 1);
 
+        assertNotNull(i2);
         assertEquals("something".length(), i2.intValue());
 
         Integer i3 = ls.find("something", "something".length() - 1);
 
+        assertNotNull(i3);
         assertEquals("something".length(), i3.intValue());
 
         Integer i4 = ls.find("something", "something".length());

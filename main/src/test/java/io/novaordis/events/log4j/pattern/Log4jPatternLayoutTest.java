@@ -143,7 +143,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%d{HH:mm:ss,SSS}", d.getLiteral());
         assertEquals("HH:mm:ss,SSS", d.getSimpleDateFormat().toPattern());
-        assertEquals(Date.CONVERSION_CHARACTER, d.getConversionCharacter().charValue());
+        assertEquals(Date.CONVERSION_CHARACTER, d.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
@@ -158,7 +158,7 @@ public class Log4jPatternLayoutTest {
         assertEquals("%-5p", p.getLiteral());
         FormatModifier m = p.getFormatModifier();
         assertEquals("-5", m.getLiteral());
-        assertEquals(Level.CONVERSION_CHARACTER, p.getConversionCharacter().charValue());
+        assertEquals(Level.CONVERSION_CHARACTER, p.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
@@ -172,7 +172,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%c", c.getLiteral());
         assertNull(c.getFormatModifier());
-        assertEquals(Logger.CONVERSION_CHARACTER, c.getConversionCharacter().charValue());
+        assertEquals(Logger.CONVERSION_CHARACTER, c.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
@@ -186,7 +186,7 @@ public class Log4jPatternLayoutTest {
 
         assertEquals("%t", t.getLiteral());
         assertNull(t.getFormatModifier());
-        assertEquals(ThreadName.CONVERSION_CHARACTER, t.getConversionCharacter().charValue());
+        assertEquals(ThreadName.CONVERSION_CHARACTER, t.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
@@ -199,20 +199,20 @@ public class Log4jPatternLayoutTest {
         WildFlyMessage u = (WildFlyMessage)i.next();
 
         assertEquals("%s", u.getLiteral());
-        assertEquals('s', u.getConversionCharacter().charValue());
+        assertEquals('s', u.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
         WildFlyException u2 = (WildFlyException)i.next();
 
         assertEquals("%E", u2.getLiteral());
-        assertEquals('E', u2.getConversionCharacter().charValue());
+        assertEquals('E', u2.getConversionCharacter());
 
         assertTrue(i.hasNext());
 
         LineSeparator n = (LineSeparator)i.next();
         assertNull(n.getFormatModifier());
-        assertEquals(LineSeparator.CONVERSION_CHARACTER, n.getConversionCharacter().charValue());
+        assertEquals(LineSeparator.CONVERSION_CHARACTER, n.getConversionCharacter());
 
         assertFalse(i.hasNext());
     }

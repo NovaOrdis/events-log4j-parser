@@ -89,7 +89,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
         Level e = new Level("p");
 
-        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter().charValue());
+        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter());
         assertNull(e.getFormatModifier());
         assertEquals("%p", e.getLiteral());
     }
@@ -99,7 +99,7 @@ public class LevelTest extends ConversionSpecifierTest {
 
         Level e = new Level("-5p");
 
-        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter().charValue());
+        assertEquals(Level.CONVERSION_CHARACTER, e.getConversionCharacter());
         FormatModifier m = e.getFormatModifier();
         assertEquals("-5", m.getLiteral());
         assertEquals("%-5p", e.getLiteral());

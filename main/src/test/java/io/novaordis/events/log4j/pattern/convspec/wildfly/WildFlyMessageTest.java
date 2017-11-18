@@ -88,7 +88,7 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
 
         WildFlyMessage s = new WildFlyMessage("s");
 
-        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter());
         assertNull(s.getFormatModifier());
         assertEquals("%s", s.getLiteral());
     }
@@ -98,7 +98,7 @@ public class WildFlyMessageTest extends ConversionSpecifierTest {
 
         WildFlyMessage s = new WildFlyMessage("-5s");
 
-        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(WildFlyMessage.CONVERSION_CHARACTER, s.getConversionCharacter());
         FormatModifier m = s.getFormatModifier();
         assertEquals("-5", m.getLiteral());
         assertEquals("%-5s", s.getLiteral());

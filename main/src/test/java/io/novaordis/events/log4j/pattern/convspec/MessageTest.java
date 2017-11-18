@@ -87,7 +87,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
         Message s = new Message("m");
 
-        assertEquals(Message.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(Message.CONVERSION_CHARACTER, s.getConversionCharacter());
         assertNull(s.getFormatModifier());
         assertEquals("%m", s.getLiteral());
     }
@@ -97,7 +97,7 @@ public class MessageTest extends ConversionSpecifierTest {
 
         Message s = new Message("-5m");
 
-        assertEquals(Message.CONVERSION_CHARACTER, s.getConversionCharacter().charValue());
+        assertEquals(Message.CONVERSION_CHARACTER, s.getConversionCharacter());
         FormatModifier m = s.getFormatModifier();
         assertEquals("-5", m.getLiteral());
         assertEquals("%-5m", s.getLiteral());
