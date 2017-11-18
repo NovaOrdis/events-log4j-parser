@@ -125,7 +125,7 @@ public abstract class ConversionSpecifierBase implements ConversionSpecifier {
 
         if (next != null) {
 
-            renderedLogEventEnd = next.findNext(line, from);
+            renderedLogEventEnd = next.find(line, from);
         }
 
         if (renderedLogEventEnd == null) {

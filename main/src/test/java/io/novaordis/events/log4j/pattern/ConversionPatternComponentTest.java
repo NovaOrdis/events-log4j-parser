@@ -103,7 +103,7 @@ public abstract class ConversionPatternComponentTest {
         assertEquals(matchingLogContent.length(), rendering.to());
     }
 
-    // findNext() ------------------------------------------------------------------------------------------------------
+    // find() ------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext_NullLogContent() throws Exception {
@@ -112,7 +112,7 @@ public abstract class ConversionPatternComponentTest {
 
         try {
 
-            c.findNext(null, 0);
+            c.find(null, 0);
 
             fail("should have thrown exception");
         }
@@ -131,7 +131,7 @@ public abstract class ConversionPatternComponentTest {
 
         try {
 
-            c.findNext("something", -1);
+            c.find("something", -1);
 
             fail("should have thrown exception");
         }
@@ -152,7 +152,7 @@ public abstract class ConversionPatternComponentTest {
         String line = "something";
         int from = "something".length();
 
-        Integer i = c.findNext(line, from);
+        Integer i = c.find(line, from);
         assertNull(i);
     }
 
@@ -163,7 +163,7 @@ public abstract class ConversionPatternComponentTest {
 
         try {
 
-            c.findNext("something", "something".length() + 1);
+            c.find("something", "something".length() + 1);
 
             fail("should have thrown exception");
         }
@@ -183,7 +183,7 @@ public abstract class ConversionPatternComponentTest {
 
         try {
 
-            c.findNext("something", 1000);
+            c.find("something", 1000);
 
             fail("should have thrown exception");
         }

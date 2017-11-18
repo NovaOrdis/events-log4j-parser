@@ -87,13 +87,14 @@ public interface ConversionPatternComponent {
             throws Log4jPatternLayoutException;
 
     /**
-     * Scan the log content from the 'from' index in an attempt to find the next occurrence of this conversion pattern
-     * component. logContent.length() is interpreted as "the end of the string" and it is a valid return value.
+     * Scan the log content from the 'from' index in an attempt to find the next occurrence of <b>this</b> conversion
+     * pattern component.
      *
-     * @return the next occurrence of this conversion pattern component, or null if there is no such component if is not
-     * possible to identify the next occurrence of the component.
+     * @return the first occurrence of this conversion pattern component, within the string, starting with 'from', or
+     * null if there is no such component if is not possible to identify the next occurrence of the component.
+     * The logContent.length() value is interpreted as "the end of the string" and it is a valid return value.
      */
-    Integer findNext(String logContent, int from);
+    Integer find(String s, int from);
 
     /**
      * Interprets the given value as the value of the corresponding log event property, and injects the property into

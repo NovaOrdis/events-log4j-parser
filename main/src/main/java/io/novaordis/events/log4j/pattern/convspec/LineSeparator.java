@@ -72,16 +72,16 @@ public class LineSeparator extends ConversionSpecifierBase {
     }
 
     @Override
-    public Integer findNext(String logContent, int from) {
+    public Integer find(String s, int from) {
 
-        ConversionPatternComponent.checkConsistency(logContent, from);
+        ConversionPatternComponent.checkConsistency(s, from);
 
-        if (from == logContent.length()) {
+        if (from == s.length()) {
 
             return null;
         }
 
-        return logContent.length();
+        return s.length();
     }
 
     @Override

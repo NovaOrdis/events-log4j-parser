@@ -74,7 +74,7 @@ public class WildFlyException extends ConversionSpecifierBase {
         //
         // TODO: this should contain pattern matching to insure that the string fragment is indeed an exception
         // rendering; for the time being, because %E is usually at the end of the conversion specifier string, so
-        // it is validated by findNext()
+        // it is validated by find()
         //
 
         return new RenderedLogEvent(ps.getProcessedString(), ps.from(), ps.to());
@@ -84,11 +84,11 @@ public class WildFlyException extends ConversionSpecifierBase {
      * TODO: Not thread safe.
      */
     @Override
-    public Integer findNext(String logContent, int from) {
+    public Integer find(String s, int from) {
 
-        ConversionPatternComponent.checkConsistency(logContent, from);
+        ConversionPatternComponent.checkConsistency(s, from);
 
-        Matcher m = EXCEPTION_RENDERING_PATTERN.matcher(logContent.substring(from));
+        Matcher m = EXCEPTION_RENDERING_PATTERN.matcher(s.substring(from));
 
         if (!m.matches()) {
 

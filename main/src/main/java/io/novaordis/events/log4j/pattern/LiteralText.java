@@ -118,11 +118,11 @@ public class LiteralText implements ConversionPatternComponent {
     }
 
     @Override
-    public Integer findNext(String logContent, int from) {
+    public Integer find(String s, int from) {
 
-        ConversionPatternComponent.checkConsistency(logContent, from);
+        ConversionPatternComponent.checkConsistency(s, from);
 
-        int i = logContent.indexOf(getLiteral(), from);
+        int i = s.indexOf(getLiteral(), from);
 
         if (i == -1) {
 

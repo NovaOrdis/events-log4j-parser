@@ -177,14 +177,14 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
         }
     }
 
-    // findNext() ------------------------------------------------------------------------------------------------------
+    // find() ------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext() throws Exception {
 
         LiteralText lt = new LiteralText(" ");
 
-        Integer i = lt.findNext(" something something else", 1);
+        Integer i = lt.find(" something something else", 1);
 
         assertEquals(10, i.intValue());
     }
@@ -194,7 +194,7 @@ public class LiteralTextTest extends ConversionPatternComponentTest {
 
         LiteralText lt = new LiteralText("@@@");
 
-        Integer i = lt.findNext("something something else", 0);
+        Integer i = lt.find("something something else", 0);
 
         assertNull(i);
     }

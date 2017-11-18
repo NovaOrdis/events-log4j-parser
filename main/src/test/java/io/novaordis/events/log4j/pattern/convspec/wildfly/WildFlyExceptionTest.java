@@ -181,7 +181,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
         assertEquals("something", e.get());
     }
 
-    // findNext() ------------------------------------------------------------------------------------------------------
+    // find() ------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext_ExceptionPattern() throws Exception {
@@ -190,7 +190,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException e = new WildFlyException();
 
-        Integer i = e.findNext(s, 0);
+        Integer i = e.find(s, 0);
 
         assertEquals(9, i.intValue());
     }
@@ -202,7 +202,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException e = new WildFlyException();
 
-        Integer i = e.findNext(s, 0);
+        Integer i = e.find(s, 0);
 
         assertEquals("a message that accompanies an exception".length(), i.intValue());
     }
@@ -214,7 +214,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException e = new WildFlyException();
 
-        Integer i = e.findNext(s, 5);
+        Integer i = e.find(s, 5);
 
         assertEquals(9, i.intValue());
     }
@@ -226,7 +226,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
 
         WildFlyException e = new WildFlyException();
 
-        Integer i = e.findNext(s, 0);
+        Integer i = e.find(s, 0);
 
         assertNull(i);
     }
@@ -237,7 +237,7 @@ public class WildFlyExceptionTest extends ConversionSpecifierTest {
     public void parseLiteralAfterFormatModifierWasUnapplied() throws Exception {
 
         //
-        // minimal processing, we rely on the fact that findNext() matched before
+        // minimal processing, we rely on the fact that find() matched before
         //
 
         WildFlyException e = new WildFlyException();

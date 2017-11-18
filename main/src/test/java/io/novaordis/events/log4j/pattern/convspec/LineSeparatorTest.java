@@ -135,26 +135,26 @@ public class LineSeparatorTest extends ConversionSpecifierTest {
 
     // Tests -----------------------------------------------------------------------------------------------------------
 
-    // findNext() ------------------------------------------------------------------------------------------------------
+    // find() ------------------------------------------------------------------------------------------------------
 
     @Test
     public void findNext() throws Exception {
 
         LineSeparator ls = new LineSeparator();
 
-        Integer i = ls.findNext("something", 0);
+        Integer i = ls.find("something", 0);
 
         assertEquals("something".length(), i.intValue());
 
-        Integer i2 = ls.findNext("something", 1);
+        Integer i2 = ls.find("something", 1);
 
         assertEquals("something".length(), i2.intValue());
 
-        Integer i3 = ls.findNext("something", "something".length() - 1);
+        Integer i3 = ls.find("something", "something".length() - 1);
 
         assertEquals("something".length(), i3.intValue());
 
-        Integer i4 = ls.findNext("something", "something".length());
+        Integer i4 = ls.find("something", "something".length());
 
         assertNull(i4);
     }

@@ -60,16 +60,16 @@ public class ThreadName extends ConversionSpecifierBase {
     }
 
     @Override
-    public Integer findNext(String logContent, int from) {
+    public Integer find(String s, int from) {
 
-        ConversionPatternComponent.checkConsistency(logContent, from);
+        ConversionPatternComponent.checkConsistency(s, from);
 
-        if (logContent.length() == from) {
+        if (s.length() == from) {
 
             return null;
         }
 
-        throw new RuntimeException("findNext() NOT YET IMPLEMENTED");
+        throw new RuntimeException("find() NOT YET IMPLEMENTED");
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ThreadName extends ConversionSpecifierBase {
                     "invalid value type " + value.getClass().getSimpleName() + ", expected String");
         }
 
-        e.setThreadName((String)value);
+        e.setThreadName((String) value);
     }
 
     // Public ----------------------------------------------------------------------------------------------------------
