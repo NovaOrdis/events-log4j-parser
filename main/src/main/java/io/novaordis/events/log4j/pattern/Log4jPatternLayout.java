@@ -159,7 +159,7 @@ public class Log4jPatternLayout {
         // parsing successful, load the raw representation
         //
 
-        log4jEvent.setRaw(line);
+        log4jEvent.appendRawLine(line);
 
         return log4jEvent;
     }

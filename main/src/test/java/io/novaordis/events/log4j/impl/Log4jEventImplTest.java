@@ -134,25 +134,7 @@ public class Log4jEventImplTest extends Log4jEventTest {
     // raw representation/append() -------------------------------------------------------------------------------------
 
     @Test
-    public void setRaw() throws Exception {
-
-        Log4jEventImpl e = getLog4jEventToTest();
-
-        e.setRaw("this is the first line");
-
-        String s = e.getRawRepresentation();
-
-        assertEquals("this is the first line", s);
-
-        e.setRaw("this is another line");
-
-        String s2 = e.getRawRepresentation();
-
-        assertEquals("this is another line", s2);
-    }
-
-    @Test
-    public void setRaw_2() throws Exception {
+    public void rawRepresentation() throws Exception {
 
         String line = "20:00:00 multi-line message\n sub-line-1\nsub-line-2";
 
@@ -289,38 +271,38 @@ public class Log4jEventImplTest extends Log4jEventTest {
         le.appendLine("line 1");
 
         assertEquals("line 1", le.getExceptionRendering());
+        assertEquals("line 1", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("line 2");
 
         assertEquals("line 1\nline 2", le.getExceptionRendering());
+        assertEquals("line 1\nline 2", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine(" ");
 
         assertEquals("line 1\nline 2\n ", le.getExceptionRendering());
+        assertEquals("line 1\nline 2\n ", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("\t");
 
         assertEquals("line 1\nline 2\n \n\t", le.getExceptionRendering());
+        assertEquals("line 1\nline 2\n \n\t", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("");
 
         assertEquals("line 1\nline 2\n \n\t\n", le.getExceptionRendering());
+        assertEquals("line 1\nline 2\n \n\t\n", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("line 3");
 
         assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getExceptionRendering());
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getRawRepresentation());
         assertNull(le.getMessage());
-        assertNull(le.getRawRepresentation());
     }
 
     @Test
@@ -330,7 +312,7 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         le.setAppendMode(Log4jEventImpl.EXCEPTION_APPEND_MODE);
 
-        le.setRaw("first line");
+        le.appendRawLine("first line");
 
         assertNull(le.getExceptionRendering());
         assertNull(le.getMessage());
@@ -387,38 +369,38 @@ public class Log4jEventImplTest extends Log4jEventTest {
         le.appendLine("line 1");
 
         assertEquals("line 1", le.getMessage());
+        assertEquals("line 1", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("line 2");
 
         assertEquals("line 1\nline 2", le.getMessage());
+        assertEquals("line 1\nline 2", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine(" ");
 
         assertEquals("line 1\nline 2\n ", le.getMessage());
+        assertEquals("line 1\nline 2\n ", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("\t");
 
         assertEquals("line 1\nline 2\n \n\t", le.getMessage());
+        assertEquals("line 1\nline 2\n \n\t", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("");
 
         assertEquals("line 1\nline 2\n \n\t\n", le.getMessage());
+        assertEquals("line 1\nline 2\n \n\t\n", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
 
         le.appendLine("line 3");
 
         assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getMessage());
+        assertEquals("line 1\nline 2\n \n\t\n\nline 3", le.getRawRepresentation());
         assertNull(le.getExceptionRendering());
-        assertNull(le.getRawRepresentation());
     }
 
     @Test
@@ -426,7 +408,7 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         Log4jEventImpl le = new Log4jEventImpl();
 
-        le.setRaw("first line");
+        le.appendRawLine("first line");
 
         le.setAppendMode(Log4jEventImpl.MESSAGE_APPEND_MODE);
 

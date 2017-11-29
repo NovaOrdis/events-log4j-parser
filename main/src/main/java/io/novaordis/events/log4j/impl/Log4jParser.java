@@ -199,7 +199,7 @@ public class Log4jParser extends ParserBase {
             }
             else {
 
-                currentEvent.setRaw(line);
+                currentEvent.appendRawLine(line);
             }
         }
         else {

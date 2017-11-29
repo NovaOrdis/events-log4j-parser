@@ -19,7 +19,6 @@ package io.novaordis.events.log4j.impl;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.event.GenericTimedEvent;
 import io.novaordis.events.api.event.StringProperty;
 import io.novaordis.utilities.logging.log4j.Log4jLevel;
@@ -78,7 +77,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         setLogger(category);
         setThreadName(threadName);
         setMessage(message);
-        setRaw(rawLine);
+        appendRawLine(rawLine);
 
         //
         // not in append mode
@@ -195,7 +194,6 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
     }
 
     /**
-     *
      * @return the append mode (EXCEPTION_APPEND_MODE, MESSAGE_APPEND_MODE). Anything else means "not in append mode",
      * and appendLine() invocation will throw exception.
      */
@@ -204,6 +202,9 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
         return appendMode;
     }
 
+    /**
+     * Set the append mode to NO_APPEND_MODE|EXCEPTION_APPEND_MODE|MESSAGE_APPEND_MODE.
+     */
     public void setAppendMode(byte m) {
 
         if (NO_APPEND_MODE != m && EXCEPTION_APPEND_MODE != m && MESSAGE_APPEND_MODE != m) {
@@ -218,7 +219,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
      * Use it to append lines following a formatted log event rendering line. These lines belong either to a
      * multi-line message or to an exception stack trace. The Log4jEventImpl instance will interpret the semantics
      * of the line being appended relative to the value of the appendMode flag. Possible append modes:
-     * EXCEPTION_APPEND_MODE, MESSAGE_APPEND_MODE.
+     * EXCEPTION_APPEND_MODE, MESSAGE_APPEND_MODE. The method updates the raw representation internally.
      *
      * It is imperative that the whole log line is added in a single appendLine() invocation, otherwise the line number
      * counting will fail.
@@ -272,35 +273,7 @@ public class Log4jEventImpl extends GenericTimedEvent implements Log4jEvent {
 
         p.setValue(s);
 
-        //
-        // update the raw representation, if present
-        //
-
-        StringProperty rp = getStringProperty(Event.RAW_PROPERTY_NAME);
-
-        if (rp != null) {
-
-            String raw = rp.getString();
-
-            if (raw != null) {
-
-                raw += "\n";
-                raw += line;
-                rp.setValue(raw);
-            }
-        }
-    }
-
-    /**
-     * Records the raw first line, as read from log. This is all that is needed to preserve the raw representation of
-     * most log events. The only ones that require more are the events carrying exception stack traces and multi-line
-     * messages. For those, use appendLine() - it will update the raw representation.
-     *
-     * @see Log4jEventImpl#appendLine(String)
-     */
-    public void setRaw(String line) {
-
-        setStringProperty(Event.RAW_PROPERTY_NAME, line);
+        appendRawLine(line);
     }
 
     @Override
