@@ -144,7 +144,7 @@ public class Log4jEventImplTest extends Log4jEventTest {
 
         for(StringTokenizer st = new StringTokenizer(line, "\n"); st.hasMoreTokens(); i ++) {
 
-            p.parse(i, st.nextToken());
+            p.parse(i, st.nextToken(), null);
         }
 
         Log4jEventImpl e = (Log4jEventImpl)p.close().get(0);

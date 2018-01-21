@@ -28,6 +28,7 @@ import io.novaordis.events.api.event.Event;
 import io.novaordis.events.api.parser.ParserBase;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayout;
 import io.novaordis.events.log4j.pattern.Log4jPatternLayoutException;
+import io.novaordis.events.query.Query;
 import io.novaordis.utilities.parsing.ParsingException;
 
 /**
@@ -67,7 +68,7 @@ public class Log4jParser extends ParserBase {
     // ParserBase implementation ---------------------------------------------------------------------------------------
 
     @Override
-    protected List<Event> parse(long lineNumber, String line) throws ParsingException {
+    protected List<Event> parse(long lineNumber, String line, Query query) throws ParsingException {
 
         if (patternLayout == null) {
 
@@ -179,6 +180,7 @@ public class Log4jParser extends ParserBase {
 
         return "Log4jParser[" + patternLiteral + "]";
     }
+
 
     // Package protected -----------------------------------------------------------------------------------------------
 

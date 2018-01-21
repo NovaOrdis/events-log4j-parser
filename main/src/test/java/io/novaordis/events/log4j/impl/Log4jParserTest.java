@@ -90,7 +90,7 @@ public class Log4jParserTest {
 
         p.setPatternLayout(layout);
 
-        List<Event> events = p.parse(7, line);
+        List<Event> events = p.parse(7, line, null);
         assertTrue(events.isEmpty());
 
         List<Event> events2 = p.close();
@@ -139,19 +139,19 @@ public class Log4jParserTest {
 
         p.setPatternLayout(patternLayout);
 
-        List<Event> events = p.parse(1, content[0]);
+        List<Event> events = p.parse(1, content[0], null);
 
         assertTrue(events.isEmpty());
 
-        List<Event> events2 = p.parse(2, content[1]);
+        List<Event> events2 = p.parse(2, content[1], null);
 
         assertTrue(events2.isEmpty());
 
-        List<Event> events3 = p.parse(3, content[2]);
+        List<Event> events3 = p.parse(3, content[2], null);
 
         assertTrue(events3.isEmpty());
 
-        List<Event> events4 = p.parse(4, content[3]);
+        List<Event> events4 = p.parse(4, content[3], null);
 
         assertEquals(1, events4.size());
 
@@ -205,19 +205,19 @@ public class Log4jParserTest {
 
         p.setPatternLayout(patternLayout);
 
-        List<Event> events = p.parse(1, content[0]);
+        List<Event> events = p.parse(1, content[0], null);
         assertTrue(events.isEmpty());
 
-        List<Event> events2 = p.parse(2, content[1]);
+        List<Event> events2 = p.parse(2, content[1], null);
         assertTrue(events2.isEmpty());
 
-        List<Event> events3 = p.parse(3, content[2]);
+        List<Event> events3 = p.parse(3, content[2], null);
         assertTrue(events3.isEmpty());
 
-        List<Event> events4 = p.parse(4, content[3]);
+        List<Event> events4 = p.parse(4, content[3], null);
         assertTrue(events4.isEmpty());
 
-        List<Event> events5 = p.parse(5, content[4]);
+        List<Event> events5 = p.parse(5, content[4], null);
 
         assertEquals(1, events5.size());
 
@@ -231,7 +231,7 @@ public class Log4jParserTest {
         assertNull(e.getExceptionRendering());
         assertEquals(Log4jEventImpl.MESSAGE_APPEND_MODE, e.getAppendMode());
 
-        List<Event> events6 = p.parse(6, content[5]);
+        List<Event> events6 = p.parse(6, content[5], null);
 
         assertEquals(1, events6.size());
 
@@ -321,7 +321,7 @@ public class Log4jParserTest {
 
         Log4jParser p = new Log4jParser();
 
-        List<Event> afterParse = p.parse(1, "this is not a matching event");
+        List<Event> afterParse = p.parse(1, "this is not a matching event", null);
         assertTrue(afterParse.isEmpty());
 
         List<Event> afterClose = p.close();
@@ -335,7 +335,7 @@ public class Log4jParserTest {
 
         Log4jParser p = new Log4jParser();
 
-        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) something");
+        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) something", null);
         assertTrue(afterParse.isEmpty());
 
         List<Event> afterClose = p.close();
@@ -353,10 +353,10 @@ public class Log4jParserTest {
 
         Log4jParser p = new Log4jParser();
 
-        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) blue");
+        List<Event> afterParse = p.parse(1, "01/01/17 01:01:01,001 INFO [io.novaordis] (main) blue", null);
         assertTrue(afterParse.isEmpty());
 
-        List<Event> afterParse2 = p.parse(2, "01/01/17 01:01:02,002 INFO [io.novaordis] (main) red");
+        List<Event> afterParse2 = p.parse(2, "01/01/17 01:01:02,002 INFO [io.novaordis] (main) red", null);
 
         assertEquals(1, afterParse2.size());
         Log4jEvent e = (Log4jEvent)afterParse2.get(0);
@@ -380,7 +380,7 @@ public class Log4jParserTest {
 
         Log4jParser p = new Log4jParser();
 
-        p.parse(line);
+        p.parse(line, null);
     }
 
     // Package protected -----------------------------------------------------------------------------------------------
